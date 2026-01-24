@@ -1,0 +1,4354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="theme-color" content="#F6F4E8" />
+<title>Michael Shea Hussey</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+
+<!-- Preload gallery images for instant display -->
+<link rel="preload" href="images/coffee-cups.jpeg" as="image" fetchpriority="high">
+<link rel="preload" href="images/IMG_0720.JPG" as="image">
+
+<script>
+(function(){
+  window.STATIONS = [
+    { name: 'KTNN 660 AM',            sources: [{ url: 'https://ice41.securenetsystems.net/KTNN', type: 'mp3' }] },
+    { name: 'WKCR 89.9 FM',           sources: [{ url: 'https://wkcr.streamguys1.com/live', type: 'mp3' }] },
+    { name: 'Bassdrive (Drum & Bass)', sources: [
+      { url: 'https://ice.bassdrive.net/stream', type: 'mp3' },
+      { url: 'https://bassdrive.radioca.st/stream', type: 'mp3' }
+    ]},
+    { name: 'WQXR 105.9 FM (NYC)',    sources: [
+      { url: 'https://stream.wqxr.org/wqxr',     type: 'mp3' },
+      { url: 'https://stream.wqxr.org/wqxr.aac', type: 'aac' }
+    ]},
+    { name: 'Dublab',                  sources: [{ url: 'https://dublab.out.airtime.pro/dublab_a', type: 'mp3' }] },
+    { name: 'WRAS 88.5 FM',            sources: [{ url: 'https://playerservices.streamtheworld.com/api/livestream-redirect/WRASFM.mp3', type: 'mp3' }] },
+    { name: 'KEXP 90.3 FM',            sources: [{ url: 'https://kexp-mp3-128.streamguys1.com/kexp128.mp3', type: 'mp3' }] },
+    { name: 'NTS Radio',               sources: [{ url: 'https://stream-relay-geo.ntslive.net/stream', type: 'mp3' }] },
+
+    { name: 'WYXR 91.7 FM',            sources: [{ url: 'https://crosstown.streamguys1.com/live', type: 'mp3' }] },
+    { name: 'Shady Pines Radio',       sources: [{ url: 'https://streamer.radio.co/s3bc65afb4/listen', type: 'mp3' }] },
+
+    { name: 'WWOZ 90.7 FM (New Orleans)', sources: [{ url: 'https://wwoz-sc.streamguys1.com/wwoz-hi.mp3', type: 'mp3' }] },
+    { name: 'KYUK 640 AM',             sources: [{ url: 'https://18233.live.streamtheworld.com/KYUKAM.mp3', type: 'mp3' }] },
+
+    { name: 'Radio UNAM (Mexico City)', sources: [{ url: 'https://tv.radiohosting.online:9484/stream', type: 'mp3' }] },
+    { name: 'Yle Klassinen (Finland)',  sources: [{ url: 'https://icecast.live.yle.fi/radio/YleKlassinen/icecast.audio', type: 'mp3' }] },
+
+    { name: 'Anima Amoris — Dub Techno', sources: [{ url: 'https://amoris.sknt.ru/dubtechno', type: 'mp3' }] },
+    { name: 'Worldwide FM',             sources: [{ url: 'https://worldwidefm.out.airtime.pro/worldwidefm_a', type: 'mp3' }] }
+  ];
+})();
+</script>
+
+<script>
+(function(){
+  try {
+    var hosts = {}; var i, j;
+    for(i=0;i<(window.STATIONS||[]).length;i++){
+      var st = window.STATIONS[i]; var srcs = st.sources||[];
+      for(j=0;j<srcs.length;j++){
+        try{
+          var u = new URL(srcs[j].url);
+          if (u.protocol === 'http:' || u.protocol === 'https:'){ hosts[u.host] = true; }
+        }catch(e){}
+      }
+    }
+    var head = document.head;
+    for (var h in hosts){
+      var dns = document.createElement('link'); dns.rel='dns-prefetch'; dns.href='//'+h; head.appendChild(dns);
+      var pre = document.createElement('link'); pre.rel='preconnect'; pre.href='https://'+h; pre.crossOrigin='anonymous'; head.appendChild(pre);
+    }
+  } catch(_){}
+})();
+</script>
+
+<style>
+/* ===================== Root & Typography ===================== */
+:root{
+  --dur: 900ms;
+  --easing: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Teleport (pill) */
+  --teleport-out: 320ms;
+  --teleport-in:  560ms;
+  --teleport-overlap: 200ms;
+  --teleport-ease: cubic-bezier(0.22,0.61,0.36,1);
+
+  /* Geometry */
+  --grid-size: 22.2222vmin;
+  --grid-center-top: 45%;
+  --pill-offset-under-grid: 12vmin;
+  --plus-row-top: calc(50% + 14vmin);
+  --plus-gap: 76px;
+
+  /* Compositions panel */
+  --comp-center-top: 46%;
+  --comp-left: 22vw;
+  --comp-stagger: 70ms;
+  --comp-left-gap: 10px;
+  --comp-plus-size: 18px;
+  --examples-gap: 18px;
+
+  /* Color */
+  --plus-color: #C4D8E2;
+  --shimmer-a: rgba(196,216,226,0.35);
+  --shimmer-b: rgba(196,216,226,0.10);
+  --example-shadow: 0 1px 12px rgba(20,20,20,0.22);
+
+  /* Overlays */
+  --overlay-in: 640ms;
+  --overlay-out: 1000ms;
+  --overlay-delay: 220ms;
+  --overlay-ease: cubic-bezier(0.19,1,0.22,1);
+
+  /* Display C cadence */
+  --overlay-in-c: 920ms;
+  --overlay-delay-c: 260ms;
+
+  /* Proximity (CTA) */
+  --cta-prox: 0;
+
+  /* Display B stage size (smaller) */
+  --b-stage-size: 50vmin;
+  --b-stage-safe-gap: 16px; /* breathing room above the + row */
+}
+
+html, body {
+  height: 100%; margin: 0; background: #F6F4E8; overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Arial, sans-serif;
+  color: #111;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  perspective: 1000px;
+}
+.pill, .comp-label, .example-btn { letter-spacing: 0.1px; font-weight: 500; }
+
+/* ===================== Grid ===================== */
+#colorGridContainer{
+  position: absolute; top: var(--grid-center-top); left: 50%;
+  width: var(--grid-size); height: var(--grid-size);
+  transform: translate(-50%, -50%);
+  transition: opacity var(--overlay-out) var(--overlay-ease);
+  will-change: opacity, transform, filter;
+}
+#colorGrid{ display:block; width:100%; height:100%; cursor:pointer; }
+#colorGrid:focus, #colorGrid:focus-visible { outline: none !important; box-shadow: none !important; }
+#colorGridContainer.is-hidden{ opacity: 0; pointer-events: none; }
+
+/* ===================== Pill / Ticker ===================== */
+.pill{
+  position: absolute; left: 50%; top: calc(50% + var(--pill-offset-under-grid) - 10px);
+  transform: translateX(-50%);
+  display: inline-flex; align-items: center; gap: 8px; padding: 0;
+  background: transparent; border: 0;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.08)) drop-shadow(0 6px 18px rgba(0,0,0,0.05));
+  color: #111; z-index: 1500; font-size: 14px; line-height: 1.1; white-space: nowrap;
+  max-width: min(56vmin, 520px); text-overflow: ellipsis; overflow: visible;
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--dur) var(--easing), transform var(--dur) var(--easing), top var(--dur) var(--easing), color var(--dur) var(--easing);
+}
+.pill.show{ opacity:1; pointer-events:auto; }
+
+/* Loading state for pill - shows immediately when station is selected */
+.pill.loading #nowPlaying::after {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  margin-left: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: pulse-dot 1.4s ease-in-out infinite;
+  position: relative;
+  top: -1px;
+  opacity: 0.6;
+}
+
+@keyframes pulse-dot {
+  0%, 80%, 100% { opacity: 0.25; transform: scale(0.75); }
+  40% { opacity: 0.75; transform: scale(1.15); }
+}
+
+/* Subtle dim when loading */
+.pill.loading {
+  opacity: 0.85;
+}
+.pill.loading.show {
+  opacity: 0.85;
+}
+.pill.dock-bottom{ position: fixed; top:auto; bottom: max(24px, env(safe-area-inset-bottom, 0px) + 12px); left:50%; transform: translateX(-50%); color:#111; }
+.pill-ghost{ pointer-events:none !important; position:absolute; left:50%; transform: translateX(-50%); font-size:14px; line-height:1.1; color:#111; }
+.overlay-open .pill:not(.dock-bottom){ display: none !important; }
+
+#nowPlaying { margin: 0; overflow: hidden; text-overflow: ellipsis; flex: 1 1 auto; min-width: 0; }
+#volumeButton{ background:none; border:none; padding:0; cursor:pointer; font-size:20px; line-height:1; color:inherit; position:relative; top:2px; flex: 0 0 auto; }
+#volumeButton .icon-full { display: inline; }
+#volumeButton .icon-half,
+#volumeButton .icon-mute { display: none; }
+
+/* ===================== Plus row ===================== */
+.plus-row{
+  position: absolute; top: var(--plus-row-top); left: 50%; transform: translateX(-50%);
+  display:flex; gap: 76px; align-items:center; justify-content:center; margin-top: 28px;
+  z-index: 4000;
+  pointer-events:auto;
+  transition: transform 640ms cubic-bezier(0.25, 1, 0.5, 1);
+}
+body.overlay-open .plus-row {
+  transform: translate(-50%, -8px);
+}
+.toggle{
+  width: 36px; height: 36px; background:none; border:none; padding:0; cursor:pointer;
+  display:inline-flex; align-items:center; justify-content:center; -webkit-tap-highlight-color: transparent;
+  position: relative;
+}
+.toggle:focus-visible{ outline: 2px solid rgba(62,91,107,.5); outline-offset: 3px; border-radius:999px; }
+.plusminus{ width: 18px; height: 18px; display:block; filter: drop-shadow(0 1px 2px rgba(196,216,226,0.08)); transition: filter var(--dur) var(--easing); }
+.bar{ fill: #C4D8E2; rx:2; ry:2; }
+.vBar,.hBar{ transform-box: fill-box; transform-origin: 50% 50%; transition: transform var(--dur) var(--easing), opacity var(--dur) var(--easing); }
+.toggle.open .vBar{ transform: scaleY(0.02); opacity:0; }
+.toggle.open .hBar{ transform: scaleX(1.06); }
+
+/* ===================== Overlays ===================== */
+.display{
+  position: fixed; inset: 0; display: none; align-items: center; justify-content: center; pointer-events: none; z-index: 1200;
+  opacity: 0;
+  transition: opacity var(--overlay-in) var(--overlay-ease) var(--overlay-delay);
+  will-change: opacity;
+}
+.display.open{ display: flex; opacity: 1; }
+
+/* Base card micro-settle (B & default) */
+.display .card{
+  pointer-events: auto;
+  background: transparent; /* frameless */
+  color:#111;
+  border:0;
+  border-radius:0;
+  box-shadow: none;
+  padding: 0;
+  font-size: 14px;
+  max-width: none;
+  opacity: 0;
+  transform: scale(1.005);
+  transition:
+    opacity var(--overlay-in) var(--overlay-ease) var(--overlay-delay),
+    transform 900ms cubic-bezier(0.19,1,0.22,1) var(--overlay-delay),
+    box-shadow 200ms ease;
+  will-change: opacity, transform;
+}
+.display.open .card{
+  opacity: 1;
+  transform: scale(1.0);
+}
+
+/* === Display C — identity chic === */
+#displayC{
+  transition: opacity var(--overlay-in-c) var(--overlay-ease) var(--overlay-delay-c);
+}
+#displayC .card{
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  color: #111;
+  font-size: 14px;
+  line-height: 1.2;
+  text-align: center;
+  filter: none;
+  transform: scale(1.01);
+  opacity: 0;
+  transition:
+    opacity var(--overlay-in-c) var(--overlay-ease) var(--overlay-delay-c),
+    transform 900ms cubic-bezier(0.19,1,0.22,1) var(--overlay-delay-c);
+}
+#displayC.open .card{ opacity: 1; transform: scale(1.0); }
+
+#displayC .contact-cta{
+  opacity: 0;
+  transition: opacity 360ms cubic-bezier(0.19,1,0.22,1) var(--overlay-delay-c);
+}
+#displayC.open .contact-cta{
+  transition-delay: calc(var(--overlay-delay-c) + 260ms);
+  opacity: 1;
+}
+
+.contact-topline{
+  --reserve: 9ch; /* space for “ — contact” */
+  display: inline-grid;
+  grid-template-columns: var(--reserve) auto var(--reserve);
+  align-items: baseline;
+  white-space: nowrap;
+  gap: 0;
+  margin: 0 auto;
+}
+.contact-name{ grid-column: 2; font-size: 1rem; font-weight: 600; letter-spacing: 0.03em; }
+.contact-cta{
+  grid-column: 3; justify-self: start; align-self: baseline; text-decoration: none; font-weight: 500;
+  letter-spacing: calc(0.03em + 0.01em * var(--cta-prox)); color: inherit;
+  transform: translateY(calc(-1px * var(--cta-prox))) scale(calc(1 + 0.015 * var(--cta-prox)));
+  filter: saturate(calc(1 + 0.05 * var(--cta-prox)));
+  transition:
+    transform 220ms cubic-bezier(0.19,1,0.22,1),
+    filter 220ms cubic-bezier(0.19,1,0.22,1),
+    letter-spacing 220ms cubic-bezier(0.19,1,0.22,1);
+}
+.contact-cta::before{ content: " — "; }
+.contact-cta:hover{
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 0.06em;
+}
+.contact-role {
+  margin: 0.65em auto 0;
+  font-size: 0.82rem;
+  font-weight: 300;
+  color: #4a4a4a;
+  letter-spacing: 0.04em;
+  display: block;
+  width: fit-content;
+}
+
+/* ===================== Compositions Stack ===================== */
+.comp-panel{
+  position: fixed;
+  top: 46%;
+  left: 22vw;
+  transform: translateY(-50%);
+  display: none;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 1600;
+  align-items: flex-start;
+  width: max-content;
+  pointer-events: none;
+}
+.comp-panel.open{ display: flex; }
+.comp-panel *{ pointer-events: auto; }
+
+.comp-item{
+  position: relative; display: flex; align-items: center; gap: 10px;
+  opacity: 0; transform: translate3d(var(--seed-dx,0), var(--seed-dy,0), 0) scale(0.86);
+  animation: compBirth 900ms cubic-bezier(0.65,0,0.35,1) forwards; animation-delay: calc(70ms * var(--i, 0));
+  min-height: 20px;
+  cursor: pointer;
+}
+@keyframes compBirth{ to { opacity: 1; transform: translate3d(0,0,0) scale(1); } }
+
+.comp-btn{
+  width: 18px; height: 18px;
+  background: none; border: 0; padding: 0; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  position: relative;
+  pointer-events: none; /* Let parent handle clicks */
+}
+.comp-btn .plusminus{ width: 16px; height: 16px; }
+.comp-btn.open .vBar{ transform: scaleY(0.02); opacity: 0; }
+.comp-btn.open .hBar{ transform: scaleX(1.06); }
+
+.comp-label{
+  appearance: none; background: none; border: 0; padding: 0; margin: 0;
+  font-size: 13px; color: #222; letter-spacing: .02em; user-select: none;
+  transition: opacity 220ms ease, transform 220ms ease;
+  white-space: nowrap; position: relative;
+  pointer-events: none; /* Let parent handle clicks */
+}
+
+.comp-panel { --left-shift: calc(-100% - 18px - (10px * 2)); }
+.comp-panel.one-open .comp-label{ opacity: 0; pointer-events: none; transform: translateX(6px); }
+.comp-panel.one-open .comp-item:not(.active):hover .comp-label{ opacity: 1; transform: translateX(var(--left-shift)); }
+.comp-panel:not(.one-open) .comp-label{ opacity: 1 !important; transform: none !important; pointer-events: auto !important; }
+
+/* ===================== Examples ===================== */
+.examples{
+  position: absolute; left: 0; top: 0;
+  opacity: 0; pointer-events: none;
+  transform: translateX(6px);
+  transition: opacity 220ms ease, transform 220ms ease;
+  z-index: 951;
+}
+.examples.visible{ opacity: 1; pointer-events: auto; transform: translateX(0); }
+.example-btn{
+  position: absolute; left: 0;
+  appearance: none; background: none; border: 0; padding: 2px 6px;
+  font-size: 12.5px; letter-spacing: .01em; color: #333; cursor: pointer;
+  display: block; text-align: left;
+  transition: color 160ms ease, text-shadow 160ms ease, transform 120ms ease, opacity 180ms ease;
+  border-radius: 4px; line-height: 1.35; opacity: 1; white-space: nowrap; font-variant-numeric: lining-nums;
+}
+.example-btn:hover{ text-shadow: 0 1px 12px rgba(20,20,20,0.22); }
+.example-btn.active{ color: #111; text-shadow: 0 1px 0 rgba(0,0,0,0.12); transform: translateX(1px); }
+.examples.is-singular .example-btn:not(.active){ opacity: 0; transform: translateX(-4px); pointer-events: none; }
+.examples.is-singular .example-btn.peep{ opacity: 1; transform: none; pointer-events: auto; }
+.example-hover{ position: absolute; left: 0; width: 220px; height: 22px; pointer-events: auto; background: transparent; }
+
+/* ===================== Display B — FRAMELess, smaller ===================== */
+.b-stage{
+  width: var(--b-stage-size);
+  height: var(--b-stage-size);
+  max-width: 80vw;
+  max-height: 56vh;
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: hidden;
+}
+/* The B stage floats chicly above the page with NO borders/shadows */
+#glassCanvas{ width:100%; height:100%; display:block; }
+#bHint{ position:absolute; bottom:10px; left:50%; transform:translateX(-50%); font-size:12px; padding:4px 8px; background:rgba(255,255,255,0.75); border-radius:8px; }
+
+@media (prefers-reduced-motion: reduce){
+  #colorGridContainer, .display, .display .card, #displayC, #displayC .card{
+    transition: none !important;
+  }
+  .contact-cta{
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* Visually hidden utility for a11y (kept in tree) */
+
+</style>
+
+<style>
+/* --- Patch v4: Copacetic luxury spacing --- */
+#displayB .b-stage{
+  height: min(var(--b-stage-size), 38vh); /* shorter for breathing room */
+  transform: translateY(0vh);            /* lift to clear + row elegantly */
+  overflow: hidden;
+  margin-bottom: 5vh; /* explicit cushion above + row */
+}
+/* On very short viewports, shrink further to always stay above + row */
+@media (max-height: 740px){
+  #displayB .b-stage{ height: min(var(--b-stage-size), 34vh); transform: translateY(0vh); }
+}
+</style>
+
+<style>
+/* Hotfix: enforce frameless card (no borders/shadows), spacing untouched */
+#displayB .card{ background: transparent !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; }
+</style>
+
+
+<style>
+/* --- Transition Couture Override (timing/ease only) --- */
+:root{
+  --overlay-in: 880ms;          /* slightly quicker in, keeps grace */
+  --overlay-out: 1000ms;        /* linger out for luxury */
+  --overlay-delay: 240ms;       /* micro pause before reveal */
+  --teleport-out: 320ms;        /* unchanged */
+  --teleport-in:  560ms;        /* unchanged */
+  --teleport-overlap: 220ms;    /* slightly more overlap for velvet crossfade */
+}
+</style>
+
+<style>
+/* === B↔C Couture Crossfade (transitions only, no layout changes) === */
+.display { will-change: opacity, filter, transform; }
+.display.xf-out { /* flagged for outgoing fade */ }
+.display.xf-out.fade {
+  transition:
+    opacity var(--overlay-out) var(--overlay-ease),
+    filter  var(--overlay-out) var(--overlay-ease),
+    transform var(--overlay-out) var(--overlay-ease);
+  opacity: 0;
+  filter: blur(6px) saturate(0.92);
+  transform: scale(0.996);
+}
+/* While crossfading, ignore pointer events to prevent stray hovers/clicks */
+body.bc-xfade #displayB,
+body.bc-xfade #displayC { pointer-events: none; }
+</style>
+
+<style>
+/* === Asymmetric B→C Concierge (transitions only) === */
+:root{
+  --overlay-ease-out: cubic-bezier(.215,.61,.355,1);     /* easeOutCubic */
+  --overlay-ease-inout: cubic-bezier(.645,.045,.355,1);  /* easeInOutCubic */
+}
+/* Incoming (C) silk fade-in scaffold */
+.display.xf-in{
+  opacity: 0;
+  filter: blur(6px) saturate(.96);
+  transform: scale(1.002);
+  z-index: 2;
+}
+.display.xf-in.go{
+  transition:
+    opacity var(--overlay-in, 820ms) var(--overlay-ease-inout),
+    filter  var(--overlay-in, 820ms) var(--overlay-ease-inout),
+    transform var(--overlay-in, 820ms) var(--overlay-ease-inout);
+  opacity: 1;
+  filter: blur(0) saturate(1);
+  transform: scale(1);
+}
+/* Outgoing (B) velvet fade with per-transition target */
+.display.xf-out.fade{
+  transition:
+    opacity var(--overlay-out, 980ms) var(--overlay-ease-out),
+    filter  var(--overlay-out, 980ms) var(--overlay-ease-out),
+    transform var(--overlay-out, 980ms) var(--overlay-ease-out);
+  opacity: var(--xf-out-target, 0);
+  filter: blur(6px) saturate(0.92);
+  transform: scale(0.996);
+}
+/* Concierge light tint overlay on C arrival */
+.concierge-tint{
+  position:absolute; inset:0; pointer-events:none;
+  background: linear-gradient(180deg, #f7f6f2, #eef1f5);
+  opacity: 0;
+}
+/* Focus silk */
+.focus-silk{ outline:1px solid rgba(0,0,0,.12); outline-offset:2px; border-radius:8px; }
+</style>
+
+
+
+
+
+<style>
+  @media (max-width: 768px){
+    :root{
+      --panel-rest: 32px;                /* approved idle offset */
+      --panel-open: 96px;                /* luxe gutter while a row is open */
+    }
+
+    /* Left column at rest; gentle glide when open */
+    .comp-panel{
+      left: var(--panel-rest) !important;
+      transition: left .24s cubic-bezier(.22,.61,.36,1);
+    }
+    .comp-panel.one-open{
+      left: max(var(--panel-open), calc(env(safe-area-inset-left, 0px) + 88px)) !important;
+    }
+
+    /* Structure & default hide */
+    .comp-panel .comp-item{ position: relative; }
+    .comp-label{ display: none !important; }
+
+    /* Only the open row speaks; beat legacy hide (opacity/transform) */
+    .comp-panel.one-open .comp-item:has(.comp-btn.open) .comp-label{
+      display: inline-block !important;
+      position: absolute; top: 50%; left: -12px;
+      transform: translate(-100%, -50%) !important;
+      opacity: .96 !important;
+      max-width: 58vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      font-size: 12px; letter-spacing: .06em; font-variant-caps: all-small-caps; color: #222;
+      text-rendering: optimizeLegibility; pointer-events: none; z-index: 20;
+    }
+
+    /* Ultra-small phones: slightly tighter open gutter */
+    @media (max-width: 360px){
+      .comp-panel.one-open{ left: max(84px, calc(env(safe-area-inset-left, 0px) + 72px)) !important; }
+    }
+  }
+</style>
+
+<style>
+  @media (max-width: 768px) {
+
+    /* 1) A single gutter that everything respects */
+    :root{
+      --luxe-gutter: max(96px, calc(env(safe-area-inset-left, 0px) + 88px));
+      --pill-under-grid-gap: 5.25vh; /* gentle breathing room under grid */
+    }
+
+    /* 2) Make the grid confidently sized across tiny & tall phones */
+    /* use clamp to avoid postage-stamp or overflow vibes */
+    :root{
+      --grid-size: clamp(64vmin, 78vmin, 86vmin);
+      --grid-center-top: 42%;
+    }
+
+    /* 3) Ensure the pill always sits cleanly below the grid */
+    .pill:not(.dock-bottom){
+      top: calc(var(--grid-center-top) + (var(--grid-size) / 2) + var(--pill-under-grid-gap));
+      max-width: 84vw;
+      font-size: 14.5px;
+    }
+
+    /* 3b) Position pill above +/- row in overlays (B/C) */
+    .pill.dock-bottom{
+      bottom: calc(max(12vh, env(safe-area-inset-bottom, 0px) + 56px) + 44px + 24px);
+    }
+
+    /* 3c) Pill styling in overlays — less prominent, delayed fade-in */
+    body.overlay-open .pill.dock-bottom{
+      opacity: 0;
+      transition: opacity 400ms ease 400ms;
+      pointer-events: auto;
+    }
+    body.overlay-open .pill.dock-bottom.show{
+      opacity: 1;
+    }
+    body.overlay-open .pill.dock-bottom #nowPlaying{
+      font-size: 11px;
+      opacity: 0.35;
+    }
+
+    /* 4) Keep the "+" row stationary across A/B/C */
+    .plus-row{
+      position: fixed;        /* was absolute */
+      top: auto;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: max(12vh, calc(env(safe-area-inset-bottom, 0px) + 56px));
+      transition: bottom 0.3s ease, transform 640ms cubic-bezier(0.25,1,0.5,1);
+      z-index: 4000;          /* lives above overlays but below pill */
+    }
+    body.overlay-open .plus-row{ transform: translate(-50%, -6px); }
+
+    /* 5) Touch targets: make toggles comfortably tappable */
+    .toggle{ width: 44px; height: 44px; }
+    .plusminus{ width: 20px; height: 20px; }
+
+    /* 6) Align Display B with the comp panel via a unified gutter */
+    .display{ justify-content: flex-start; }
+    #displayB .card{ margin-left: var(--luxe-gutter); }
+    #displayB .b-stage{
+      max-width: calc(100vw - (var(--luxe-gutter) * 1.5));
+      height: min(var(--b-stage-size), 46vh);
+    }
+
+    /* 7) Make the composition panel share that same gutter logic */
+    .comp-panel{ left: 32px !important; } /* idle */
+    .comp-panel.one-open{ left: var(--luxe-gutter) !important; }
+
+    /* 8) Prevent awkward overlaps on ultra-short viewports */
+    @media (max-height: 700px){
+      .pill:not(.dock-bottom){ font-size: 13.5px; }
+      #displayB .b-stage{ height: min(var(--b-stage-size), 40vh); }
+      .plus-row{ bottom: max(10vh, calc(env(safe-area-inset-bottom, 0px) + 52px)); }
+      .pill.dock-bottom{
+        bottom: calc(max(10vh, env(safe-area-inset-bottom, 0px) + 52px) + 44px + 20px);
+      }
+    }
+  }
+</style>
+
+
+<style>*:focus, :focus-visible { outline:none !important; box-shadow:none !important; }</style>
+
+<style>
+/* Force-hide the internal station list container so it never dumps text on Display A */
+#sr-stations { display: none !important; visibility: hidden !important; }
+</style>
+
+
+<style>
+/* Hide only the speaker glyph during B/C and during the teleport back to A */
+body.overlay-open .pill #volumeButton,
+.pill.teleporting #volumeButton {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  /* Remove from layout so station name is perfectly centered on pages 2 and 3 */
+  width: 0 !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+/* Remove flex gap when volume button is hidden for perfect centering */
+body.overlay-open .pill,
+.pill.teleporting {
+  gap: 0 !important;
+}
+</style>
+
+
+<style>
+#sr-stations { display: none !important; visibility: hidden !important; }
+</style>
+
+
+<style id="night-mode-patch">
+/* ===== Night Mode — Shades of White (Monochrome Luxe) ===== */
+/* Palette (dark): near-black canvas + layered whites/greys with soft bloom */
+@media (prefers-color-scheme: dark){
+  :root{
+    --nm-canvas: #0d0f11;      /* page background */
+    --nm-ink:    #eaeaea;      /* primary text: soft white */
+    --nm-ink-2:  #c9c9c9;      /* secondary text */
+    --nm-accent: #e6eef2;      /* ice-white accent for lines/icons */
+    --nm-glowA:  rgba(255,255,255,0.10); /* subtle bloom */
+    --nm-glowB:  rgba(255,255,255,0.06);
+
+    /* app-specific tints to replace light theme blues */
+    --nm-plus:   #e6eef2;      /* “+ / –” bars */
+    --nm-shimA:  rgba(230,238,242,0.28);
+    --nm-shimB:  rgba(230,238,242,0.10);
+
+    /* Display C silk tint remapped to a dark glide */
+    --nm-silkA:  #121417;
+    --nm-silkB:  #0d0f11;
+  }
+
+  /* Canvas & typography */
+  html, body{
+    background: var(--nm-canvas) !important;
+    color: var(--nm-ink) !important;
+  }
+
+  /* Pill & ticker (keep transparent, just flip text/icon color) */
+  .pill,
+  .pill-ghost{
+    color: var(--nm-ink) !important;
+    filter: drop-shadow(0 2px 8px var(--nm-glowA)) drop-shadow(0 6px 18px var(--nm-glowB));
+  }
+  #nowPlaying{ color: inherit; }
+  #volumeButton{ color: inherit; }
+
+  /* “+ / –” glyphs */
+  .bar{ fill: var(--nm-plus) !important; }
+
+  /* Plus row hover/shadow softness */
+  .plusminus{ filter: drop-shadow(0 1px 2px var(--nm-glowA)); }
+
+  /* Display cards remain frameless; just inherit ink */
+  .display .card{ color: var(--nm-ink) !important; }
+
+  /* Identity / contact area subtlety */
+  .contact-role{ color: var(--nm-ink-2) !important; }
+  #displayC .concierge-tint{
+    background: linear-gradient(180deg, var(--nm-silkA), var(--nm-silkB)) !important;
+  }
+
+  /* Examples (labels & hover) */
+  .example-btn{ color: var(--nm-ink-2) !important; text-shadow: none; }
+  .example-btn.active{ color: var(--nm-ink) !important; text-shadow: 0 1px 0 rgba(0,0,0,0.12); }
+  .examples{ filter: none; }
+
+  /* Composition labels */
+  .comp-label{ color: var(--nm-ink-2) !important; }
+
+  /* Shimmer accents used elsewhere */
+  :root{
+    --plus-color: var(--nm-plus);
+    --shimmer-a:  var(--nm-shimA);
+    --shimmer-b:  var(--nm-shimB);
+  }
+
+  /* Display B hint badge (if you ever show it) */
+  #bHint{ background: rgba(255,255,255,0.08) !important; color: var(--nm-ink-2) !important; }
+
+  /* If any light gradient slips through, neutralize it */
+  .concierge-tint{ opacity: 0; pointer-events:none !important; }
+
+  /* Optional: soften focus ring for dark */
+  .focus-silk{ outline-color: rgba(255,255,255,0.18) !important; }
+}
+
+/* ===== (Optional) Manual toggle without adding UI =====
+   Add data-theme="dark" to <html> to force night on any device.
+   This mirrors the above rules without @media. */
+html[data-theme="dark"]{
+  background: #0d0f11;
+}
+html[data-theme="dark"] body{
+  background: #0d0f11;
+  color: #eaeaea;
+}
+html[data-theme="dark"] .bar{ fill:#e6eef2; }
+</style>
+
+
+<style id="night-mode-force">
+html[data-theme="dark"]{
+  background: #0d0f11 !important;
+}
+html[data-theme="dark"] body{
+  background: #0d0f11 !important;
+  color: #eaeaea !important;
+}
+html[data-theme="dark"] .bar{ fill:#e6eef2 !important; }
+</style>
+
+
+<style id="night-mode-shades-of-white">
+/* Night Mode Look: mid-dark canvas + desaturated ivory grid */
+@media (prefers-color-scheme: dark){
+  :root{
+    --nm-canvas: #2f3336; /* mid-dark charcoal */
+  }
+  body{ background: var(--nm-canvas) !important; }
+
+  /* Display A grid: convert to shades of white with gentle warmth */
+  #colorGrid{
+    filter: brightness(1.05) contrast(0.95) drop-shadow(0 2px 12px rgba(0,0,0,0.35));
+    will-change: filter;
+  }
+
+  /* Plus icons slight blue accent for readability */
+  .bar{ fill: #9ecff0 !important; }
+}
+
+/* Manual override path (forced dark via data-theme) */
+html[data-theme="dark"] body{ background:#2f3336 !important; }
+html[data-theme="dark"] #colorGrid{
+  filter: brightness(1.05) contrast(0.95) drop-shadow(0 2px 12px rgba(0,0,0,0.35)) !important;
+}
+html[data-theme="dark"] .bar{ fill:#9ecff0 !important; }
+</style>
+
+
+<style id="shomon-vars">
+:root{ --ivory:#F6F4E8; --char:#0E0E0F; }
+@media (prefers-color-scheme: dark){
+  :root{ --ivory:#EDEAE2; --char:#0E0E0F; }
+}
+</style>
+
+<style id="gallery-carousel-styles">
+/* ===================== Gallery Carousel ===================== */
+.gallery-carousel {
+  position: relative;
+  width: 100%;
+  max-width: 70vmin;
+  min-height: 200px;
+  height: 50vmin;
+  max-height: 60vh;
+  margin: 0 auto;
+  overflow: visible;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+
+/* Hidden state - fully rendered and composited for instant show */
+.gallery-carousel.is-hidden {
+  opacity: 0 !important;
+  pointer-events: none;
+  z-index: -1;
+  /* Position off-screen but keep rendered for instant show */
+  position: fixed;
+  top: -9999px;
+  left: -9999px;
+  /* Keep composited */
+  contain: layout style;
+}
+
+/* Visible state */
+.gallery-carousel:not(.is-hidden) {
+  opacity: 1;
+  z-index: 1;
+  position: relative;
+}
+
+/* Force image to be pre-rendered on GPU */
+.gallery-carousel img {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+.carousel-track {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.carousel-slide {
+  position: absolute;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.carousel-slide.active {
+  display: flex;
+  position: relative;
+}
+
+.carousel-slide img {
+  max-width: 90%;
+  max-height: 90%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Carousel Navigation Buttons */
+.carousel-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: rgba(255,255,255,0.9);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  opacity: 0;
+  transition: opacity 200ms ease, background 200ms ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.gallery-carousel:hover .carousel-nav {
+  opacity: 1;
+}
+
+.carousel-nav:hover {
+  background: rgba(255,255,255,1);
+}
+
+.carousel-nav:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.carousel-nav-left { left: 8px; }
+.carousel-nav-right { right: 8px; }
+
+.carousel-nav svg {
+  color: #333;
+}
+
+/* ===================== Lightbox ===================== */
+.gallery-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.3);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+@media (prefers-color-scheme: dark) {
+  .lightbox-backdrop {
+    background: rgba(0,0,0,0.4);
+  }
+}
+
+.lightbox-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.lightbox-image {
+  max-width: 90vw;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: 6px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+  user-select: none;
+  -webkit-user-drag: none;
+  transition: transform 400ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Cursor-based navigation zones */
+.lightbox-image.cursor-left {
+  cursor: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>') 12 12, w-resize;
+}
+
+.lightbox-image.cursor-right {
+  cursor: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>') 12 12, e-resize;
+}
+
+/* Lightbox Navigation Buttons */
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: rgba(255,255,255,0.9);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  transition: opacity 200ms ease, background 200ms ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.lightbox-nav:hover {
+  opacity: 1;
+  background: rgba(255,255,255,1);
+}
+
+.lightbox-nav:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.lightbox-nav-left { left: -50px; }
+.lightbox-nav-right { right: -50px; }
+
+.lightbox-nav svg {
+  color: #333;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .gallery-carousel {
+    max-width: 90vw;
+    height: 40vmin;
+  }
+
+  /* Completely hide carousel arrow buttons on mobile - tap zones only */
+  .carousel-nav {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+  }
+
+  .carousel-nav-left,
+  .carousel-nav-right {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+  }
+
+  .gallery-carousel:hover .carousel-nav,
+  .gallery-carousel:hover .carousel-nav-left,
+  .gallery-carousel:hover .carousel-nav-right,
+  .carousel-nav:hover,
+  .carousel-nav-left:hover,
+  .carousel-nav-right:hover {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+  }
+
+  .lightbox-nav-left { left: 10px; }
+  .lightbox-nav-right { right: 10px; }
+
+  /* Hide navigation tabs when lightbox is open on mobile */
+  body.lightbox-open .comp-panel,
+  body.lightbox-open #compPanel,
+  body.lightbox-open .examples {
+    display: none !important;
+  }
+}
+
+/* ===================== Score Display ===================== */
+.score-display {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5000;
+  box-sizing: border-box;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.95);
+}
+
+@media (prefers-color-scheme: dark) {
+  .score-display {
+    background: rgba(0, 0, 0, 0.92);
+  }
+}
+
+.score-display.is-hidden {
+  opacity: 0 !important;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.score-display:not(.is-hidden) {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+/* Hide +/- row and sidebar when score is displayed */
+body.score-open .plus-row,
+body.score-open .comp-panel,
+body.score-open .comp-panel *,
+body.score-open .examples,
+body.score-open .examples * {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Prevent scrolling on mobile when score is displayed */
+@media (max-width: 768px) {
+  body.score-open,
+  body.lightbox-open {
+    overflow: hidden !important;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+  }
+
+  .score-lightbox {
+    touch-action: none;
+    overscroll-behavior: contain;
+  }
+}
+
+/* Score content container */
+.score-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 16vh 4vw 10vh 4vw;
+  max-width: 600px;
+  min-height: 90vh;
+  cursor: default;
+  color: #111;
+}
+
+.score-title {
+  font-size: clamp(20px, 2.5vw, 28px);
+  font-weight: 500;
+  margin: 8vh 0 0.3em 0;
+  letter-spacing: -0.01em;
+}
+
+.score-subtitle {
+  font-size: clamp(14px, 1.8vw, 18px);
+  font-style: italic;
+  font-weight: 400;
+  margin: 1vh 0 0 0;
+  opacity: 0.9;
+}
+
+/* 4x4 Color Grid */
+.score-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  width: clamp(140px, 22vmin, 200px);
+  height: clamp(140px, 22vmin, 200px);
+  margin: 10vh 0 0 0;
+}
+
+.score-grid-cell {
+  aspect-ratio: 1;
+}
+
+/* Grid colors - exact hex values from PNG */
+.score-grid-cell:nth-child(1)  { background: #F4C5A0; }
+.score-grid-cell:nth-child(2)  { background: #EE83BB; }
+.score-grid-cell:nth-child(3)  { background: #8175A8; }
+.score-grid-cell:nth-child(4)  { background: #3DAFDB; }
+.score-grid-cell:nth-child(5)  { background: #5DB355; }
+.score-grid-cell:nth-child(6)  { background: #FFED00; }
+.score-grid-cell:nth-child(7)  { background: #FF9F1C; }
+.score-grid-cell:nth-child(8)  { background: #EE2737; }
+.score-grid-cell:nth-child(9)  { background: #F4E8D8; }
+.score-grid-cell:nth-child(10) { background: #BFBFBF; }
+.score-grid-cell:nth-child(11) { background: #6B5D4F; }
+.score-grid-cell:nth-child(12) { background: #B4583B; }
+.score-grid-cell:nth-child(13) { background: #008B74; }
+.score-grid-cell:nth-child(14) { background: #8B2F5D; }
+.score-grid-cell:nth-child(15) { background: #283A5E; }
+.score-grid-cell:nth-child(16) { background: #000000; }
+
+/* Instructions */
+.score-instructions {
+  font-size: clamp(12px, 1.5vw, 15px);
+  line-height: 2.2;
+  margin: 6vh 0 0 0;
+}
+
+.score-instructions p {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.score-arrow {
+  font-size: clamp(11px, 1.3vw, 14px);
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+
+/* Attribution */
+.score-attribution {
+  font-size: clamp(10px, 1.2vw, 13px);
+  font-style: italic;
+  opacity: 0.85;
+  position: absolute;
+  bottom: 15vh;
+  white-space: nowrap;
+}
+
+/* ===================== Acknowledgment Display ===================== */
+.acknowledgment-display {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5000;
+  box-sizing: border-box;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.95);
+}
+
+@media (prefers-color-scheme: dark) {
+  .acknowledgment-display {
+    background: rgba(0, 0, 0, 0.92);
+  }
+}
+
+.acknowledgment-display.is-hidden {
+  opacity: 0 !important;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.acknowledgment-display:not(.is-hidden) {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+/* Hide +/- row and sidebar when acknowledgment is displayed */
+body.acknowledgment-open .plus-row,
+body.acknowledgment-open .comp-panel,
+body.acknowledgment-open .comp-panel *,
+body.acknowledgment-open .examples,
+body.acknowledgment-open .examples *,
+body.acknowledgment-open .pill {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Acknowledgment content container */
+.acknowledgment-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #111;
+}
+
+.acknowledgment-text {
+  font-size: clamp(13px, 1.2vw, 15px);
+  font-weight: 400;
+  margin: 0;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Mobile fix for centering - use transform for precision */
+@media (max-width: 768px) {
+  .acknowledgment-text {
+    transform: translateX(20px);
+  }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .acknowledgment-content {
+    color: #F6F4E8;
+  }
+}
+
+/* Dark mode - match site text styling */
+@media (prefers-color-scheme: dark) {
+  .score-content {
+    color: #eaeaea;
+  }
+}
+
+/* Score Lightbox (mobile) */
+.score-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: auto;
+}
+
+.score-lightbox .lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.3);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  touch-action: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .score-lightbox .lightbox-backdrop {
+    background: rgba(0,0,0,0.4);
+  }
+}
+
+.score-lightbox .lightbox-content {
+  position: relative;
+  max-width: 94vw;
+  max-height: 94vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  padding: 20px;
+  overflow: hidden;
+  touch-action: none;
+  overscroll-behavior: none;
+}
+
+.score-lightbox .score-content {
+  transform: scale(1);
+  transform-origin: center center;
+}
+
+/* ===================== Contextual Yield System ===================== */
+:root {
+  --yield-amount: 0px;
+  --yield-duration: 280ms;
+  --yield-easing: cubic-bezier(0.33, 1, 0.68, 1); /* ease-out */
+  --yield-max-desktop: 80px;
+  --yield-max-mobile: 110px;
+  --yield-breathing-desktop: 20px;
+  --yield-breathing-mobile: 24px;
+}
+
+.plus-row {
+  --yield-transform: translateY(var(--yield-amount));
+  will-change: transform, opacity;
+}
+
+.plus-row.is-yielding {
+  transform: translateX(-50%) translateY(var(--yield-amount));
+  opacity: 0.75;
+  transition: transform var(--yield-duration) var(--yield-easing),
+              opacity var(--yield-duration) var(--yield-easing);
+}
+
+.plus-row.is-yielding-reset {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+  transition: transform var(--yield-duration) var(--yield-easing),
+              opacity var(--yield-duration) var(--yield-easing);
+}
+
+/* Override when overlay is open and yielding */
+body.overlay-open .plus-row.is-yielding {
+  transform: translate(-50%, calc(-8px + var(--yield-amount)));
+}
+
+body.overlay-open .plus-row.is-yielding-reset {
+  transform: translate(-50%, -8px);
+}
+
+/* Mobile overrides for yield */
+@media (max-width: 768px) {
+  .plus-row.is-yielding {
+    transform: translateX(-50%) translateY(var(--yield-amount));
+  }
+
+  body.overlay-open .plus-row.is-yielding {
+    transform: translate(-50%, calc(-6px + var(--yield-amount)));
+  }
+
+  body.overlay-open .plus-row.is-yielding-reset {
+    transform: translate(-50%, -6px);
+  }
+}
+</style>
+</head>
+<body>
+
+<div id="colorGridContainer">
+  <canvas id="colorGrid"></canvas>
+  <div id="sr-stations" class="sr-only"></div>
+</div>
+
+<div class="pill" id="pill">
+  <span id="nowPlaying"></span>
+  <button id="volumeButton" class="volume-full">
+    <svg class="icon-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor"></polygon>
+      <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+      <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+    </svg>
+    <svg class="icon-half" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor"></polygon>
+      <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+    </svg>
+    <svg class="icon-mute" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor"></polygon>
+      <line x1="17" y1="9" x2="23" y2="15"></line>
+      <line x1="23" y1="9" x2="17" y2="15"></line>
+    </svg>
+  </button>
+</div>
+
+<div class="plus-row">
+  <button class="toggle" id="toggleB">
+    <svg class="plusminus" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect class="hBar bar" x="15" y="46" width="70" height="8"></rect>
+      <rect class="vBar bar" x="46" y="15" width="8" height="70"></rect>
+    </svg>
+  </button>
+  <button class="toggle" id="toggleC">
+    <svg class="plusminus" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect class="hBar bar" x="15" y="46" width="70" height="8"></rect>
+      <rect class="vBar bar" x="46" y="15" width="8" height="70"></rect>
+    </svg>
+  </button>
+</div>
+
+<div class="display" id="displayB">
+  <div class="card" id="displayBCard">
+    <div class="b-stage" id="bStage">
+        <canvas id="glassCanvas"></canvas>
+    </div>
+    <div id="bText" style="position:relative; margin-top:10px; text-align:center;"></div>
+    <!-- Gallery Carousel -->
+    <div id="galleryCarousel" class="gallery-carousel is-hidden">
+      <div class="carousel-track">
+        <div class="carousel-slide active" data-index="0">
+          <img src="images/coffee-cups.jpeg" alt="Street photography" draggable="false">
+        </div>
+        <div class="carousel-slide" data-index="1">
+          <img src="images/IMG_0720.JPG" alt="Street photography" draggable="false">
+        </div>
+      </div>
+      <button class="carousel-nav carousel-nav-left" aria-label="Previous image">
+        <svg viewBox="0 0 24 24" width="16" height="16"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="carousel-nav carousel-nav-right" aria-label="Next image">
+        <svg viewBox="0 0 24 24" width="16" height="16"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <!-- Score Display (desktop) -->
+    <div id="scoreDisplay" class="score-display is-hidden">
+      <div class="score-content">
+        <h1 class="score-title">Composition #3</h1>
+        <p class="score-subtitle">" (...) " and Meaning</p>
+        <div class="score-grid">
+          <div class="score-grid-cell"></div>
+          <div class="score-grid-cell"></div>
+          <div class="score-grid-cell"></div>
+          <div class="score-grid-cell"></div>
+          <div class="score-grid-cell"></div>
+          <div class="score-grid-cell"></div>
+          <div class="score-grid-cell"></div>
+          <div class="score-grid-cell"></div>
+          <div class="score-grid-cell"></div>
+          <div class="score-grid-cell"></div>
+          <div class="score-grid-cell"></div>
+          <div class="score-grid-cell"></div>
+          <div class="score-grid-cell"></div>
+          <div class="score-grid-cell"></div>
+          <div class="score-grid-cell"></div>
+          <div class="score-grid-cell"></div>
+        </div>
+        <div class="score-instructions">
+          <p>Engage three distinct broadcasts.</p>
+          <p class="score-arrow">0 → 1 → 2</p>
+          <p>Shape dynamics to articulate interplay.</p>
+          <p>Converge, disrupt, and resolve — let meaning emerge.</p>
+        </div>
+        <p class="score-attribution">For Aleksander Bošković and Chris Caes, George E. Lewis, and Brian Greene</p>
+      </div>
+    </div>
+    <!-- Acknowledgment Display (desktop) -->
+    <div id="acknowledgmentDisplay" class="acknowledgment-display is-hidden">
+      <div class="acknowledgment-content">
+        <p class="acknowledgment-text">With gratitude to —</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Lightbox Overlay -->
+<div id="galleryLightbox" class="gallery-lightbox" style="display:none;" aria-hidden="true">
+  <div class="lightbox-backdrop"></div>
+  <div class="lightbox-content">
+    <img class="lightbox-image" src="" alt="" draggable="false">
+    <button class="lightbox-nav lightbox-nav-left" aria-label="Previous image">
+      <svg viewBox="0 0 24 24" width="16" height="16"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="lightbox-nav lightbox-nav-right" aria-label="Next image">
+      <svg viewBox="0 0 24 24" width="16" height="16"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- Score Lightbox (mobile) -->
+<div id="scoreLightbox" class="score-lightbox" style="display:none;" aria-hidden="true">
+  <div class="lightbox-backdrop"></div>
+  <div class="lightbox-content">
+    <div class="score-content">
+      <h1 class="score-title">Composition #3</h1>
+      <p class="score-subtitle">" (...) " and Meaning</p>
+      <div class="score-grid">
+        <div class="score-grid-cell"></div>
+        <div class="score-grid-cell"></div>
+        <div class="score-grid-cell"></div>
+        <div class="score-grid-cell"></div>
+        <div class="score-grid-cell"></div>
+        <div class="score-grid-cell"></div>
+        <div class="score-grid-cell"></div>
+        <div class="score-grid-cell"></div>
+        <div class="score-grid-cell"></div>
+        <div class="score-grid-cell"></div>
+        <div class="score-grid-cell"></div>
+        <div class="score-grid-cell"></div>
+        <div class="score-grid-cell"></div>
+        <div class="score-grid-cell"></div>
+        <div class="score-grid-cell"></div>
+        <div class="score-grid-cell"></div>
+      </div>
+      <div class="score-instructions">
+        <p>Engage three distinct broadcasts.</p>
+        <p class="score-arrow">0 → 1 → 2</p>
+        <p>Shape dynamics to articulate interplay.</p>
+        <p>Converge, disrupt, and resolve — let meaning emerge.</p>
+      </div>
+      <p class="score-attribution">For Aleksander Bošković and Chris Caes, George E. Lewis, and Brian Greene</p>
+    </div>
+  </div>
+</div>
+
+<div class="display" id="displayC">
+  <div class="card contact-card">
+    <div class="contact-topline">
+      <span class="contact-name">Michael Shea Hussey</span>
+      <a class="contact-cta" href="mailto:mike.shea.huss@gmail.com">contact</a>
+    </div>
+    <div class="contact-role">Literary Media Developer</div>
+  </div>
+</div>
+
+<div class="comp-panel" id="compPanel">
+  <div class="comp-item" data-comp="gallery" style="--i:0">
+    <button class="comp-btn">
+      <svg class="plusminus" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect class="hBar bar" x="15" y="46" width="70" height="8"></rect>
+        <rect class="vBar bar" x="46" y="15" width="8" height="70"></rect>
+      </svg>
+    </button>
+    <span class="comp-label">Gallery</span>
+  </div>
+
+  <div class="comp-item" data-comp="letters" style="--i:1">
+    <button class="comp-btn">
+      <svg class="plusminus" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect class="hBar bar" x="15" y="46" width="70" height="8"></rect>
+        <rect class="vBar bar" x="46" y="15" width="8" height="70"></rect>
+      </svg>
+    </button>
+    <span class="comp-label">Letters</span>
+  </div>
+
+  <div class="comp-item" data-comp="scores" style="--i:2">
+    <button class="comp-btn">
+      <svg class="plusminus" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect class="hBar bar" x="15" y="46" width="70" height="8"></rect>
+        <rect class="vBar bar" x="46" y="15" width="8" height="70"></rect>
+      </svg>
+    </button>
+    <span class="comp-label">Scores</span>
+  </div>
+
+  <div class="examples" id="examples">
+    <button class="example-btn" data-example="1">Example 1</button>
+    <button class="example-btn" data-example="2">Example 2</button>
+    <button class="example-btn" data-example="3">Example 3</button>
+
+    <div class="example-hover" data-example="1"></div>
+    <div class="example-hover" data-example="2"></div>
+    <div class="example-hover" data-example="3"></div>
+  </div>
+</div>
+
+<audio id="radioPlayer" preload="auto" playsinline crossorigin="anonymous"></audio>
+<audio id="radioPlayerBuffer" preload="auto" playsinline crossorigin="anonymous" style="display:none;"></audio>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+(function(){
+  "use strict";
+
+  /* ================== DOM helpers ================== */
+  function $(id){ return document.getElementById(id); }
+
+  /* ================== Gallery Image Preloading ================== */
+  // Aggressive preloading with decoding for instant display
+  var galleryImageCache = {};
+  var galleryImagesDecoded = {};
+  var GALLERY_IMAGES = ['images/coffee-cups.jpeg', 'images/IMG_0720.JPG'];
+
+  function preloadAndDecodeImage(src) {
+    if (galleryImagesDecoded[src]) return Promise.resolve();
+    if (galleryImageCache[src]) {
+      // Already loading, wait for it
+      var img = galleryImageCache[src];
+      if (img.complete && img.naturalWidth > 0) {
+        return decodeImage(img, src);
+      }
+      return new Promise(function(resolve) {
+        img.onload = function() { decodeImage(img, src).then(resolve); };
+        img.onerror = resolve;
+      });
+    }
+
+    var img = new Image();
+    galleryImageCache[src] = img;
+
+    return new Promise(function(resolve) {
+      img.onload = function() { decodeImage(img, src).then(resolve); };
+      img.onerror = resolve;
+      img.src = src;
+    });
+  }
+
+  function decodeImage(img, src) {
+    if (galleryImagesDecoded[src]) return Promise.resolve();
+    if (img.decode) {
+      return img.decode().then(function() {
+        galleryImagesDecoded[src] = true;
+      }).catch(function() {
+        galleryImagesDecoded[src] = true;
+      });
+    }
+    galleryImagesDecoded[src] = true;
+    return Promise.resolve();
+  }
+
+  // Start preloading immediately on script load
+  GALLERY_IMAGES.forEach(preloadAndDecodeImage);
+
+  // Force browser to fully render and composite gallery images
+  function primeGalleryDOMImages() {
+    var carousel = document.getElementById('galleryCarousel');
+    if (!carousel) return;
+
+    var imgs = carousel.querySelectorAll('img');
+    imgs.forEach(function(img) {
+      if (!img.src) return;
+
+      var doPrime = function() {
+        // Decode the image
+        if (img.decode) {
+          img.decode().then(function() {
+            // Force paint by reading computed style and dimensions
+            void img.offsetHeight;
+            void getComputedStyle(img).opacity;
+          }).catch(function() {});
+        } else {
+          void img.offsetHeight;
+        }
+      };
+
+      if (img.complete && img.naturalWidth > 0) {
+        doPrime();
+      } else {
+        img.addEventListener('load', doPrime, { once: true });
+      }
+    });
+
+    // Force carousel layout calculation
+    void carousel.offsetHeight;
+  }
+
+  // Prime immediately and again after load
+  primeGalleryDOMImages();
+
+  // Warm up compositor by briefly showing carousel (invisible to user)
+  function warmUpCarouselCompositor() {
+    var carousel = document.getElementById('galleryCarousel');
+    if (!carousel) return;
+
+    // Temporarily show at opacity 0.01 (invisible but forces compositing)
+    carousel.style.opacity = '0.001';
+    carousel.classList.remove('is-hidden');
+
+    // Force browser to composite this frame
+    void carousel.offsetHeight;
+    void getComputedStyle(carousel).opacity;
+
+    // Hide again after compositor has the layer ready
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        carousel.classList.add('is-hidden');
+        carousel.style.opacity = '';
+      });
+    });
+  }
+
+  if (document.readyState === 'complete') {
+    primeGalleryDOMImages();
+    warmUpCarouselCompositor();
+  } else {
+    window.addEventListener('load', function() {
+      primeGalleryDOMImages();
+      // Warm up after everything is loaded
+      requestAnimationFrame(function() {
+        warmUpCarouselCompositor();
+      });
+    });
+  }
+
+  /* ================== Elements ================== */
+  var canvas     = $("colorGrid");
+  var container  = $("colorGridContainer");
+  var ctx        = canvas.getContext("2d");
+  var pill       = $("pill");
+  var nowPlaying = $("nowPlaying");
+  var audioEl    = $("radioPlayer");
+  var bufferEl   = $("radioPlayerBuffer");
+  var volumeBtn  = $("volumeButton");
+
+  var displayB   = $("displayB");
+  var displayBCard = $("displayBCard");
+  var bStage     = $("bStage");
+  var bText      = $("bText");
+
+  var tB = $("toggleB");
+  var tC = $("toggleC");
+  var dB = $("displayB");
+  var dC = $("displayC");
+
+  var compPanel = $("compPanel");
+  var examplesEl = $("examples");
+
+  let activePlayer = audioEl;
+  let bufferPlayer = bufferEl;
+
+  /* ======== Instant audio unlock (first user gesture) ======== */
+  var _audioUnlocked = false;
+  function _unlockAudioOnce(){
+    if (_audioUnlocked) return;
+    _audioUnlocked = true;
+    try {
+      var _p = activePlayer.play();
+      if (_p && _p.then) { _p.then(function(){ try{ activePlayer.pause(); }catch(_e){} }).catch(function(){}); }
+    } catch(_e) {}
+    try {
+      if (window.AudioContext || window.webkitAudioContext){
+        var AC = window.AudioContext || window.webkitAudioContext;
+        var ctx = (window.__LUXE_AC__ = window.__LUXE_AC__ || new AC());
+        if (ctx && ctx.state === "suspended"){ ctx.resume().catch(function(){}); }
+      }
+    } catch(_e) {}
+    window.removeEventListener('pointerdown', _unlockAudioOnce, true);
+    window.removeEventListener('keydown', _unlockAudioOnce, true);
+    document.removeEventListener('click', _unlockAudioOnce, true);
+  }
+  window.addEventListener('pointerdown', _unlockAudioOnce, { once:true, capture:true });
+  window.addEventListener('keydown', _unlockAudioOnce,  { once:true, capture:true });
+  document.addEventListener('click', _unlockAudioOnce,   { once:true, capture:true });
+
+
+  /* ================== Volume ================== */
+  function fadeVolume(element, to, duration, onComplete) {
+    const from = element.volume;
+    const startTime = performance.now();
+
+    function animate() {
+        const elapsed = performance.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        element.volume = Math.max(0, Math.min(1, from + (to - from) * progress));
+        if (progress < 1) {
+            requestAnimationFrame(animate);
+        } else if (onComplete) {
+            onComplete();
+        }
+    }
+    requestAnimationFrame(animate);
+  }
+
+  // Set volume to full always
+  activePlayer.volume = 1.0;
+  volumeBtn.setAttribute('aria-label', 'Stop playback');
+
+  volumeBtn.addEventListener('click', function(e){
+    if (stationPlaying && !isPaused) {
+      e.stopPropagation();
+      pausePlayback();
+    }
+  });
+
+  /* ================== Grid anim ================== */
+  function resize(){ canvas.width  = container.clientWidth; canvas.height = container.clientHeight; }
+  window.addEventListener('resize', resize, { passive:true }); resize();
+
+  // Light mode palette
+  var LIGHT_COLOURS = [
+    {r:251,g:205,b:172},{r:241,g:119,b:166},{r:131,g:119,b:155},{r:82,g:167,b:221},
+    {r:94,g:186,b:77},{r:247,g:236,b:48},{r:250,g:162,b:26},{r:239,g:28,b:83},
+    {r:255,g:241,b:234},{r:196,g:195,b:200},{r:96,g:87,b:78},{r:172,g:82,b:55},
+    {r:1,g:136,b:80},{r:127,g:35,b:82},{r:28,g:43,b:84},{r:1,g:1,b:1}
+  ];
+  // Night-mode warm neutral palette (shades of white)
+  var DARK_COLOURS = [
+    {r:236,g:232,b:224}, /* bone */
+    {r:248,g:242,b:231}, /* ivory */
+    {r:244,g:236,b:226}, /* eggshell */
+    {r:242,g:232,b:221}, /* alabaster warm */
+    {r:232,g:226,b:218}, /* chalk */
+    {r:226,g:220,b:212}, /* ecru */
+    {r:220,g:214,b:206}, /* oatmeal */
+    {r:214,g:208,b:200}, /* putty */
+    {r:206,g:200,b:192}, /* dove */
+    {r:198,g:192,b:184}, /* mushroom */
+    {r:190,g:184,b:176}, /* ash beige */
+    {r:228,g:222,b:214}, /* pearl */
+    {r:238,g:232,b:224}, /* pale sand */
+    {r:246,g:240,b:232}, /* brightest warm white */
+    {r:240,g:236,b:228}, /* linen */
+    {r:234,g:228,b:220}  /* soft taupe-ivory */
+  ];
+
+  function _isDark(){
+    try{
+      return (document.documentElement.getAttribute('data-theme') === 'dark') ||
+             (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    }catch(_e){ return false; }
+  }
+
+  var colours = _isDark() ? DARK_COLOURS : LIGHT_COLOURS;
+
+  // Listen for system color scheme changes and update grid colors in real-time
+  if (window.matchMedia) {
+    var colorSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    colorSchemeQuery.addEventListener('change', function(e) {
+      colours = e.matches ? DARK_COLOURS : LIGHT_COLOURS;
+    });
+  }
+  function lerp(a,b,t){ return a + (b - a) * t; }
+  function blendColours(i,t){ var c0 = colours[i % colours.length], c1 = colours[(i + 1) % colours.length]; return { r: Math.round(lerp(c0.r,c1.r,t)), g: Math.round(lerp(c0.g,c1.g,t)), b: Math.round(lerp(c0.b,c1.b,t)) }; }
+
+  var rows = 4, cols = 4;
+  var tiles = []; var boundingBoxes = new Array(rows * cols);
+  var i, j;
+  for(i=0;i<rows;i++){ for(j=0;j<cols;j++){
+    tiles.push({ row:i, col:j, offset:i*cols+j, phaseX:i*0.8 + j*0.3, phaseY:i*0.3 + j*0.8, stationIndex:i*cols + j });
+  }}
+
+  var gridPaused = false;
+
+  function animTick(){
+    if (!gridPaused){
+      var time = performance.now()*0.001;
+      var tileW = canvas.width/cols, tileH = canvas.height/rows;
+      var amplitude = Math.min(tileW, tileH)*0.1;
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      for (var k=0;k<tiles.length;k++){
+        var tile = tiles[k];
+        var ciFloat = (time*0.5 + tile.offset) % colours.length;
+        var baseIdx = Math.floor(ciFloat), t = ciFloat - baseIdx;
+        var blended = blendColours(baseIdx, t);
+        var baseColour = 'rgb('+blended.r+','+blended.g+','+blended.b+')';
+        var light = { r: Math.min(255, blended.r+30), g: Math.min(255, blended.g+30), b: Math.min(255, blended.b+30) };
+        var lightColour = 'rgb('+light.r+','+light.g+','+light.b+')';
+        var dx = amplitude * Math.sin(time + tile.phaseX);
+        var dy = amplitude * Math.cos(time + tile.phaseY);
+        var scale = 1 + 0.05 * Math.sin(time*2 + tile.phaseX - tile.phaseY);
+        var baseX = tile.col*tileW + tileW/2, baseY = tile.row*tileH + tileH/2;
+        var cx = baseX + dx, cy = baseY + dy;
+        var w = tileW * scale, h = tileH * scale;
+        var x0 = cx - w/2, y0 = cy - h/2;
+        boundingBoxes[k] = { x:x0, y:y0, w:w, h:h, stationIndex: tile.stationIndex };
+        var grad = ctx.createRadialGradient(cx,cy,0,cx,cy,Math.max(w,h)/2);
+        grad.addColorStop(0, lightColour); grad.addColorStop(1, baseColour);
+        ctx.fillStyle = grad; ctx.fillRect(x0,y0,w,h);
+      }
+    }
+    requestAnimationFrame(animTick);
+  }
+  animTick();
+
+  /* ================== Playback ================== */
+  var stations = window.STATIONS || [];
+  var stationPlaying = false; var currentStationIndex = null; var isPaused = false; var isLoading = false;
+
+  function pillShouldShow(){ return (stationPlaying && !isPaused) || isLoading; }
+
+  function pausePlayback(){
+    if (!stationPlaying || isPaused) return;
+    fadeVolume(activePlayer, 0, 200, () => activePlayer.pause());
+    isPaused = true;
+    isLoading = false; // Clear loading state
+    pill.classList.remove('loading');
+    updatePillForTransition(isOverlayOpen, isOverlayOpen);
+  }
+  function resumePlayback(){
+    if (!stationPlaying || !isPaused) return;
+    activePlayer.play().catch(function(){});
+    fadeVolume(activePlayer, 1.0, 200); // Always full volume
+    isPaused = false;
+    isLoading = false; // Clear loading state
+    pill.classList.remove('loading');
+    updatePillForTransition(isOverlayOpen, isOverlayOpen);
+  }
+
+  function canPlayType(type){
+    if (type === 'aac') return !!audioEl.canPlayType('audio/aac') || !!audioEl.canPlayType('audio/mp4; codecs="mp4a.40.2"');
+    if (type === 'mp3') return !!audioEl.canPlayType('audio/mpeg');
+    if (type === 'opus') return !!audioEl.canPlayType('audio/ogg; codecs=opus') || !!audioEl.canPlayType('audio/opus');
+    return false;
+  }
+
+  function playStation(index) {
+    const st = STATIONS[index];
+    if (!st || !st.sources || !st.sources.length) return;
+
+    try {
+      if (window.__LUXE_RACERS__) {
+        window.__LUXE_RACERS__.forEach(a => { try { a.pause(); a.src=""; a.remove(); } catch(_e){} });
+      }
+      window.__LUXE_RACERS__ = [];
+    } catch(_e){}
+
+    try {
+      if (activePlayer && !activePlayer.paused) {
+        fadeVolume(activePlayer, 0, 180, () => {
+          try { activePlayer.pause(); } catch(_e){}
+          try { activePlayer.src = ''; } catch(_e){}
+        });
+      }
+    } catch(_e){}
+
+    // Update "Now Playing" pill immediately (0ms) - don't wait for audio
+    nowPlaying.textContent = st.name;
+    nowPlaying.setAttribute('aria-label', 'Now playing: ' + st.name);
+
+    // Set loading state and show pill immediately
+    isLoading = true;
+    pill.classList.add('loading');
+    pill.classList.add('show');
+    pill.classList.toggle('dock-bottom', isOverlayOpen);
+
+    const urls = st.sources
+      .filter(s => !s.type || canPlayType(s.type))
+      .concat(st.sources.filter(s => s.type && !canPlayType(s.type)))
+      .map(s => s.url);
+    if (!urls.length) return;
+
+    let settled = false;
+
+    function cleanup(keep=null){
+      try {
+        window.__LUXE_RACERS__.forEach(a => {
+          try { if (a !== keep) { a.pause(); a.src=""; a.remove(); } } catch(_e){}
+        });
+      } catch(_e){}
+      window.__LUXE_RACERS__ = keep ? [keep] : [];
+    }
+
+    urls.forEach((url) => {
+      const a = new Audio();
+      a.preload = "auto";
+      a.crossOrigin = "anonymous";
+      a.playsInline = true;
+      a.muted = true;
+      a.volume = 0;
+      a.src = url;
+      window.__LUXE_RACERS__.push(a);
+
+      const onWin = () => {
+        if (settled) return;
+        settled = true;
+
+        try { bufferPlayer.src = url; bufferPlayer.load(); } catch(_e){}
+
+        const promote = () => {
+          const FADE_DURATION = 220;
+          const targetVolume = 1.0; // Always full volume
+
+          try { bufferPlayer.volume = 0; bufferPlayer.play().catch(()=>{}); } catch(_e){}
+
+          try {
+            fadeVolume(bufferPlayer, targetVolume, FADE_DURATION);
+          } catch(_e){
+            bufferPlayer.volume = targetVolume;
+          }
+
+          let temp = activePlayer;
+          activePlayer = bufferPlayer;
+          bufferPlayer = temp;
+
+          stationPlaying = true;
+          currentStationIndex = index;
+          isPaused = false;
+          
+          // Clear loading state once audio starts playing
+          isLoading = false;
+          pill.classList.remove('loading');
+          
+          updatePillForTransition(isOverlayOpen, isOverlayOpen);
+
+          bufferPlayer.removeEventListener('playing', promote, true);
+        };
+
+        bufferPlayer.addEventListener('playing', promote, { once:true, capture:true });
+        try { bufferPlayer.play().catch(()=>{}); } catch(_e){}
+
+        cleanup(a);
+      };
+
+      a.addEventListener('playing', onWin, { once:true });
+      a.addEventListener('canplay', () => { try { a.play().catch(()=>{}); } catch(_e){} });
+      a.addEventListener('error', () => {});
+
+      try { a.play().catch(()=>{}); } catch(_e){}
+    });
+
+    setTimeout(() => {
+      if (!settled && window.__LUXE_RACERS__ && window.__LUXE_RACERS__.length) {
+        const cand = window.__LUXE_RACERS__.find(x => x.readyState >= 3) || window.__LUXE_RACERS__[0];
+        try { cand.dispatchEvent(new Event('playing')); } catch(_e){}
+      }
+    }, 1200);
+
+    // Safety timeout: if loading takes longer than 8 seconds, clear loading state
+    setTimeout(() => {
+      if (isLoading) {
+        isLoading = false;
+        pill.classList.remove('loading');
+      }
+    }, 8000);
+  }
+
+  canvas.addEventListener('click', function(e){
+    var rect = canvas.getBoundingClientRect(); var x = e.clientX - rect.left, y = e.clientY - rect.top;
+    for(var i2=0;i2<boundingBoxes.length;i2++){
+      var b = boundingBoxes[i2]; if(!b) continue;
+      if(x>=b.x && x<=b.x+b.w && y>=b.y && y<=b.y+b.h){
+        if (b.stationIndex === currentStationIndex){
+          if (stationPlaying && !isPaused) { pausePlayback(); }
+          else if (stationPlaying && isPaused) { resumePlayback(); }
+          else { playStation(b.stationIndex); }
+        } else {
+          playStation(b.stationIndex);
+        }
+        return;
+      }
+    }
+  });
+
+  /* ================== Spin/Shimmer helpers ================== */
+  function spin(svg, deg) {
+    svg.classList.add('rotating','shimmering');
+    var anim = svg.animate([{transform:'rotate(0deg)'},{transform:'rotate('+deg+'deg)'}], { duration: 900, easing: 'cubic-bezier(0.65,0,0.35,1)' });
+    anim.addEventListener('finish', function(){ svg.classList.remove('rotating','shimmering'); });
+  }
+  function spinShimmerOnce(svg, deg){
+    svg.classList.add('shimmering');
+    var anim = svg.animate([{transform:'rotate(0deg)'},{transform:'rotate('+deg+'deg)'}], { duration: 900, easing: 'cubic-bezier(0.65,0,0.35,1)' });
+    anim.addEventListener('finish', function(){ svg.classList.remove('shimmering'); });
+  }
+
+  /* ================== Compositions + Examples ================== */
+  var EXAMPLE_LABELS = {
+    gallery: ["Streets"],
+    letters:  ["Treatment for Absence", "Acknowledgments"],
+    scores:    ["Composition #3"]
+  };
+
+  function applyExampleLabels(compId){
+    var labels = EXAMPLE_LABELS[compId] || [];
+    var btns = examplesEl.querySelectorAll(".example-btn");
+    var hovers = examplesEl.querySelectorAll(".example-hover");
+
+    for (let i = 0; i < btns.length; i++) {
+        btns[i].style.display = 'none';
+        if (hovers[i]) hovers[i].style.display = 'none';
+    }
+
+    if (labels.length === 1) {
+        let targetIndex = 1; // Always target the middle button (index 1 for data-example="2")
+
+        if(btns[targetIndex]) {
+            btns[targetIndex].textContent = labels[0];
+            btns[targetIndex].setAttribute('data-ex-label', labels[0].trim());
+            btns[targetIndex].style.display = '';
+            if (hovers[targetIndex]) hovers[targetIndex].style.display = '';
+        }
+    } else {
+        // For categories with multiple labels, display them in their corresponding rows
+        for (let i = 0; i < labels.length; i++) {
+            if (btns[i]) {
+                btns[i].textContent = labels[i];
+                btns[i].setAttribute('data-ex-label', labels[i].trim());
+                btns[i].style.display = '';
+                if (hovers[i]) hovers[i].style.display = '';
+            }
+        }
+    }
+}
+
+  var isOverlayOpen = false;
+  var switching = false;
+
+  /* ---------- Hard-pin comp panel position ---------- */
+  function positionCompPanel() {
+    var leftPx = Math.round(window.innerWidth * 0.22);
+    var topPx  = Math.round(window.innerHeight * 0.46);
+    compPanel.style.left = leftPx + 'px';
+    compPanel.style.top  = topPx  + 'px';
+  }
+
+  function setToggleRaw(toggle, display, open){
+    var isOpen = toggle.getAttribute('aria-expanded') === 'true';
+    if (isOpen === open) return;
+    var svg = toggle.querySelector('.plusminus');
+    spin(svg, open ? 360 : -360);
+    toggle.classList.toggle('open', open);
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    display.classList.toggle('open', open);
+    display.setAttribute('aria-hidden', open ? 'false' : 'true');
+
+    // When C opens/closes, toggle proximity engine
+    if (display === dC) setCtaProximityActive(open);
+
+    updateBVisibility();
+  }
+
+  function applyOverlayState(openB, openC){
+    var prev = isOverlayOpen;
+    setToggleRaw(tB, dB, openB);
+    setToggleRaw(tC, dC, openC);
+    var anyOpen = !!(openB || openC);
+    isOverlayOpen = anyOpen;
+
+    document.body.classList.toggle('overlay-open', anyOpen);
+
+    container.classList.toggle('is-hidden', anyOpen);
+    container.setAttribute('aria-hidden', anyOpen ? 'true' : 'false');
+    gridPaused = anyOpen;
+
+    positionCompPanel();
+
+    updatePillForTransition(prev, anyOpen);
+    if (openB) showCompositionsFromB(); else hideCompositions();
+
+    requestAnimationFrame(function(){ layoutExamplesToRows(); });
+  }
+
+  window.setToggleRaw = setToggleRaw;
+  window.applyOverlayState = applyOverlayState;
+
+
+  var PRE_HOLD_C = 140; // couture pause
+  tB.addEventListener('click', function(e){
+    var willOpenB = tB.getAttribute('aria-expanded')!=='true';
+    // Pre-decode gallery images when opening displayB
+    if (willOpenB) {
+      primeGalleryDOMImages();
+    }
+    applyOverlayState(willOpenB, false);
+    if (e.detail) tB.blur();
+  });
+  tC.addEventListener('click', function(e){
+    var willOpenC = tC.getAttribute('aria-expanded')!=='true';
+    if (willOpenC){
+      coutureCue(); // whisper-tick at the start of the pre-hold
+      setTimeout(function(){ applyOverlayState(false, true); }, PRE_HOLD_C);
+    } else {
+      applyOverlayState(false, false);
+    }
+    if (e.detail) tC.blur();
+  });
+
+  function measureBSeed() {
+    var bRect = tB.getBoundingClientRect();
+    var panelRect = compPanel.getBoundingClientRect();
+    var seedDx = (bRect.left + bRect.width/2) - (panelRect.left + panelRect.width/2);
+    var seedDy = (bRect.top + bRect.height/2) - (panelRect.top + 8);
+    compPanel.style.setProperty('--seed-dx', seedDx.toFixed(1) + 'px');
+    compPanel.style.setProperty('--seed-dy', seedDy.toFixed(1) + 'px');
+  }
+
+  function layoutExamplesToRows(){
+    var panelRect = compPanel.getBoundingClientRect();
+    var firstBtn = compPanel.querySelector('.comp-item .comp-btn');
+    if (!firstBtn) return;
+    var btnRect = firstBtn.getBoundingClientRect();
+    var gap = 18;
+    var left = Math.round(btnRect.right - panelRect.left + gap);
+    examplesEl.style.left = left + 'px';
+    examplesEl.style.top  = '0px';
+
+    var items = compPanel.querySelectorAll('.comp-item');
+    var exButtons = examplesEl.querySelectorAll('.example-btn');
+    var exHovers  = examplesEl.querySelectorAll('.example-hover');
+
+    for (var idx=0; idx<items.length; idx++){
+      var item = items[idx];
+      var ir = item.getBoundingClientRect();
+      var b = exButtons[idx];
+      if (!b) continue;
+      var top = Math.round(ir.top - panelRect.top + (ir.height - b.offsetHeight)/2);
+      b.style.top = top + 'px';
+
+      var hv = exHovers[idx];
+      if (hv){
+        hv.style.top = top + 'px';
+        hv.style.height = b.offsetHeight + 'px';
+        hv.style.left = '0px';
+        hv.style.width = Math.max(220, b.offsetWidth + 24) + 'px';
+      }
+    }
+  }
+
+  function showCompositionsFromB(){
+    compPanel.classList.add('open');
+    compPanel.setAttribute('aria-hidden','false');
+
+    positionCompPanel();
+
+    requestAnimationFrame(function(){
+      measureBSeed();
+      requestAnimationFrame(function(){
+        layoutExamplesToRows();
+        var items = compPanel.querySelectorAll('.comp-item');
+        for (var q=0;q<items.length;q++){
+          var item = items[q];
+          item.style.animation = 'none'; void item.offsetWidth; item.style.animation = '';
+          var svg = item.querySelector('.plusminus');
+          if (svg) spinShimmerOnce(svg, 360);
+        }
+      });
+    });
+  }
+
+  function hideCompositions(){
+    var btns = compPanel.querySelectorAll('.comp-btn');
+    for(var h=0; h<btns.length; h++){ closeComp(btns[h], { skipSpin:false }); }
+    compPanel.classList.remove('open','one-open');
+    compPanel.removeAttribute('data-open');
+    var rowsEls = compPanel.querySelectorAll('.comp-item');
+    for (var r=0;r<rowsEls.length;r++){ rowsEls[r].classList.remove('active'); }
+    compPanel.setAttribute('aria-hidden','true');
+    hideExamples(true);
+    // Hide score display when closing compositions
+    var scoreDisplay = $('scoreDisplay');
+    if (scoreDisplay) scoreDisplay.classList.add('is-hidden');
+    document.body.classList.remove('score-open');
+  }
+
+  window.showCompositionsFromB = showCompositionsFromB;
+  window.hideCompositions = hideCompositions;
+  window.layoutExamplesToRows = layoutExamplesToRows;
+
+  function setPanelOpenState(openBtn){
+    var items = compPanel.querySelectorAll('.comp-item');
+    for (var s=0;s<items.length;s++){
+      var id = items[s].getAttribute('data-comp');
+      items[s].querySelector('.comp-btn').classList.toggle('active', !!openBtn && openBtn.getAttribute('data-comp') === id);
+    }
+    if (openBtn){
+      compPanel.classList.add('one-open');
+      compPanel.setAttribute('data-open', openBtn.getAttribute('data-comp'));
+      layoutExamplesToRows();
+      applyExampleLabels(openBtn.getAttribute('data-comp'));
+      showExamples();
+      requestAnimationFrame(layoutExamplesToRows);
+    } else {
+      compPanel.classList.remove('one-open');
+      compPanel.removeAttribute('data-open');
+      hideExamples();
+    }
+    updateBVisibility();
+  }
+
+  function closeComp(btn, opts){
+    var skipSpin = (opts && opts.skipSpin) ? true : false;
+    var compItem = btn.closest('.comp-item');
+    if (!compItem.querySelector('.comp-btn').classList.contains('open')) return;
+
+    compItem.querySelector('.comp-btn').classList.remove('open');
+    btn.setAttribute('aria-pressed','false');
+    var svg = btn.querySelector('.plusminus');
+    if (svg && !skipSpin) spin(svg, -360);
+    var anyOpen = compPanel.querySelector('.comp-btn.open');
+    if (!anyOpen) setPanelOpenState(null);
+  }
+
+  function openComp(btn){
+    if (switching) return;
+    switching = true;
+    var compItem = btn.closest('.comp-item');
+    var compId = compItem.getAttribute('data-comp');
+
+    // Pre-decode gallery images when opening Gallery tab
+    if (compId === 'gallery') {
+      primeGalleryDOMImages();
+    }
+
+    var alreadyOpen = compPanel.querySelector('.comp-item .comp-btn.open');
+
+    if (alreadyOpen && alreadyOpen !== compItem.querySelector('.comp-btn')) {
+        closeComp(alreadyOpen);
+    }
+
+    if (!compItem.querySelector('.comp-btn').classList.contains('open')){
+      compItem.querySelector('.comp-btn').classList.add('open');
+      btn.setAttribute('aria-pressed','true');
+      var svg = btn.querySelector('.plusminus');
+      if (svg) spin(svg, 360);
+    }
+    setPanelOpenState(compItem);
+    if (tB.getAttribute('aria-expanded') !== 'true') applyOverlayState(true, false);
+    requestAnimationFrame(function(){ switching = false; });
+  }
+
+  compPanel.addEventListener('click', function(e){
+    var item = e.target.closest('.comp-item');
+    if (!item) return;
+
+    var compBtn = item.querySelector('.comp-btn');
+    if(!compBtn) return;
+
+    if (compBtn.classList.contains('open')) {
+        closeComp(compBtn);
+        hideExamples();
+        // Hide score and acknowledgment displays when closing any composition
+        var scoreDisplay = $('scoreDisplay');
+        var acknowledgmentDisplay = $('acknowledgmentDisplay');
+        if (scoreDisplay) scoreDisplay.classList.add('is-hidden');
+        if (acknowledgmentDisplay) acknowledgmentDisplay.classList.add('is-hidden');
+        document.body.classList.remove('score-open');
+        document.body.classList.remove('acknowledgment-open');
+    } else {
+        openComp(compBtn);
+    }
+  });
+
+  /* ================== Examples ================== */
+  function showExamples(){
+    examplesEl.classList.add('visible');
+    examplesEl.setAttribute('aria-hidden','false');
+  }
+  function hideExamples(immediate){
+    examplesEl.classList.remove('visible','is-singular');
+    examplesEl.setAttribute('aria-hidden','true');
+    var actives = examplesEl.querySelectorAll('.example-btn.active');
+    for (var i4=0;i4<actives.length;i4++){ actives[i4].classList.remove('active'); }
+    bText.textContent = '';
+    // Reset contextual yield when hiding examples (tab closed)
+    if (window.__CONTEXTUAL_YIELD__) {
+      window.__CONTEXTUAL_YIELD__.reset();
+    }
+    if (immediate){
+      examplesEl.style.transition = 'none'; void examplesEl.offsetWidth; examplesEl.style.transition = '';
+    }
+    updateBVisibility();
+  }
+
+  examplesEl.addEventListener('click', function(e){
+    var openBtn = compPanel.querySelector('.comp-btn.open');
+    if (!openBtn) return;
+
+    var ex = (e.target && e.target.classList && e.target.classList.contains('example-btn')) ? e.target : null;
+    if (!ex){
+      var hv = (e.target && e.target.closest) ? e.target.closest('.example-hover') : null;
+      if (hv){
+        ex = examplesEl.querySelector('.example-btn[data-example="'+hv.getAttribute('data-example')+'"]');
+      }
+    }
+    if (!ex) return;
+
+    var compId = openBtn.parentElement.getAttribute('data-comp') || '';
+    var isMobileView = window.matchMedia('(max-width: 768px)').matches;
+    var isGalleryMobile = compId === 'gallery' && isMobileView;
+    var isScoresMobile = compId === 'scores' && isMobileView;
+
+    // Prevent redundant processing if this example is already active
+    // Exception: On mobile gallery/scores, always allow re-opening the lightbox
+    if (ex.classList.contains('active') && !isGalleryMobile && !isScoresMobile) {
+      return;
+    }
+
+    examplesEl.classList.remove('is-singular');
+    var all = examplesEl.querySelectorAll('.example-btn');
+    for (var a=0; a<all.length; a++){ all[a] === ex ? all[a].classList.add('active') : all[a].classList.remove('active'); }
+
+    var compLabel = compId ? (compPanel.querySelector('.comp-item[data-comp="'+compId+'"] .comp-label') ? compPanel.querySelector('.comp-item[data-comp="'+compId+'"] .comp-label').textContent : '') : '';
+    var exLabel = ex.getAttribute('data-ex-label') || ex.textContent.replace(/^\s+|\s+$/g,'');
+
+    // Show carousel for gallery, score display for scores, acknowledgment for acknowledgments, text for others
+    var galleryCarousel = $('galleryCarousel');
+    var scoreDisplay = $('scoreDisplay');
+    var acknowledgmentDisplay = $('acknowledgmentDisplay');
+
+    if (compId === 'gallery' && galleryCarousel) {
+      // Hide score and acknowledgment displays
+      if (scoreDisplay) scoreDisplay.classList.add('is-hidden');
+      if (acknowledgmentDisplay) acknowledgmentDisplay.classList.add('is-hidden');
+      document.body.classList.remove('score-open');
+      document.body.classList.remove('acknowledgment-open');
+      // On mobile, skip carousel and go directly to lightbox
+      if (isMobileView && window.__GALLERY_CAROUSEL__ && window.__GALLERY_CAROUSEL__.openLightbox) {
+        bStage.style.display = 'none';
+        bText.style.display = 'none';
+        // Keep carousel hidden but open lightbox directly
+        galleryCarousel.classList.add('is-hidden');
+        window.__GALLERY_CAROUSEL__.openLightbox();
+      } else {
+        // Desktop: Single class toggle shows pre-rendered carousel instantly
+        bStage.style.display = 'none';
+        bText.style.display = 'none';
+        galleryCarousel.classList.remove('is-hidden');
+      }
+    } else if (compId === 'scores') {
+      // Hide carousel, text, and acknowledgment display
+      if (galleryCarousel) galleryCarousel.classList.add('is-hidden');
+      if (acknowledgmentDisplay) acknowledgmentDisplay.classList.add('is-hidden');
+      document.body.classList.remove('acknowledgment-open');
+      bText.style.display = 'none';
+      bStage.style.display = 'none';
+
+      if (isMobileView) {
+        // Mobile: open score lightbox fullscreen
+        if (scoreDisplay) scoreDisplay.classList.add('is-hidden');
+        document.body.classList.remove('score-open');
+        window.__SCORE_LIGHTBOX__.open();
+      } else {
+        // Desktop: show score display container
+        if (scoreDisplay) scoreDisplay.classList.remove('is-hidden');
+        document.body.classList.add('score-open');
+      }
+      if (window.__CONTEXTUAL_YIELD__) window.__CONTEXTUAL_YIELD__.reset();
+    } else if (compId === 'letters' && exLabel === 'Acknowledgments') {
+      // Show acknowledgment display fullscreen
+      if (galleryCarousel) galleryCarousel.classList.add('is-hidden');
+      if (scoreDisplay) scoreDisplay.classList.add('is-hidden');
+      document.body.classList.remove('score-open');
+      bStage.style.display = 'none';
+      bText.style.display = 'none';
+      if (acknowledgmentDisplay) acknowledgmentDisplay.classList.remove('is-hidden');
+      document.body.classList.add('acknowledgment-open');
+      if (window.__CONTEXTUAL_YIELD__) window.__CONTEXTUAL_YIELD__.reset();
+    } else {
+      // Hide carousel, score display, and acknowledgment display; show text
+      if (galleryCarousel) galleryCarousel.classList.add('is-hidden');
+      if (scoreDisplay) scoreDisplay.classList.add('is-hidden');
+      if (acknowledgmentDisplay) acknowledgmentDisplay.classList.add('is-hidden');
+      document.body.classList.remove('score-open');
+      document.body.classList.remove('acknowledgment-open');
+      bStage.style.display = 'none';
+      bText.style.display = 'block';
+      // For "letters" composition, show only the example label without prefix
+      if (compId === 'letters') {
+        bText.textContent = exLabel + '.';
+      } else {
+        bText.textContent = compLabel + ': ' + exLabel + '.';
+      }
+      if (window.__CONTEXTUAL_YIELD__) window.__CONTEXTUAL_YIELD__.reset();
+    }
+    if (tB.getAttribute('aria-expanded') !== 'true') applyOverlayState(true, false);
+    requestAnimationFrame(function(){ examplesEl.classList.add('is-singular'); });
+  });
+
+  examplesEl.addEventListener('mouseenter', function(e){
+    var hv = (e.target && e.target.closest) ? e.target.closest('.example-hover') : null;
+    if (!hv) return;
+    if (!examplesEl.classList.contains('is-singular')) return;
+    var idx = hv.getAttribute('data-example');
+    var btn = examplesEl.querySelector('.example-btn[data-example="'+idx+'"]');
+    if (!btn || btn.classList.contains('active')) return;
+    btn.classList.add('peep');
+  }, true);
+
+  examplesEl.addEventListener('mouseleave', function(e){
+    var hv = (e.target && e.target.closest) ? e.target.closest('.example-hover') : null;
+    if (!hv) return;
+    var idx = hv.getAttribute('data-example');
+    var btn = examplesEl.querySelector('.example-btn[data-example="'+idx+'"]');
+    if (!btn || btn.classList.contains('active')) return;
+    btn.classList.remove('peep');
+  }, true);
+
+  examplesEl.addEventListener('mouseleave', function(){
+    var peeps = examplesEl.querySelectorAll('.example-btn.peep');
+    for (var i5=0;i5<peeps.length;i5++){ peeps[i5].classList.remove('peep'); }
+  }, { passive:true });
+
+  /* ================== Pill teleport ================== */
+  var scheduled = [];
+  function parseCssMs(varName, fallback){
+    var rs = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+    if (!rs) return fallback;
+    if (/ms$/.test(rs)) return parseFloat(rs);
+    if (/s$/.test(rs))  return parseFloat(rs)*1000;
+    var n = parseFloat(rs); return isFinite(n) ? n : fallback;
+  }
+  function teleportCrossfade(toDock){
+  try{
+    pill.classList.add("teleporting");
+    setTimeout(function() {
+      try{ pill.classList.remove("teleporting"); }catch(_e){}
+    }, 1000); // Buffer to ensure it's removed
+  }catch(_){}
+
+    for (var s2=0; s2<scheduled.length; s2++){ clearTimeout(scheduled[s2]); }
+    scheduled = [];
+
+    if (!pillShouldShow()){
+      pill.classList.remove('show');
+      pill.classList.toggle('dock-bottom', isOverlayOpen);
+      return;
+    }
+
+    pill.classList.add('show');
+    var wasDock = pill.classList.contains('dock-bottom');
+    if (wasDock === toDock){ pill.classList.toggle('dock-bottom', toDock); pill.style.opacity=''; return; }
+
+    var outDur = parseCssMs('--teleport-out', 320);
+    var inDur  = parseCssMs('--teleport-in',  560);
+    var overlap= parseCssMs('--teleport-overlap', 200);
+    var ease   = getComputedStyle(document.documentElement).getPropertyValue('--teleport-ease').trim() || 'ease';
+
+    var ghost = pill.cloneNode(true);
+    ghost.id = '';
+    ghost.classList.add('pill-ghost');
+    ghost.classList.toggle('dock-bottom', wasDock);
+    ghost.setAttribute('aria-hidden', 'true');
+    ghost.querySelectorAll('[id]').forEach(n => n.removeAttribute('id'));
+
+    ghost.style.opacity='1'; ghost.style.transition='opacity '+outDur+'ms '+ease; pill.parentNode.insertBefore(ghost, pill.nextSibling);
+
+    pill.classList.toggle('dock-bottom', toDock);
+    // When returning to non-dock mode, clear inline top so CSS default position is used
+    if (!toDock) { pill.style.top = ''; }
+    pill.style.transition='none'; pill.style.opacity='0'; void pill.offsetWidth;
+    pill.style.transition='opacity '+inDur+'ms '+ease;
+    requestAnimationFrame(function(){ ghost.style.opacity='0'; });
+
+    var startInDelay = Math.max(0, outDur - overlap);
+    var startIn = setTimeout(function(){ pill.style.opacity='1'; }, startInDelay);
+    scheduled.push(startIn);
+    var total = Math.max(outDur, startInDelay + inDur) + 20;
+    var cleanup = setTimeout(function(){ ghost.parentNode && ghost.parentNode.removeChild(ghost); pill.style.opacity=''; pill.style.transition=''; }, total);
+    scheduled.push(cleanup);
+  }
+  function updatePillForTransition(prevOverlayOpen, nextOverlayOpen){
+    if(!pillShouldShow()){
+      pill.classList.remove('show');
+      pill.classList.toggle('dock-bottom', !!nextOverlayOpen);
+      return;
+    }
+    if (prevOverlayOpen === true && nextOverlayOpen === true){
+      pill.classList.add('show','dock-bottom'); pill.style.opacity=''; return;
+    }
+    if (prevOverlayOpen === false && nextOverlayOpen === false){
+      pill.classList.add('show'); pill.classList.remove('dock-bottom'); pill.style.opacity=''; return;
+    }
+    // Returning to page 1: show pill instantly after grid transition, no animation
+    if (prevOverlayOpen === true && nextOverlayOpen === false){
+      pill.classList.remove('show', 'dock-bottom');
+      pill.style.top = '';
+      pill.style.opacity = '';
+      pill.style.transition = 'none';
+      // Wait for grid transition (800ms) then show instantly at correct position
+      setTimeout(function(){
+        if (typeof window.centerPill === 'function') window.centerPill();
+        pill.classList.add('show');
+        // Restore transitions after appearing
+        requestAnimationFrame(function(){
+          pill.style.transition = '';
+        });
+      }, 820);
+      return;
+    }
+    teleportCrossfade(!!nextOverlayOpen);
+  }
+
+  /* ================== Proximity CTA (Display C) ================== */
+  var contactLink = document.querySelector('#displayC .contact-cta');
+  var proxActive = false;
+  var mouseX = 0, mouseY = 0;
+  var ticking = false;
+
+  function setCtaProximityActive(active){
+    var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var noHover = window.matchMedia('(hover: none)').matches;
+    proxActive = !!active && !prefersReduced && !noHover && !!contactLink;
+
+    if (!proxActive){
+      document.documentElement.style.setProperty('--cta-prox', '0');
+      window.removeEventListener('mousemove', onMouseMove, { passive:true });
+      return;
+    }
+    window.addEventListener('mousemove', onMouseMove, { passive:true });
+  }
+
+  function onMouseMove(e){
+    mouseX = e.clientX; mouseY = e.clientY;
+    if (!ticking){
+      ticking = true;
+      requestAnimationFrame(updateProximity);
+    }
+  }
+
+  function updateProximity(){
+    ticking = false;
+    if (!proxActive || !contactLink) return;
+
+    var rect = contactLink.getBoundingClientRect();
+    var cx = rect.left + rect.width/2;
+    var cy = rect.top + rect.height/2;
+    var dx = mouseX - cx;
+    var dy = mouseY - cy;
+    var dist = Math.sqrt(dx*dx + dy*dy);
+
+    var R = 140; // px influence radius
+    var prox = 1 - (dist / R);
+    if (isNaN(prox) || prox < 0) prox = 0;
+    if (prox > 1) prox = 1;
+
+    document.documentElement.style.setProperty('--cta-prox', prox.toFixed(3));
+  }
+
+  /* ================== Accessibility & keys ================== */
+  canvas.addEventListener('pointerdown', function(){ if (document.activeElement !== canvas) canvas.focus(); });
+
+  window.addEventListener('keydown', function(e){
+    var key = e.key || e.code;
+    if (key === ' ' || key === 'Space'){
+      var ae = document.activeElement;
+      var tag = ae && ae.tagName;
+      var isUiFocus = (ae && ae.isContentEditable) || (tag && /^(INPUT|TEXTAREA|BUTTON|A|SELECT)$/i.test(tag || ''));
+      if (!isUiFocus) {
+        e.preventDefault();
+        if (e.repeat) return;
+        if (stationPlaying && !isPaused) { pausePlayback(); }
+        else if (stationPlaying) { resumePlayback(); }
+      }
+    }
+  });
+
+  /* ================== Pill tap to stop (mobile) ================== */
+  nowPlaying.addEventListener('click', function(e){
+    if (stationPlaying && !isPaused) {
+      e.stopPropagation();
+      pausePlayback();
+    }
+  });
+
+  /* ================== Couture audio tick ================== */
+  var cueCtx = null;
+  function initCueCtx() {
+    if (cueCtx) return;
+    var Klass = window.AudioContext || window.webkitAudioContext;
+    cueCtx = window.__LUXE_AC__ || (Klass ? new Klass() : null);
+    if (cueCtx && !window.__LUXE_AC__) { window.__LUXE_AC__ = cueCtx; }
+
+    if (cueCtx && cueCtx.state === 'suspended') {
+      try { cueCtx.resume(); } catch(_) {}
+    }
+  }
+  function coutureCue() {
+    var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var isTouch = window.matchMedia('(hover: none)').matches;
+    if (prefersReduced || isTouch) return;
+
+    initCueCtx();
+    if (!cueCtx) return;
+
+    var t0 = cueCtx.currentTime + 0.01;
+    var dur = 0.12; // 120ms tick
+    var osc = cueCtx.createOscillator();
+    var gain = cueCtx.createGain();
+    var hp  = cueCtx.createBiquadFilter();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(980, t0);
+    osc.frequency.exponentialRampToValueAtTime(1400, t0 + dur * 0.6);
+
+    hp.type = 'highpass';
+    hp.frequency.value = 600;
+
+    gain.gain.setValueAtTime(0.015, t0);
+    gain.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+
+    osc.connect(hp).connect(gain).connect(cueCtx.destination);
+    osc.start(t0);
+    osc.stop(t0 + dur + 0.02);
+  }
+
+  /* ================== Display B — BlackLabel RO · ULTRA ================== */
+  var bCanvas = $('glassCanvas');
+  var bCtx = bCanvas.getContext('2d', { alpha: true });
+  var bAnimationRunning = false;
+  var bAnimationStart = 0;
+
+  const BLACKLABEL_PARAMS = {
+    SPEED:0.45,
+    THICK:1.2,
+    EDGE:1.18,
+    SPECTRAL:0.2,
+    GLOW:1.05,
+    GRID:0.06,
+  };
+
+  let bDPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+
+  function resizeBlackLabel(){
+    // Measure the container (bStage) since canvas is 100% width/height
+    const stage = document.getElementById('bStage');
+    const b = stage ? stage.getBoundingClientRect() : bCanvas.getBoundingClientRect();
+    bCanvas.width = Math.floor((b.width||640)*bDPR);
+    bCanvas.height = Math.floor((b.height||640)*bDPR);
+  }
+  window.addEventListener('resize', resizeBlackLabel, {passive:true});
+
+  function blacklabel_spectral(x){
+    const r=0.5+0.5*Math.sin(6.0*x+0.0);
+    const g=0.5+0.5*Math.sin(6.0*x+2.0944);
+    const b=0.5+0.5*Math.sin(6.0+x+4.18879);
+    const Y=0.2126*r+0.7152*g+0.0722*b;
+    const sc = 0.82/(Y+1e-4);
+    const R=(255*Math.min(1,r*sc))|0, G=(255*Math.min(1,g*sc))|0, B=(255*Math.min(1,b*sc))|0;
+    return 'rgba('+R+','+G+','+B+',';
+  }
+
+  function blacklabel_superellipse(a,b,n,theta){
+    const ct=Math.cos(theta), st=Math.sin(theta);
+    const x=Math.sign(ct)*Math.pow(Math.abs(ct), 2/n)*a;
+    const y=Math.sign(st)*Math.pow(Math.abs(st), 2/n)*b;
+    return {x,y};
+  }
+
+  function drawGrid(W,H,cx,cy,t){
+    if(BLACKLABEL_PARAMS.GRID<=0) return;
+    bCtx.save();
+    bCtx.strokeStyle = 'rgba(0,0,0,'+(0.06*BLACKLABEL_PARAMS.GRID)+')';
+    bCtx.lineWidth = Math.max(1, 0.75*bDPR);
+    const s = Math.min(W,H)*0.12;
+    const off = (t*0.3) % s;
+    for(let x=cx - 3*s; x<=cx+3*s; x+=s){
+      bCtx.beginPath(); bCtx.moveTo(x+off, cy-3*s); bCtx.lineTo(x+off, cy+3*s); bCtx.stroke();
+    }
+    for(let y=cy - 3*s; y<=cy+3*s; y+=s){
+      bCtx.beginPath(); bCtx.moveTo(cx-3*s, y+off); bCtx.lineTo(cx+3*s, y+off); bCtx.stroke();
+    }
+    bCtx.restore();
+  }
+
+  function drawAperture(W,H,cx,cy,t){
+    const rad = Math.min(W,H)*0.22*(0.98 + 0.02*Math.sin(t*0.8));
+    const g = bCtx.createRadialGradient(cx,cy, rad*0.1, cx,cy, rad*1.25);
+    g.addColorStop(0, 'rgba(255,255,255,'+(0.22*BLACKLABEL_PARAMS.GLOW)+')');
+    g.addColorStop(0.5,'rgba(255,255,255,'+(0.06*BLACKLABEL_PARAMS.GLOW)+')');
+    g.addColorStop(1, 'rgba(0,0,0,0)');
+    bCtx.globalCompositeOperation='lighter';
+    bCtx.fillStyle=g;
+    bCtx.beginPath(); bCtx.arc(cx,cy, rad, 0, Math.PI*2); bCtx.fill();
+    bCtx.globalCompositeOperation='source-over';
+  }
+
+  function drawRing(W,H,cx,cy,t){
+    const a = Math.min(W,H)*0.40;
+    const b = Math.min(W,H)*0.38;
+    const n = 3.2;
+    const N = 520;
+    const baseW = Math.min(W,H)*0.06 * BLACKLABEL_PARAMS.THICK;
+    const outlineW = baseW * (1.00 + 0.30*(BLACKLABEL_PARAMS.EDGE-1.0));
+    const bodyW = baseW*0.78;
+    const hiW = baseW*0.36;
+
+    bCtx.save();
+    bCtx.translate(cx,cy);
+    const rot = 0.08*Math.sin(t*0.15);
+    bCtx.rotate(rot);
+    bCtx.translate(-cx,-cy);
+
+    let prev=null;
+    for(let i=0;i<=N;i++){
+      const theta = (i/N)*Math.PI*2;
+      const P = blacklabel_superellipse(a,b,n,theta);
+      const x = cx + P.x, y = cy + P.y;
+      if(prev){
+        bCtx.globalCompositeOperation='source-over';
+        bCtx.lineJoin='round'; bCtx.lineCap='round';
+        bCtx.strokeStyle='#0E0E0F';
+        bCtx.lineWidth=outlineW;
+        bCtx.beginPath(); bCtx.moveTo(prev.x,prev.y); bCtx.lineTo(x,y); bCtx.stroke();
+
+        bCtx.strokeStyle='#F7F7F5';
+        bCtx.lineWidth=bodyW; bCtx.globalCompositeOperation='lighter'; bCtx.stroke();
+
+        if(BLACKLABEL_PARAMS.SPECTRAL>0){
+          const col = blacklabel_spectral(i/N);
+          bCtx.strokeStyle=col + (0.40 * BLACKLABEL_PARAMS.SPECTRAL) + ')';
+          bCtx.lineWidth=outlineW*0.66; bCtx.globalCompositeOperation='screen'; bCtx.stroke();
+        }
+
+        bCtx.strokeStyle='rgba(255,255,255,0.18)'; bCtx.lineWidth=hiW; bCtx.globalCompositeOperation='screen'; bCtx.stroke();
+      }
+      prev={x,y};
+    }
+    bCtx.restore();
+  }
+
+  function drawNodes(W,H,cx,cy,t){
+    if(BLACKLABEL_PARAMS.SPECTRAL<=0.2) return;
+    const nodes = 8;
+    for(let i=0;i<nodes;i++){
+      const a = i/nodes*Math.PI*2 + 0.2*Math.sin(t*0.4+i);
+      const R = Math.min(W,H)*0.33*(1+0.02*Math.sin(t+i));
+      const x = cx + Math.cos(a)*R, y = cy + Math.sin(a)*R;
+      const col = blacklabel_spectral(i/nodes);
+      bCtx.strokeStyle=col+'0.45)'; bCtx.lineWidth=2.5*bDPR;
+      bCtx.beginPath(); bCtx.arc(x,y, 6*bDPR, 0, Math.PI*2); bCtx.stroke();
+    }
+  }
+
+  function drawGlint(W,H,cx,cy,t){
+    const phase = (t*0.06) % 1;
+    if(phase > 0.98){
+      const ang = (phase-0.98)/0.02 * Math.PI*2;
+      const R = Math.min(W,H)*0.41;
+      bCtx.save();
+      bCtx.globalCompositeOperation='screen';
+      bCtx.strokeStyle='rgba(255,255,255,0.65)';
+      bCtx.lineWidth = 3*bDPR;
+      bCtx.beginPath();
+      bCtx.arc(cx,cy, R, ang-0.12, ang+0.12);
+      bCtx.stroke();
+      bCtx.restore();
+    }
+  }
+
+  function loopBlackLabel(now){
+    if(!bAnimationRunning) return;
+    const dt = (now - bAnimationStart)/1000;
+    const t = dt * BLACKLABEL_PARAMS.SPEED;
+    const W = bCanvas.width, H = bCanvas.height;
+    const cx = W*0.5, cy = H*0.52;
+
+    bCtx.clearRect(0,0,W,H);
+    drawGrid(W,H,cx,cy,t);
+    drawAperture(W,H,cx,cy,t);
+    drawRing(W,H,cx,cy,t);
+    drawNodes(W,H,cx,cy,t);
+    drawGlint(W,H,cx,cy,t);
+
+    requestAnimationFrame(loopBlackLabel);
+  }
+
+  // Draw a single frame synchronously (for flicker-free reveal)
+  function drawBlackLabelFrame(){
+    const t = 0; // Start at t=0 for initial frame
+    const W = bCanvas.width, H = bCanvas.height;
+    const cx = W*0.5, cy = H*0.52;
+    bCtx.clearRect(0,0,W,H);
+    drawGrid(W,H,cx,cy,t);
+    drawAperture(W,H,cx,cy,t);
+    drawRing(W,H,cx,cy,t);
+    drawNodes(W,H,cx,cy,t);
+    drawGlint(W,H,cx,cy,t);
+  }
+
+  function startBlackLabel() {
+    var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (bAnimationRunning || prefersReduced) return;
+    bAnimationRunning = true;
+    bAnimationStart = performance.now();
+    resizeBlackLabel();
+    requestAnimationFrame(loopBlackLabel);
+  }
+
+  function stopBlackLabel() {
+    bAnimationRunning = false;
+  }
+
+  function updateBVisibility(){
+    var bOpen = tB.getAttribute('aria-expanded') === 'true';
+    var anyCategoryOpen = compPanel.classList.contains('one-open');
+    var show = bOpen && !anyCategoryOpen;
+    var galleryCarousel = document.getElementById('galleryCarousel');
+
+    if (show){
+      // Show shape, hide text and carousel
+      bText.style.display = 'none';
+      if (galleryCarousel) galleryCarousel.classList.add('is-hidden');
+      // Reset contextual yield when showing shape
+      if (window.__CONTEXTUAL_YIELD__) {
+        window.__CONTEXTUAL_YIELD__.reset();
+      }
+      bStage.style.display = 'grid';
+      // Force a synchronous reflow to get accurate dimensions
+      void bStage.offsetHeight;
+      // Now resize and draw immediately
+      resizeBlackLabel();
+      drawBlackLabelFrame();
+      startBlackLabel();
+    } else {
+      bStage.style.display = 'none';
+      stopBlackLabel();
+      // Don't auto-show bText here - let the click handler decide what to show
+    }
+  }
+
+  /* ================== Init ================ */
+  positionCompPanel();
+  updateBVisibility();
+
+  var srStationsContainer = document.getElementById('sr-stations');
+  var stations = window.STATIONS || [];
+  if (srStationsContainer && stations.length) {
+    stations.forEach(function(station, index) {
+      var cell = document.createElement('div');
+      cell.id = 'station-' + index;
+      cell.setAttribute('role', 'gridcell');
+      cell.textContent = station.name;
+      srStationsContainer.appendChild(cell);
+    });
+  }
+
+  window.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      if (document.body.classList.contains('overlay-open')) {
+        try { applyOverlayState(false, false); } catch(_){}
+      }
+    }
+  }, { passive: true });
+
+})();
+</script>
+
+<style id="lux-ab-transition">
+#colorGridContainer{
+  visibility: visible;
+  transition: opacity 800ms cubic-bezier(0.68, -0.55, 0.27, 1.55),
+              filter   800ms cubic-bezier(0.68, -0.55, 0.27, 1.55),
+              transform 800ms cubic-bezier(0.68, -0.55, 0.27, 1.55),
+              visibility 0s linear 0s;
+  will-change: opacity, transform, filter;
+  transform-style: preserve-3d;
+}
+#colorGridContainer.is-hidden{
+  opacity: 0;
+  visibility: hidden;
+  filter: blur(40px) saturate(2.5);
+  transform: translate(-50%, -50%) scale(0.5) translateZ(-600px);
+  pointer-events: none;
+  transition: opacity 800ms cubic-bezier(0.68, -0.55, 0.27, 1.55),
+              filter   800ms cubic-bezier(0.68, -0.55, 0.27, 1.55),
+              transform 800ms cubic-bezier(0.68, -0.55, 0.27, 1.55),
+              visibility 0s linear 800ms;
+}
+#displayB .card{
+  position: relative;
+  overflow: visible;
+}
+#displayB .card::before{
+  content: "";
+  position: absolute; inset: 0;
+  background: radial-gradient(120% 100% at 50% 0%,
+               rgba(255,255,255,0.90) 0%,
+               rgba(255,255,255,0.65) 26%,
+               rgba(255,255,255,0.00) 60%);
+  opacity: 0; pointer-events: none;
+}
+#displayB .card{
+  opacity: 0;
+  transform: translateY(14px) scale(0.992);
+  filter: blur(12px);
+}
+#displayB.open .card{
+  animation: bCardIn 720ms cubic-bezier(0.19,1,0.22,1) both 160ms;
+}
+#displayB.open .card::before{
+  animation: bVeil 680ms cubic-bezier(0.19,1,0.22,1) both 160ms;
+}
+#displayB:not(.open) .card{
+  transition: opacity 420ms cubic-bezier(0.19,1,0.22,1),
+              transform 420ms cubic-bezier(0.19,1,0.22,1),
+              filter 420ms cubic-bezier(0.19,1,0.22,1);
+}
+@keyframes bCardIn{
+  0%   { opacity: 0; filter: blur(12px); transform: translateY(14px) scale(0.992); }
+  100% { opacity: 1; filter: blur(0);    transform: translateY(0) scale(1); }
+}
+@keyframes bVeil{
+  0%   { opacity: 0.95; }
+  100% { opacity: 0; }
+}
+</style>
+
+
+<script>
+/* === B↔C Couture Crossfade Orchestrator (transitions only) === */
+(function(){
+  var tB = document.getElementById('toggleB');
+  var tC = document.getElementById('toggleC');
+  var dB = document.getElementById('displayB');
+  var dC = document.getElementById('displayC');
+  var container = document.getElementById('colorGridContainer');
+  if(!(tB && tC && dB && dC)) return;
+
+  // Keep references to functions defined earlier
+  var _setToggleRaw = window.setToggleRaw;
+  var _applyOverlayState = window.applyOverlayState;
+  if (!_setToggleRaw || !_applyOverlayState) return;
+
+  // Utilities
+  function msVar(name, fallback){
+    try{
+      var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      if (!v) return fallback;
+      if (v.endsWith('ms')) return parseFloat(v);
+      if (v.endsWith('s'))  return parseFloat(v)*1000;
+      var n = parseFloat(v);
+      return isFinite(n) ? n : fallback;
+    }catch(_){ return fallback; }
+  }
+  var OVERLAP = msVar('--teleport-overlap', 220);
+
+  // Replace applyOverlayState with a crossfade-aware version
+  window.applyOverlayState = function(openB, openC){
+    var bWas = tB.getAttribute('aria-expanded') === 'true';
+    var cWas = tC.getAttribute('aria-expanded') === 'true';
+
+    // Detect a direct B<->C swap (one opens while the other closes)
+    var bcSwap = (openB && cWas && !openC) || (openC && bWas && !openB);
+
+    if (!bcSwap){
+      // Fallback to original behavior for all other cases (A<->B/C, close all, etc.)
+      return _applyOverlayState(openB, openC);
+    }
+
+    // Crossfade path
+    var incoming = openB ? dB : dC;
+    var incomingToggle = openB ? tB : tC;
+    var outgoing = bWas ? dB : dC;
+    var outgoingToggle = bWas ? tB : tC;
+
+    // 1) Ensure overlay mode is enabled
+    document.body.classList.add('overlay-open');
+    document.body.classList.add('bc-xfade'); // gate pointer events during fade
+    if (container){ container.classList.add('is-hidden'); }
+
+    // 2) Open the incoming immediately
+    _setToggleRaw(incomingToggle, incoming, true);
+
+    // 3) Style outgoing with a velvet fade
+    outgoing.classList.add('xf-out');
+    // Force a reflow so the transition applies
+    void outgoing.offsetWidth;
+    outgoing.classList.add('fade');
+
+    // 4) After overlap, close outgoing && clean up
+    setTimeout(function(){
+      _setToggleRaw(outgoingToggle, outgoing, false);
+      outgoing.classList.remove('fade');
+      outgoing.classList.remove('xf-out');
+      document.body.classList.remove('bc-xfade');
+
+      // Maintain composition panel state consistently with destination
+      if (incoming === dB && typeof window.showCompositionsFromB === 'function'){
+        window.showCompositionsFromB();
+      } else if (typeof window.hideCompositions === 'function'){
+        window.hideCompositions();
+      }
+
+      // Re-run layout helpers if present
+      try{
+        requestAnimationFrame(function(){
+          if (typeof window.layoutExamplesToRows === 'function') window.layoutExamplesToRows();
+        });
+      }catch(_){}
+    }, OVERLAP);
+  };
+})();
+</script>
+
+
+<script>
+/* === Asymmetric B→C Concierge Orchestrator (transitions only) === */
+(function(){
+  var tB = document.getElementById('toggleB');
+  var tC = document.getElementById('toggleC');
+  var dB = document.getElementById('displayB');
+  var dC = document.getElementById('displayC');
+  var container = document.getElementById('colorGridContainer');
+
+  if(!(tB && tC && dB && dC)) return;
+  if (!window.setToggleRaw || !window.applyOverlayState) return;
+
+  var _prevAOS = window.applyOverlayState;
+
+  function ms(n){ return (typeof n === 'number') ? n : parseFloat(n)||0; }
+
+  window.applyOverlayState = function(openB, openC){
+    var bWas = tB.getAttribute('aria-expanded') === 'true';
+    var cWas = tC.getAttribute('aria-expanded') === 'true';
+
+    var BtoC = (openC && bWas && !openB);
+    if (!BtoC){
+      return _prevAOS(openB, openC);
+    }
+
+    // === Concierge path: B -> C ===
+    // Durations / easing
+    var IN  = 820;   // ms
+    var OUT = 980;   // ms
+    var OVERLAP = 200; // ms (handshake window)
+    document.documentElement.style.setProperty('--overlay-in',  IN + 'ms');
+    document.documentElement.style.setProperty('--overlay-out', OUT + 'ms');
+
+    // Pause B parallax/metaglass motion immediately if hooks exist
+    try{ window.METAGLASS_PAUSE = true; }catch(_){}
+
+    // Gate interactions
+    document.body.classList.add('overlay-open');
+    document.body.classList.add('bc-xfade');
+    if (container){ container.classList.add('is-hidden'); }
+
+    // Incoming C: prep && open
+    dC.classList.add('xf-in');
+    // ensure it's in the DOM flow before open to get initial styles
+    void dC.offsetWidth;
+    window.setToggleRaw(tC, dC, true);
+    requestAnimationFrame(function(){
+      dC.classList.add('go');
+    });
+
+    // Outgoing B: velvet fade to ghost (4% hold)
+    dB.style.setProperty('--xf-out-target', '0.04');
+    dB.classList.add('xf-out');
+    void dB.offsetWidth;
+    dB.classList.add('fade');
+
+    // Concierge light tint on C
+    var tint = document.createElement('div');
+    tint.className = 'concierge-tint';
+    dC.appendChild(tint);
+    requestAnimationFrame(function(){
+      tint.style.transition = 'opacity 300ms ease';
+      tint.style.opacity = '0.06';
+      setTimeout(function(){
+        tint.style.transition = 'opacity 300ms ease';
+        tint.style.opacity = '0';
+        setTimeout(function(){
+          try{ dC.removeChild(tint); }catch(_){}
+        }, 320);
+      }, 300);
+    });
+
+    // Focus handoff to primary contact action (after arrival +300ms)
+    setTimeout(function(){
+      try{
+        var target = dC.querySelector('[data-primary-cta], a[href^="mailto:"], button, input, textarea');
+        if (target && typeof target.focus === 'function'){
+          target.classList.add('focus-silk');
+          target.focus({preventScroll:true});
+          setTimeout(function(){ target.classList.remove('focus-silk'); }, 400);
+        }
+      }catch(_){}
+    }, 300);
+
+    // After 600ms, retire B ghost && close B formally
+    setTimeout(function(){
+      dB.classList.remove('fade');
+      dB.classList.remove('xf-out');
+      dB.style.removeProperty('--xf-out-target');
+      window.setToggleRaw(tB, dB, false);
+      document.body.classList.remove('bc-xfade');
+    }, 600);
+
+    return true;
+  };
+})();
+</script>
+
+
+<script>
+/* === Asymmetric A↔B / A↔C Orchestrator (transitions only) === */
+(function(){
+  var tB = document.getElementById('toggleB');
+  var tC = document.getElementById('toggleC');
+  var dB = document.getElementById('displayB');
+  var dC = document.getElementById('displayC');
+  var container = document.getElementById('colorGridContainer');
+  if(!(tB && tC && dB && dC)) return;
+  if (!window.applyOverlayState) return;
+
+  var _prev = window.applyOverlayState;
+
+  function setVar(name, ms){
+    try{ document.documentElement.style.setProperty(name, (typeof ms==='number'? ms+'ms' : ms)); }catch(_){}
+  }
+
+  window.applyOverlayState = function(openB, openC){
+    var bWas = tB.getAttribute('aria-expanded') === 'true';
+    var cWas = tC.getAttribute('aria-expanded') === 'true';
+    var fromA = (!bWas && !cWas);
+    var toA   = (!openB && !openC);
+
+    /* ---- A → B : reverence (curtain lift) ---- */
+    if (fromA && openB && !openC){
+      // Unify with couture grammar
+      setVar('--overlay-in',  880);
+      setVar('--overlay-out', 1000);
+      setVar('--overlay-delay', 240);
+      // Open via previous logic
+      var ret = _prev(openB, openC);
+      // Resume B's motion after the reveal settles
+      setTimeout(function(){ try{ window.METAGLASS_PAUSE = false; }catch(_){} }, 220);
+      return ret;
+    }
+
+    /* ---- A → C : concierge escort (decisive) ---- */
+    if (fromA && openC && !openB){
+      // C has its own cadence vars
+      setVar('--overlay-in-c',   820);
+      setVar('--overlay-delay-c',240);
+      // Also align base overlay vars for container fade
+      setVar('--overlay-in',  820);
+      setVar('--overlay-out', 980);
+      setVar('--overlay-delay', 240);
+
+      var ret2 = _prev(openB, openC);
+
+      // Private-office light cue (neutral, 6% peak)
+      try{
+        var tint = document.createElement('div');
+        tint.className = 'concierge-tint';
+        dC.appendChild(tint);
+        requestAnimationFrame(function(){
+          tint.style.transition = 'opacity 300ms ease';
+          tint.style.opacity = '0.06';
+          setTimeout(function(){
+            tint.style.opacity = '0';
+            setTimeout(function(){ try{ dC.removeChild(tint); }catch(_){} }, 320);
+          }, 300);
+        });
+      }catch(_){}
+
+      // Focus handoff to primary contact action
+      setTimeout(function(){
+        try{
+          var target = dC.querySelector('[data-primary-cta], a[href^="mailto:"], button, input, textarea');
+          if (target && typeof target.focus === 'function'){
+            target.classList.add('focus-silk');
+            target.focus({preventScroll:true});
+            setTimeout(function(){ target.classList.remove('focus-silk'); }, 400);
+          }
+        }catch(_){}
+      }, 300);
+
+      return ret2;
+    }
+
+    /* ---- B → A : graceful exhale ---- */
+    if (bWas && toA){
+      setVar('--overlay-in',  880);
+      setVar('--overlay-out', 880);
+      setVar('--overlay-delay', 220);
+      try{ window.METAGLASS_PAUSE = true; }catch(_){}
+      return _prev(openB, openC);
+    }
+
+    /* ---- C → A : clean reset ---- */
+    if (cWas && toA){
+      // Use slightly longer "in" for home, faster "out" for C
+      setVar('--overlay-in-c', 900);
+      setVar('--overlay-delay-c', 240);
+      setVar('--overlay-in', 900);
+      setVar('--overlay-out', 820);
+      setVar('--overlay-delay', 220);
+      return _prev(openB, openC);
+    }
+
+    // Default to previous behavior (includes B↔C couture paths)
+    return _prev(openB, openC);
+  };
+})();
+</script>
+
+
+<script>
+/* === Display C: Optical Centering — Auto‑reserve & Role Alignment (surgical) === */
+(function(){
+  var dC = document.getElementById('displayC');
+  if (!dC) return;
+  var topline = dC.querySelector('.contact-topline');
+  var role    = dC.querySelector('.contact-role');
+  var link    = dC.querySelector('.contact-cta');
+  if (!(topline && role && link)) return;
+
+  function syncContactLayout(){
+    // Only measure when visible to avoid 0 widths
+    if (!dC.classList.contains('open')) return;
+    var linkRect = link.getBoundingClientRect();
+    var tlRect   = topline.getBoundingClientRect();
+
+    var reserve = Math.max(0, Math.ceil(linkRect.width));
+    if (reserve > 0){
+      topline.style.setProperty('--reserve', reserve + 'px');
+    }
+    var tlw = Math.max(0, Math.ceil(tlRect.width));
+    if (tlw > 0){
+      role.style.width = tlw + 'px';
+      role.style.marginLeft  = 'auto';
+      role.style.marginRight = 'auto';
+      role.style.display = 'block';
+      // keep center alignment via existing text-align center on card
+    }
+  }
+
+  // Recalculate when Display C opens/closes
+  var obs = new MutationObserver(function(muts){
+    for (var i=0;i<muts.length;i++){
+      var m = muts[i];
+      if (m.type === 'attributes' && m.attributeName === 'class'){
+        if (dC.classList.contains('open')){
+          // wait two frames so transforms/opacity settle enough for precise geometry
+          requestAnimationFrame(function(){ requestAnimationFrame(syncContactLayout); });
+        }
+      }
+    }
+  });
+  obs.observe(dC, { attributes:true });
+
+  // Recalculate on resize & after fonts load
+  window.addEventListener('resize', function(){
+    if (dC.classList.contains('open')) syncContactLayout();
+  }, { passive:true });
+
+  if (document.fonts && document.fonts.ready){
+    document.fonts.ready.then(function(){
+      if (dC.classList.contains('open')) syncContactLayout();
+    });
+  }
+
+  // Expose for manual debugging if needed
+  window.syncContactLayout = syncContactLayout;
+})();
+</script>
+
+
+<script id="lux-a11y-grid-js">
+(function(){
+  try{
+    var grid = document.getElementById('colorGrid');
+    var wrap = document.getElementById('colorGridContainer');
+    if (!grid || !wrap) return;
+
+    // Create focus rectangle
+    var focusEl = document.createElement('div');
+    focusEl.id = 'gridFocus';
+    wrap.appendChild(focusEl);
+
+    // Compute logical grid based on station count
+    function getCounts(){
+      var n = (window.STATIONS && window.STATIONS.length) ? window.STATIONS.length : 16;
+      var cols = Math.ceil(Math.sqrt(n));
+      var rows = Math.ceil(n / cols);
+      return {n:n, cols:cols, rows:rows};
+    }
+
+    function cellRect(col, row){
+      var b = grid.getBoundingClientRect();
+      // Use canvas internal size if available to get aspect; else fallback to client
+      var counts = getCounts();
+      var cols = counts.cols, rows = counts.rows;
+      var w = b.width / cols;
+      var h = b.height / rows;
+      var x = b.left + col * w;
+      var y = b.top + row * h;
+      return { x:x, y:y, w:w, h:h };
+    }
+
+    function placeFocus(){
+      var counts = getCounts();
+      var selCol = currentSelCol;
+      var selRow = currentSelRow;
+      var r = cellRect(selCol, selRow);
+      var c = wrap.getBoundingClientRect();
+      var left = r.x - c.left + 2;
+      var top  = r.y - c.top  + 2;
+      focusEl.style.left = left + 'px';
+      focusEl.style.top  = top  + 'px';
+      focusEl.style.width  = Math.max(0, r.w - 4) + 'px';
+      focusEl.style.height = Math.max(0, r.h - 4) + 'px';
+    }
+
+    var currentIndex = 0;
+    var currentSelCol = 0, currentSelRow = 0;
+
+    function setIndex(i, announce){
+      var counts = getCounts();
+      var n = counts.n;
+      if (i < 0) i = 0;
+      if (i > n-1) i = n-1;
+      currentIndex = i;
+      currentSelCol = i % counts.cols;
+      currentSelRow = Math.floor(i / counts.cols);
+      placeFocus();
+      if (announce){
+        try {
+          var name = (window.STATIONS && window.STATIONS[currentIndex] and window.STATIONS[currentIndex].name) || ('Station '+(currentIndex+1));
+          grid.setAttribute('aria-activedescendant', 'station-'+currentIndex);
+          grid.setAttribute('aria-label', 'Station grid, '+name);
+        } catch(_){}
+      }
+    }
+
+    function move(dx, dy){
+      var counts = getCounts();
+      var cols = counts.cols, rows = counts.rows;
+      var c = currentSelCol + dx;
+      var r = currentSelRow + dy;
+      if (c < 0) c = 0;
+      if (c > cols-1) c = cols-1;
+      if (r < 0) r = 0;
+      if (r > rows-1) r = rows-1;
+      var i = r * cols + c;
+      if (i >= counts.n) { i = counts.n - 1; }
+      setIndex(i, true);
+    }
+
+    function activate(){
+      if (typeof playStation === 'function'){
+        playStation(currentIndex);
+      }
+    }
+
+    function show(){ focusEl.classList.add('show'); placeFocus(); }
+    function hide(){ focusEl.classList.remove('show'); }
+
+    grid.addEventListener('focus', function(){ setIndex(currentIndex, true); show(); });
+    grid.addEventListener('blur', function(){ hide(); });
+
+    grid.addEventListener('keydown', function(e){
+      if (e.altKey || e.ctrlKey || e.metaKey) return;
+      switch(e.key){
+        case 'ArrowLeft':  e.preventDefault(); move(-1, 0); break;
+        case 'ArrowRight': e.preventDefault(); move( 1, 0); break;
+        case 'ArrowUp':    e.preventDefault(); move( 0,-1); break;
+        case 'ArrowDown':  e.preventDefault(); move( 0, 1); break;
+        case 'Home':       e.preventDefault(); setIndex(0, true); break;
+        case 'End':        e.preventDefault(); setIndex(getCounts().n-1, true); break;
+        case 'PageUp':     e.preventDefault(); move(0,-1); break;
+        case 'PageDown':   e.preventDefault(); move(0, 1); break;
+        case 'Enter':
+        case ' ':
+          e.preventDefault(); activate(); break;
+      }
+    });
+
+    window.addEventListener('resize', function(){ placeFocus(); });
+    setTimeout(function(){ setIndex(0, false); }, 30);
+  }catch(_){}
+})();
+</script>
+
+
+
+
+
+<script>
+/* ===== Pill dynamic centering — Robust, clamps edge cases ===== */
+(function(){
+  function centerPillRobust(){
+    try{
+      // Only when A is visible
+      if (document.body.classList.contains('overlay-open')) return;
+      var container = document.getElementById('colorGridContainer');
+      var plusRow   = document.querySelector('.plus-row');
+      var pill      = document.getElementById('pill');
+      if (!container || !plusRow || !pill) return;
+
+      // Ensure we're not stuck in dock-bottom when overlays are closed
+      pill.classList.remove('dock-bottom');
+
+      var gridRect = container.getBoundingClientRect();
+      var plusRect = plusRow.getBoundingClientRect();
+      var span = (plusRect.top - gridRect.bottom);
+      var pillH = pill.offsetHeight || 0;
+
+      // If measurements are silly (negative || tiny), fall back to "just under the grid"
+      var desiredTop;
+      if (!isFinite(span)) return;
+      if (span >= 24){
+        desiredTop = Math.round(gridRect.bottom + span/2 - pillH/2);
+      } else {
+        var minGap = 12; // px cushion under grid
+        desiredTop = Math.round(gridRect.bottom + minGap);
+      }
+
+      pill.style.left = '50%';
+      pill.style.transform = 'translateX(-50%)';
+      pill.style.top = desiredTop + 'px';
+    }catch(_){}
+  }
+
+  // Expose & wire
+  window.centerPill = centerPillRobust;
+  function boot(){ centerPillRobust(); }
+  if (document.readyState === 'complete' || document.readyState === 'interactive'){
+    requestAnimationFrame(boot);
+  }else{
+    window.addEventListener('DOMContentLoaded', function(){ requestAnimationFrame(boot); }, { once:true });
+  }
+  if (document.fonts && document.fonts.ready){ document.fonts.ready.then(function(){ requestAnimationFrame(centerPillRobust); }); }
+  window.addEventListener('resize', function(){ requestAnimationFrame(centerPillRobust); }, { passive:true });
+
+  // Note: Pill repositioning when returning to page 1 is handled in updatePillForTransition
+  // This observer handles edge cases like window resize while overlay is closing
+  var mo = new MutationObserver(function(muts){
+    for (var i=0;i<muts.length;i++){
+      var m = muts[i];
+      if (m.type === 'attributes' && m.attributeName === 'class'){
+        if (!document.body.classList.contains('overlay-open')){
+          // Small delay to avoid conflicting with updatePillForTransition
+          setTimeout(function(){
+            requestAnimationFrame(centerPillRobust);
+          }, 850);
+        }
+      }
+    }
+  });
+  try{ mo.observe(document.body, { attributes:true }); }catch(_){}
+})();
+</script>
+
+
+<script id="displayB-shomon-engine-mobile">
+(function(){
+  'use strict';
+  var isMobile = (matchMedia && matchMedia('(max-width:768px)').matches) && (('ontouchstart' in window) || (navigator.maxTouchPoints||0)>0);
+  // This engine is for mobile only; desktop uses BlackLabel
+  if (!isMobile) return;
+
+  var B = document.getElementById('displayB');
+  var canvas = document.getElementById('glassCanvas');
+  if (!B || !canvas) return;
+
+  var ctx = canvas.getContext('2d', { alpha:true });
+  var DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+  var raf = null, started = false, startTime = 0;
+
+  function resize(){
+    var r = canvas.getBoundingClientRect();
+    var w = Math.max(1, Math.floor((r.width||640) * DPR));
+    var h = Math.max(1, Math.floor((r.height||640) * DPR));
+    if (canvas.width !== w || canvas.height !== h){
+      canvas.width = w; canvas.height = h;
+    }
+  }
+  window.addEventListener('resize', resize, {passive:true});
+
+  // ======== Shōmon core (ring + mobile-only inner nodes) ========
+  var SPEED=0.48, THICK=1.2, EDGE=1.18, SPECTRAL=0.22, GLOW=1.05, GRID=0.06;
+  function spectral(x){
+    var r=0.5+0.5*Math.sin(6.0*x+0.0);
+    var g=0.5+0.5*Math.sin(6.0*x+2.0944);
+    var b=0.5+0.5*Math.sin(6.0*x+4.18879);
+    var Y=0.2126*r+0.7152*g+0.0722*b;
+    var sc = 0.82/(Y+1e-4);
+    var R=(255*Math.min(1,r*sc))|0, G=(255*Math.min(1,g*sc))|0, B=(255*Math.min(1,b*sc))|0;
+    return 'rgba('+R+','+G+','+B+',';
+  }
+  function superellipse(a,b,n,theta){
+    var ct=Math.cos(theta), st=Math.sin(theta);
+    var x=Math.sign(ct)*Math.pow(Math.abs(ct), 2/n)*a;
+    var y=Math.sign(st)*Math.pow(Math.abs(st), 2/n)*b;
+    return {x:x,y:y};
+  }
+  function drawGrid(W,H,cx,cy,t){
+    if(GRID<=0) return;
+    ctx.save();
+    ctx.strokeStyle = 'rgba(0,0,0,'+(0.06*GRID)+')';
+    ctx.lineWidth = Math.max(1, 0.75*DPR);
+    var s = Math.min(W,H)*0.12, off=(t*0.3)%s;
+    for(var x=cx-3*s;x<=cx+3*s;x+=s){ ctx.beginPath(); ctx.moveTo(x+off,cy-3*s); ctx.lineTo(x+off,cy+3*s); ctx.stroke(); }
+    for(var y=cy-3*s;y<=cy+3*s;y+=s){ ctx.beginPath(); ctx.moveTo(cx-3*s,y+off); ctx.lineTo(cx+3*s,y+off); ctx.stroke(); }
+    ctx.restore();
+  }
+  function drawAperture(W,H,cx,cy,t){
+    var rad=Math.min(W,H)*0.22*(0.985+0.015*Math.sin(t*0.8));
+    var g=ctx.createRadialGradient(cx,cy,rad*0.1,cx,cy,rad*1.25);
+    g.addColorStop(0,'rgba(255,255,255,'+(0.22*GLOW)+')');
+    g.addColorStop(.5,'rgba(255,255,255,'+(0.06*GLOW)+')');
+    g.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.globalCompositeOperation='lighter';
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(cx,cy,rad,0,Math.PI*2); ctx.fill();
+    ctx.globalCompositeOperation='source-over';
+  }
+  function drawRing(W,H,cx,cy,t){
+    var a0=Math.min(W,H)*0.40, b0=Math.min(W,H)*0.38, n=3.2, N=540;
+    var baseW=Math.min(W,H)*0.06*THICK, outlineW=baseW*(1+0.30*(EDGE-1)), bodyW=baseW*0.78, hiW=baseW*0.36;
+    ctx.save(); ctx.translate(cx,cy); var rot=0.06*Math.sin(t*0.12); ctx.rotate(rot); ctx.translate(-cx,-cy);
+    var p=null;
+    for(var i=0;i<=N;i++){
+      var th=(i/N)*Math.PI*2, P=superellipse(a0,b0,n,th), x=cx+P.x, y=cy+P.y;
+      if(p){
+        ctx.globalCompositeOperation='source-over'; ctx.lineJoin='round'; ctx.lineCap='round';
+        var charCol = getComputedStyle(document.documentElement).getPropertyValue('--char').trim()||'#0E0E0F';
+        var ivory   = getComputedStyle(document.documentElement).getPropertyValue('--ivory').trim()||'#F6F4E8';
+        ctx.strokeStyle=charCol; ctx.lineWidth=outlineW; ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(x,y); ctx.stroke();
+        ctx.strokeStyle=ivory;   ctx.lineWidth=bodyW;   ctx.globalCompositeOperation='lighter'; ctx.stroke();
+        if(SPECTRAL>0){ var col=spectral(i/N); ctx.strokeStyle=col+(0.40*SPECTRAL)+')'; ctx.lineWidth=outlineW*0.66; ctx.globalCompositeOperation='screen'; ctx.stroke(); }
+        ctx.strokeStyle='rgba(255,255,255,0.18)'; ctx.lineWidth=hiW; ctx.globalCompositeOperation='screen'; ctx.stroke();
+      }
+      p={x:x,y:y};
+    }
+    ctx.restore();
+  }
+  function drawNodes(W,H,cx,cy,t){
+    // Colored inner circles — MOBILE ONLY
+    var N=8;
+    for(var i=0;i<N;i++){
+      var a=i/N*Math.PI*2+0.25*Math.sin(t*0.35+i);
+      var R=Math.min(W,H)*0.33*(1+0.02*Math.sin(t*0.9+i));
+      var x=cx+Math.cos(a)*R, y=cy+Math.sin(a)*R, col=spectral(i/N);
+      ctx.strokeStyle=col+'0.40)'; ctx.lineWidth=2.0*DPR; ctx.beginPath(); ctx.arc(x,y,6*DPR,0,Math.PI*2); ctx.stroke();
+    }
+  }
+  function drawOverlay(W,H,cx,cy,t){
+    var r = Math.min(W,H)*0.39, grains = 140;
+    ctx.save(); ctx.globalCompositeOperation='multiply';
+    for(var i=0;i<grains;i++){
+      var ang = (i/grains)*Math.PI*2 + 0.7*Math.sin(t*0.07+i);
+      var rr = r * (0.88 + 0.12*Math.random());
+      var x = cx + Math.cos(ang)*rr, y = cy + Math.sin(ang)*rr;
+      ctx.fillStyle = 'rgba(180,170,150,' + (0.04 + 0.02*Math.random()) + ')';
+      ctx.beginPath(); ctx.arc(x,y, 1.2*DPR, 0, Math.PI*2); ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  // ======== lifecycle ========
+  function frame(now){
+    if (!started) return;
+    var W=canvas.width, H=canvas.height, cx=W*0.5, cy=H*0.52;
+    var t = ((now - startTime)/1000) * SPEED;
+    ctx.clearRect(0,0,W,H);
+    drawGrid(W,H,cx,cy,t);
+    drawAperture(W,H,cx,cy,t);
+    drawRing(W,H,cx,cy,t);
+    if (isMobile) drawNodes(W,H,cx,cy,t); // <-- ONLY on mobile
+    drawOverlay(W,H,cx,cy,t);
+    raf = requestAnimationFrame(frame);
+  }
+  function start(){
+    if (started) return;
+    started = true;
+    resize();
+    startTime = performance.now();
+    raf = requestAnimationFrame(frame);
+  }
+  function stop(){
+    started = false;
+    if (raf) { cancelAnimationFrame(raf); raf = null; }
+  }
+
+  function isOpen(){
+    var cp = document.getElementById('compPanel');
+    var anyCategoryOpen = cp && cp.classList.contains('one-open');
+    return B.classList.contains('open') && B.getAttribute('aria-hidden')!=='true' && !anyCategoryOpen;
+  }
+
+  var mo = new MutationObserver(function(){ if (isOpen()) start(); else stop(); });
+  mo.observe(B, { attributes:true, attributeFilter:['class','style','aria-hidden'] });
+  // Also observe compPanel for tab open/close state changes
+  var cp = document.getElementById('compPanel');
+  if (cp) mo.observe(cp, { attributes:true, attributeFilter:['class'] });
+
+  window.addEventListener('load', function(){ setTimeout(function(){ if (isOpen()) start(); }, 60); }, {once:true});
+  new ResizeObserver(function(){ if (isOpen()) { resize(); } }).observe(canvas);
+
+  window.__SHOMON__ = { start:start, stop:stop, resize:resize };
+})();
+</script>
+
+<script id="gallery-carousel-engine">
+(function(){
+  'use strict';
+
+  var carousel = document.getElementById('galleryCarousel');
+  var lightbox = document.getElementById('galleryLightbox');
+  if (!carousel || !lightbox) return;
+
+  var track = carousel.querySelector('.carousel-track');
+  var slides = carousel.querySelectorAll('.carousel-slide');
+  var navLeft = carousel.querySelector('.carousel-nav-left');
+  var navRight = carousel.querySelector('.carousel-nav-right');
+  var lightboxImage = lightbox.querySelector('.lightbox-image');
+  var lightboxBackdrop = lightbox.querySelector('.lightbox-backdrop');
+  var lightboxNavLeft = lightbox.querySelector('.lightbox-nav-left');
+  var lightboxNavRight = lightbox.querySelector('.lightbox-nav-right');
+
+  var currentIndex = 0;
+  var isAnimating = false;
+  var lightboxOpen = false;
+
+  // Update navigation arrow visibility based on current position
+  function updateNavArrows() {
+    // Force hide carousel arrows on mobile - use tap zones only
+    if (window.matchMedia('(max-width: 768px)').matches) {
+      if (navLeft) navLeft.style.display = 'none';
+      if (navRight) navRight.style.display = 'none';
+      return;
+    }
+
+    // Hide left arrow on first image (index 0)
+    // Hide right arrow on last image (index === slides.length - 1)
+    var hideLeft = currentIndex === 0;
+    var hideRight = currentIndex === slides.length - 1;
+
+    // Carousel arrows
+    if (navLeft) {
+      navLeft.style.display = hideLeft ? 'none' : '';
+      navLeft.disabled = hideLeft;
+    }
+    if (navRight) {
+      navRight.style.display = hideRight ? 'none' : '';
+      navRight.disabled = hideRight;
+    }
+
+    // Lightbox arrows
+    if (lightboxNavLeft) {
+      lightboxNavLeft.style.display = hideLeft ? 'none' : '';
+      lightboxNavLeft.disabled = hideLeft;
+    }
+    if (lightboxNavRight) {
+      lightboxNavRight.style.display = hideRight ? 'none' : '';
+      lightboxNavRight.disabled = hideRight;
+    }
+  }
+
+  // Initialize arrow visibility
+  updateNavArrows();
+
+  // Initialize first slide as active
+  if (slides.length > 0) {
+    slides[0].classList.add('active');
+  }
+
+  // Update carousel display - show only the active slide
+  function updateCarousel(animate){
+    // Update navigation arrows
+    updateNavArrows();
+
+    // Show only the current slide, hide all others
+    for (var i = 0; i < slides.length; i++) {
+      if (i === currentIndex) {
+        slides[i].classList.add('active');
+      } else {
+        slides[i].classList.remove('active');
+      }
+    }
+
+    if (animate) {
+      isAnimating = true;
+      setTimeout(function(){ isAnimating = false; }, 400);
+    }
+  }
+
+  // Initial sync
+  updateCarousel(false);
+
+  function goToSlide(index){
+    if (isAnimating) return;
+    currentIndex = Math.max(0, Math.min(slides.length - 1, index));
+    updateCarousel(true);
+  }
+
+  function nextSlide(){
+    if (currentIndex < slides.length - 1) goToSlide(currentIndex + 1);
+  }
+
+  function prevSlide(){
+    if (currentIndex > 0) goToSlide(currentIndex - 1);
+  }
+
+  // Navigation button clicks
+  navLeft.addEventListener('click', function(e){
+    e.stopPropagation();
+    prevSlide();
+  });
+
+  navRight.addEventListener('click', function(e){
+    e.stopPropagation();
+    nextSlide();
+  });
+
+  // Click on slivers to navigate
+  slides.forEach(function(slide, i){
+    slide.addEventListener('click', function(){
+      if (i === currentIndex) {
+        openLightbox();
+      } else {
+        goToSlide(i);
+      }
+    });
+  });
+
+  // Keyboard navigation
+  document.addEventListener('keydown', function(e){
+    // Only handle keys when carousel or lightbox is visible
+    var carouselVisible = !carousel.classList.contains('is-hidden');
+    if (!carouselVisible && !lightboxOpen) return;
+
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      prevSlide();
+      if (lightboxOpen) updateLightboxImage();
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      nextSlide();
+      if (lightboxOpen) updateLightboxImage();
+    } else if (e.key === 'Escape' && lightboxOpen) {
+      e.preventDefault();
+      closeLightbox();
+    }
+  });
+
+  // Mobile tap zones - tap left half for previous, right half for next
+  function isMobileDevice() {
+    return window.matchMedia('(max-width: 768px)').matches;
+  }
+
+  track.addEventListener('click', function(e){
+    if (!isMobileDevice()) return;
+    if (lightboxOpen) return; // Don't interfere with lightbox
+
+    var rect = track.getBoundingClientRect();
+    var x = e.clientX - rect.left;
+    var halfWidth = rect.width / 2;
+
+    if (x < halfWidth) {
+      prevSlide();
+    } else {
+      nextSlide();
+    }
+  });
+
+  // Lightbox functions
+  function openLightbox(){
+    var currentSlide = slides[currentIndex];
+    var img = currentSlide.querySelector('img');
+    if (!img) return;
+
+    lightboxImage.src = img.src;
+    lightboxImage.alt = img.alt;
+    lightbox.style.display = 'flex';
+
+    // Force reflow then add open class
+    void lightbox.offsetHeight;
+    lightbox.classList.add('open');
+    document.body.classList.add('lightbox-open');
+    lightboxOpen = true;
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox(){
+    lightbox.classList.remove('open');
+    document.body.classList.remove('lightbox-open');
+    lightboxOpen = false;
+    document.body.style.overflow = '';
+
+    setTimeout(function(){
+      lightbox.style.display = 'none';
+    }, 300);
+  }
+
+  function updateLightboxImage(){
+    var currentSlide = slides[currentIndex];
+    var img = currentSlide.querySelector('img');
+    if (img) {
+      lightboxImage.src = img.src;
+      lightboxImage.alt = img.alt;
+    }
+  }
+
+  // Lightbox navigation
+  lightboxNavLeft.addEventListener('click', function(e){
+    e.stopPropagation();
+    prevSlide();
+    updateLightboxImage();
+  });
+
+  lightboxNavRight.addEventListener('click', function(e){
+    e.stopPropagation();
+    nextSlide();
+    updateLightboxImage();
+  });
+
+  // Click backdrop to close
+  lightboxBackdrop.addEventListener('click', closeLightbox);
+
+  // Cursor-based navigation zones in lightbox
+  lightbox.querySelector('.lightbox-content').addEventListener('click', function(e){
+    var rect = this.getBoundingClientRect();
+    var x = e.clientX - rect.left;
+    var width = rect.width;
+
+    if (x < width * 0.3) {
+      prevSlide();
+      updateLightboxImage();
+    } else if (x > width * 0.7) {
+      nextSlide();
+      updateLightboxImage();
+    } else {
+      closeLightbox();
+    }
+  });
+
+  // Hide carousel when Gallery tab closes or other tab opens
+  var compPanel = document.getElementById('compPanel');
+  if (compPanel) {
+    var observer = new MutationObserver(function(){
+      var galleryItem = document.querySelector('[data-comp="gallery"]');
+      var galleryBtn = galleryItem ? galleryItem.querySelector('.comp-btn') : null;
+      var isGalleryOpen = galleryBtn && galleryBtn.classList.contains('open');
+
+      // Hide carousel if gallery tab is closed
+      if (!isGalleryOpen) {
+        carousel.classList.add('is-hidden');
+        if (lightboxOpen) closeLightbox();
+      }
+    });
+
+    observer.observe(compPanel, {
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class']
+    });
+  }
+
+  // Refresh function to update carousel layout
+  function refresh(){
+    setTimeout(function(){ updateCarousel(false); }, 50);
+  }
+
+  // Handle window resize
+  window.addEventListener('resize', function(){
+    if (!carousel.classList.contains('is-hidden')) {
+      updateCarousel(false);
+    }
+  });
+
+  // Export for debugging
+  window.__GALLERY_CAROUSEL__ = {
+    next: nextSlide,
+    prev: prevSlide,
+    refresh: refresh,
+    goTo: goToSlide,
+    openLightbox: openLightbox,
+    closeLightbox: closeLightbox
+  };
+})();
+</script>
+
+<script id="score-lightbox-engine">
+(function(){
+  'use strict';
+
+  var scoreLightbox = document.getElementById('scoreLightbox');
+  if (!scoreLightbox) return;
+
+  var lightboxBackdrop = scoreLightbox.querySelector('.lightbox-backdrop');
+  var lightboxContent = scoreLightbox.querySelector('.lightbox-content');
+  var isOpen = false;
+  var scrollY = 0;
+
+  // Prevent all touch/scroll events when lightbox is open
+  function preventScroll(e) {
+    if (isOpen) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+  }
+
+  function openScoreLightbox() {
+    if (isOpen) return;
+    isOpen = true;
+
+    // Store scroll position before locking
+    scrollY = window.scrollY;
+
+    scoreLightbox.style.display = 'flex';
+    scoreLightbox.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('lightbox-open');
+
+    // Lock body completely
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = -scrollY + 'px';
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.touchAction = 'none';
+
+    // Add event listeners to prevent scrolling
+    scoreLightbox.addEventListener('touchmove', preventScroll, { passive: false });
+    scoreLightbox.addEventListener('wheel', preventScroll, { passive: false });
+    document.addEventListener('touchmove', preventScroll, { passive: false });
+  }
+
+  function closeScoreLightbox() {
+    if (!isOpen) return;
+    isOpen = false;
+
+    scoreLightbox.style.display = 'none';
+    scoreLightbox.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('lightbox-open');
+
+    // Restore body
+    document.body.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.touchAction = '';
+
+    // Restore scroll position
+    window.scrollTo(0, scrollY);
+
+    // Remove event listeners
+    scoreLightbox.removeEventListener('touchmove', preventScroll);
+    scoreLightbox.removeEventListener('wheel', preventScroll);
+    document.removeEventListener('touchmove', preventScroll);
+  }
+
+  // Close on backdrop click
+  lightboxBackdrop.addEventListener('click', closeScoreLightbox);
+
+  // Close on content click
+  lightboxContent.addEventListener('click', closeScoreLightbox);
+
+  // Close on Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && isOpen) {
+      closeScoreLightbox();
+    }
+  });
+
+  // Export
+  window.__SCORE_LIGHTBOX__ = {
+    open: openScoreLightbox,
+    close: closeScoreLightbox
+  };
+})();
+</script>
+
+<script id="score-display-desktop">
+(function(){
+  'use strict';
+  var scoreDisplay = document.getElementById('scoreDisplay');
+  if (!scoreDisplay) return;
+
+  function closeScoreDisplay() {
+    scoreDisplay.classList.add('is-hidden');
+    document.body.classList.remove('score-open');
+    // Deactivate the example button so clicking Composition #3 works again
+    var examplesEl = document.getElementById('examples');
+    if (examplesEl) {
+      var activeBtn = examplesEl.querySelector('.example-btn.active');
+      if (activeBtn) activeBtn.classList.remove('active');
+      examplesEl.classList.remove('is-singular');
+    }
+    // Stay in Display B (Scores view) - ensure overlay state is B open, C closed
+    if (typeof window.applyOverlayState === 'function') {
+      window.applyOverlayState(true, false);
+    }
+  }
+
+  // Click anywhere on scoreDisplay closes it (same as mobile)
+  scoreDisplay.addEventListener('click', function(e) {
+    closeScoreDisplay();
+  });
+
+  // Close on Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && !scoreDisplay.classList.contains('is-hidden')) {
+      closeScoreDisplay();
+    }
+  });
+})();
+</script>
+
+<script id="acknowledgment-display-desktop">
+(function(){
+  'use strict';
+  var acknowledgmentDisplay = document.getElementById('acknowledgmentDisplay');
+  if (!acknowledgmentDisplay) return;
+
+  function closeAcknowledgmentDisplay() {
+    acknowledgmentDisplay.classList.add('is-hidden');
+    document.body.classList.remove('acknowledgment-open');
+    // Deactivate the example button so clicking Acknowledgments works again
+    var examplesEl = document.getElementById('examples');
+    if (examplesEl) {
+      var activeBtn = examplesEl.querySelector('.example-btn.active');
+      if (activeBtn) activeBtn.classList.remove('active');
+      examplesEl.classList.remove('is-singular');
+    }
+    // Stay in Display B (Letters view) - ensure overlay state is B open, C closed
+    if (typeof window.applyOverlayState === 'function') {
+      window.applyOverlayState(true, false);
+    }
+  }
+
+  // Click anywhere on acknowledgmentDisplay closes it
+  acknowledgmentDisplay.addEventListener('click', function(e) {
+    closeAcknowledgmentDisplay();
+  });
+
+  // Close on Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && !acknowledgmentDisplay.classList.contains('is-hidden')) {
+      closeAcknowledgmentDisplay();
+    }
+  });
+})();
+</script>
+
+<script id="contextual-yield-engine">
+(function(){
+  'use strict';
+
+  // ===================== Contextual Yield System =====================
+  // Ensures gallery images never overlap the bottom +/- controls
+  // by dynamically translating controls downward when collision detected
+
+  var plusRow = document.querySelector('.plus-row');
+  var galleryCarousel = document.getElementById('galleryCarousel');
+  if (!plusRow || !galleryCarousel) return;
+
+  // Configuration
+  var isMobile = function() {
+    return window.matchMedia('(max-width: 768px)').matches;
+  };
+
+  var getMaxYield = function() {
+    return isMobile() ? 110 : 80;
+  };
+
+  var getBreathingMargin = function() {
+    return isMobile() ? 24 : 20;
+  };
+
+  // State
+  var currentYield = 0;
+  var isYielding = false;
+  var resizeTimeout = null;
+  var rafId = null;
+
+  // Get the active image element in the carousel
+  function getActiveImage() {
+    var slide = galleryCarousel.querySelector('.carousel-slide');
+    if (!slide) return null;
+    return slide.querySelector('img');
+  }
+
+  // Calculate yield amount based on collision detection
+  function calculateYield() {
+    // Only calculate if carousel is visible
+    if (galleryCarousel.style.display === 'none' ||
+        !galleryCarousel.offsetParent) {
+      return 0;
+    }
+
+    var img = getActiveImage();
+    if (!img || !img.complete || img.naturalWidth === 0) {
+      return 0;
+    }
+
+    // Get bounding rectangles
+    var imgRect = img.getBoundingClientRect();
+    var plusRect = plusRow.getBoundingClientRect();
+
+    // Calculate overlap (positive means collision)
+    var overlap = imgRect.bottom - plusRect.top;
+
+    if (overlap <= 0) {
+      return 0;
+    }
+
+    // Add breathing margin and clamp to max
+    var maxYield = getMaxYield();
+    var breathingMargin = getBreathingMargin();
+    var yieldAmount = Math.min(overlap + breathingMargin, maxYield);
+
+    return Math.round(yieldAmount);
+  }
+
+  // Apply yield transform using RAF for smooth rendering
+  function applyYield(amount) {
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+    }
+
+    rafId = requestAnimationFrame(function() {
+      if (amount > 0) {
+        // Apply yield
+        plusRow.style.setProperty('--yield-amount', amount + 'px');
+        plusRow.classList.remove('is-yielding-reset');
+        plusRow.classList.add('is-yielding');
+        isYielding = true;
+        currentYield = amount;
+      } else if (isYielding) {
+        // Reset yield
+        plusRow.classList.remove('is-yielding');
+        plusRow.classList.add('is-yielding-reset');
+        isYielding = false;
+        currentYield = 0;
+
+        // Clean up reset class after transition
+        setTimeout(function() {
+          if (!isYielding) {
+            plusRow.classList.remove('is-yielding-reset');
+            plusRow.style.setProperty('--yield-amount', '0px');
+          }
+        }, 300);
+      }
+      rafId = null;
+    });
+  }
+
+  // Main yield update function
+  function updateYield() {
+    var yieldAmount = calculateYield();
+    applyYield(yieldAmount);
+  }
+
+  // Reset yield immediately (for when gallery closes)
+  function resetYield() {
+    applyYield(0);
+  }
+
+  // Debounced resize handler
+  function handleResize() {
+    if (resizeTimeout) {
+      clearTimeout(resizeTimeout);
+    }
+    resizeTimeout = setTimeout(function() {
+      updateYield();
+      resizeTimeout = null;
+    }, 120);
+  }
+
+  // Deferred yield calculation using requestIdleCallback (non-blocking)
+  var idleCallbackId = null;
+  var scheduleYield = (function() {
+    // Use requestIdleCallback if available, otherwise use setTimeout
+    var schedule = window.requestIdleCallback || function(cb) { return setTimeout(cb, 1); };
+    var cancel = window.cancelIdleCallback || clearTimeout;
+
+    return function() {
+      if (idleCallbackId) {
+        cancel(idleCallbackId);
+      }
+      idleCallbackId = schedule(function() {
+        idleCallbackId = null;
+        var img = getActiveImage();
+        if (img && img.complete && img.naturalWidth > 0) {
+          updateYield();
+        } else if (img) {
+          // Image not loaded yet - listen for load event
+          img.addEventListener('load', function onLoad() {
+            img.removeEventListener('load', onLoad);
+            updateYield();
+          }, { once: true });
+        }
+      }, { timeout: 100 });
+    };
+  })();
+
+  // Observe gallery visibility changes (class-based)
+  var observer = new MutationObserver(function(mutations) {
+    var isHidden = galleryCarousel.classList.contains('is-hidden');
+
+    if (!isHidden) {
+      // Gallery opened - schedule non-blocking yield calculation
+      scheduleYield();
+    } else {
+      // Gallery closed - reset yield immediately
+      resetYield();
+    }
+  });
+
+  observer.observe(galleryCarousel, {
+    attributes: true,
+    attributeFilter: ['class']
+  });
+
+  // Window resize listener
+  window.addEventListener('resize', handleResize, { passive: true });
+
+  // Also observe when displayB visibility changes (for when returning to page 1)
+  var displayB = document.getElementById('displayB');
+  if (displayB) {
+    var displayObserver = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (mutation.type === 'attributes') {
+          var isOpen = displayB.classList.contains('open');
+          if (!isOpen) {
+            resetYield();
+          }
+        }
+      });
+    });
+
+    displayObserver.observe(displayB, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+  }
+
+  // Export for external triggering
+  window.__CONTEXTUAL_YIELD__ = {
+    update: updateYield,
+    reset: resetYield
+  };
+})();
+</script>
+</body>
+</html>
