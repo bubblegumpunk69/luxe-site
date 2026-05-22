@@ -9,8 +9,9 @@
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 
 <!-- Preload gallery images for instant display -->
-<link rel="preload" href="images/coffee-cups.jpeg" as="image" fetchpriority="high">
-<link rel="preload" href="images/IMG_0720.JPG" as="image">
+<link rel="preload" href="images/IMG_0328.jpeg" as="image" fetchpriority="high">
+<link rel="preload" href="images/coffee-cups.jpeg" as="image">
+<link rel="preload" href="images/Project 1.JPG" as="image" fetchpriority="high">
 
 <script>
 (function(){
@@ -68,6 +69,21 @@
 </script>
 
 <style>
+@font-face {
+  font-family: 'EB Garamond';
+  src: url('fonts/EBGaramond.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'EB Garamond';
+  src: url('fonts/EBGaramond-Italic.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
 /* ===================== Root & Typography ===================== */
 :root{
   --dur: 900ms;
@@ -106,12 +122,9 @@
   --overlay-delay: 220ms;
   --overlay-ease: cubic-bezier(0.19,1,0.22,1);
 
-  /* Display C cadence */
-  --overlay-in-c: 920ms;
-  --overlay-delay-c: 260ms;
-
-  /* Proximity (CTA) */
-  --cta-prox: 0;
+  /* Display C cadence — simultaneous, fast, inspires trust */
+  --overlay-in-c: 340ms;
+  --overlay-delay-c: 120ms;
 
   /* Display B stage size (smaller) */
   --b-stage-size: 50vmin;
@@ -197,7 +210,7 @@ html, body {
   display:flex; gap: 76px; align-items:center; justify-content:center; margin-top: 28px;
   z-index: 4000;
   pointer-events:auto;
-  transition: transform 640ms cubic-bezier(0.25, 1, 0.5, 1);
+  transition: transform 640ms cubic-bezier(0.25, 1, 0.5, 1), opacity 200ms ease;
 }
 body.overlay-open .plus-row {
   transform: translate(-50%, -8px);
@@ -260,59 +273,158 @@ body.overlay-open .plus-row {
   color: #111;
   font-size: 14px;
   line-height: 1.2;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: 3vw;
   filter: none;
-  transform: scale(1.01);
   opacity: 0;
-  transition:
-    opacity var(--overlay-in-c) var(--overlay-ease) var(--overlay-delay-c),
-    transform 900ms cubic-bezier(0.19,1,0.22,1) var(--overlay-delay-c);
+  position: relative;
+  z-index: 2;
+  transition: opacity var(--overlay-in-c) var(--overlay-ease) var(--overlay-delay-c);
 }
-#displayC.open .card{ opacity: 1; transform: scale(1.0); }
-
-#displayC .contact-cta{
-  opacity: 0;
-  transition: opacity 360ms cubic-bezier(0.19,1,0.22,1) var(--overlay-delay-c);
-}
-#displayC.open .contact-cta{
-  transition-delay: calc(var(--overlay-delay-c) + 260ms);
+#displayC.open .card{
   opacity: 1;
 }
 
+
+/* Display C — WKCR illustration */
+#displayC { background: #F6F4E8; }
+
+@media (prefers-color-scheme: dark) {
+  #displayC { background: var(--nm-canvas); }
+}
+.wkcr-illus {
+  position: absolute;
+  left: 0;
+  top: 42%;
+  transform: translateY(-50%);
+  height: 88vh;
+  width: auto;
+  display: block;
+  pointer-events: none;
+  -webkit-user-select: none;
+  z-index: 10;
+  user-select: none;
+  mix-blend-mode: multiply;
+  opacity: 0;
+  transition: opacity var(--overlay-in-c) var(--overlay-ease) var(--overlay-delay-c);
+}
+#displayC.open .wkcr-illus { opacity: 1; }
+#displayC.open .wkcr-illus-mobile { opacity: 1; }
+/* Hide mobile PNG on desktop — placed after .wkcr-illus{display:block} so same-specificity wins */
+.wkcr-illus-mobile { display: none; }
+@media (prefers-color-scheme: dark) {
+  .wkcr-illus {
+    filter: invert(1);
+    mix-blend-mode: screen;
+  }
+  /* PNG with transparency: invert makes dark lines → white; keep normal blend */
+  .wkcr-illus-mobile {
+    filter: invert(1);
+    mix-blend-mode: normal;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Desktop illustration hidden on mobile */
+  .wkcr-illus-desktop { display: none; }
+
+  /* Figure: left-anchored, torso at screen center */
+  .wkcr-illus-mobile {
+    display: block;
+    position: absolute;
+    left: -12vw;
+    right: auto;
+    top: 50%;
+    transform: translateY(-44%);
+    height: 42vh;
+    width: auto;
+    mix-blend-mode: normal;
+    pointer-events: none;
+    -webkit-user-select: none;
+    user-select: none;
+    opacity: 0;
+    transition: opacity var(--overlay-in-c) var(--overlay-ease) var(--overlay-delay-c);
+  }
+
+  /* Card: right of figure, vertically locked to the torso zone */
+  #displayC .card {
+    position: absolute;
+    left: 48%;
+    right: auto;
+    top: 47%;
+    transform: translateY(-50%);
+    margin: 0;
+    padding: 0;
+    align-items: flex-start;
+    text-align: left;
+    z-index: 2;
+    max-width: none;
+  }
+  #displayC.open .card {
+    opacity: 1;
+  }
+  /* Dissolve topline so name + cta can be freely ordered within card column */
+  #displayC .card .contact-topline {
+    display: contents;
+  }
+  #displayC .card .contact-name {
+    order: 1;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+  #displayC .card .contact-role {
+    order: 2;
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    line-height: 1.4;
+    margin-top: 5px;
+    white-space: nowrap;
+    width: max-content;
+    opacity: 0.5;
+  }
+  #displayC .card .contact-cta {
+    order: 3;
+    font-size: 11px;
+    margin-top: 10px;
+    white-space: nowrap;
+    opacity: 0.65;
+    text-decoration: none;
+  }
+#displayC .card .contact-cta::before {
+    content: none;
+  }
+}
+
 .contact-topline{
-  --reserve: 9ch; /* space for “ — contact” */
-  display: inline-grid;
-  grid-template-columns: var(--reserve) auto var(--reserve);
+  display: flex;
   align-items: baseline;
   white-space: nowrap;
   gap: 0;
-  margin: 0 auto;
+  margin-left: 0;
+  padding-left: 0;
 }
-.contact-name{ grid-column: 2; font-size: 1rem; font-weight: 600; letter-spacing: 0.03em; }
+.contact-name{ font-size: 1rem; font-weight: 600; letter-spacing: 0.03em; margin-left: 0; padding-left: 0; }
 .contact-cta{
-  grid-column: 3; justify-self: start; align-self: baseline; text-decoration: none; font-weight: 500;
-  letter-spacing: calc(0.03em + 0.01em * var(--cta-prox)); color: inherit;
-  transform: translateY(calc(-1px * var(--cta-prox))) scale(calc(1 + 0.015 * var(--cta-prox)));
-  filter: saturate(calc(1 + 0.05 * var(--cta-prox)));
-  transition:
-    transform 220ms cubic-bezier(0.19,1,0.22,1),
-    filter 220ms cubic-bezier(0.19,1,0.22,1),
-    letter-spacing 220ms cubic-bezier(0.19,1,0.22,1);
+  align-self: flex-start; text-decoration: none; font-weight: 500; display: block; margin-top: 0.6em;
+  color: inherit;
 }
-.contact-cta::before{ content: " — "; }
-.contact-cta:hover{
-  text-decoration: underline;
-  text-underline-offset: 0.18em;
-  text-decoration-thickness: 0.06em;
-}
+.contact-cta::before{ content: none; }
 .contact-role {
-  margin: 0.65em auto 0;
+  margin: 0.65em 0 0;
+  padding-left: 0;
   font-size: 0.82rem;
   font-weight: 300;
   color: #4a4a4a;
   letter-spacing: 0.04em;
   display: block;
-  width: fit-content;
+  text-align: left;
+  white-space: nowrap;
+  align-self: flex-start;
 }
 
 /* ===================== Compositions Stack ===================== */
@@ -335,7 +447,7 @@ body.overlay-open .plus-row {
 .comp-item{
   position: relative; display: flex; align-items: center; gap: 10px;
   opacity: 0; transform: translate3d(var(--seed-dx,0), var(--seed-dy,0), 0) scale(0.86);
-  animation: compBirth 900ms cubic-bezier(0.65,0,0.35,1) forwards; animation-delay: calc(70ms * var(--i, 0));
+  animation: compBirth 520ms cubic-bezier(0.65,0,0.35,1) forwards; animation-delay: calc(18ms * var(--i, 0));
   min-height: 20px;
   cursor: pointer;
 }
@@ -344,7 +456,8 @@ body.overlay-open .plus-row {
 .comp-btn{
   width: 18px; height: 18px;
   background: none; border: 0; padding: 0; cursor: pointer;
-  display: inline-flex; align-items: center; justify-content: center;
+  display: none;
+  align-items: center; justify-content: center;
   position: relative;
   pointer-events: none; /* Let parent handle clicks */
 }
@@ -406,10 +519,6 @@ body.overlay-open .plus-row {
 @media (prefers-reduced-motion: reduce){
   #colorGridContainer, .display, .display .card, #displayC, #displayC .card{
     transition: none !important;
-  }
-  .contact-cta{
-    transition: none !important;
-    transform: none !important;
   }
 }
 
@@ -672,21 +781,21 @@ body.overlay-open .pill,
 /* Palette (dark): near-black canvas + layered whites/greys with soft bloom */
 @media (prefers-color-scheme: dark){
   :root{
-    --nm-canvas: #0d0f11;      /* page background */
-    --nm-ink:    #eaeaea;      /* primary text: soft white */
-    --nm-ink-2:  #c9c9c9;      /* secondary text */
-    --nm-accent: #e6eef2;      /* ice-white accent for lines/icons */
+    --nm-canvas: #131210;      /* page background: warm dark charcoal — presence, not absence */
+    --nm-ink:    #D9D2C2;      /* primary text: platinum vellum — warm, luminous, not harsh */
+    --nm-ink-2:  #B8B1A3;      /* secondary text: same warmth, two stops deeper */
+    --nm-accent: #D9D2C2;      /* accent for lines/icons */
     --nm-glowA:  rgba(255,255,255,0.10); /* subtle bloom */
     --nm-glowB:  rgba(255,255,255,0.06);
 
     /* app-specific tints to replace light theme blues */
-    --nm-plus:   #e6eef2;      /* “+ / –” bars */
-    --nm-shimA:  rgba(230,238,242,0.28);
-    --nm-shimB:  rgba(230,238,242,0.10);
+    --nm-plus:   #D9D2C2;      /* “+ / –“ bars — warm, unified with ink */
+    --nm-shimA:  rgba(217,210,194,0.28);
+    --nm-shimB:  rgba(217,210,194,0.10);
 
-    /* Display C silk tint remapped to a dark glide */
-    --nm-silkA:  #121417;
-    --nm-silkB:  #0d0f11;
+    /* Display C silk tint — follows canvas exactly */
+    --nm-silkA:  #131210;
+    --nm-silkB:  #131210;
   }
 
   /* Canvas & typography */
@@ -724,8 +833,16 @@ body.overlay-open .pill,
   .example-btn.active{ color: var(--nm-ink) !important; text-shadow: 0 1px 0 rgba(0,0,0,0.12); }
   .examples{ filter: none; }
 
-  /* Composition labels */
-  .comp-label{ color: var(--nm-ink-2) !important; }
+  /* Composition labels — same primary ink as pill */
+  .comp-label{ color: var(--nm-ink) !important; }
+
+  /* Mobile comp list items — unified with pill and Display C */
+  .b-mobile-item{ color: var(--nm-ink) !important; }
+
+  /* Display C contact — name, role, CTA all draw from same ink family */
+  .contact-name{ color: var(--nm-ink) !important; }
+  .contact-cta{ color: var(--nm-ink) !important; }
+  .contact-role{ color: var(--nm-ink-2) !important; }
 
   /* Shimmer accents used elsewhere */
   :root{
@@ -748,25 +865,25 @@ body.overlay-open .pill,
    Add data-theme="dark" to <html> to force night on any device.
    This mirrors the above rules without @media. */
 html[data-theme="dark"]{
-  background: #0d0f11;
+  background: #131210;
 }
 html[data-theme="dark"] body{
-  background: #0d0f11;
-  color: #eaeaea;
+  background: #131210;
+  color: #D9D2C2;
 }
-html[data-theme="dark"] .bar{ fill:#e6eef2; }
+html[data-theme="dark"] .bar{ fill:#9ecff0; }
 </style>
 
 
 <style id="night-mode-force">
 html[data-theme="dark"]{
-  background: #0d0f11 !important;
+  background: #131210 !important;
 }
 html[data-theme="dark"] body{
-  background: #0d0f11 !important;
-  color: #eaeaea !important;
+  background: #131210 !important;
+  color: #D9D2C2 !important;
 }
-html[data-theme="dark"] .bar{ fill:#e6eef2 !important; }
+html[data-theme="dark"] .bar{ fill:#9ecff0 !important; }
 </style>
 
 
@@ -774,7 +891,7 @@ html[data-theme="dark"] .bar{ fill:#e6eef2 !important; }
 /* Night Mode Look: mid-dark canvas + desaturated ivory grid */
 @media (prefers-color-scheme: dark){
   :root{
-    --nm-canvas: #2f3336; /* mid-dark charcoal */
+    --nm-canvas: #131210; /* warm near-black: presence without declaration */
   }
   body{ background: var(--nm-canvas) !important; }
 
@@ -789,7 +906,7 @@ html[data-theme="dark"] .bar{ fill:#e6eef2 !important; }
 }
 
 /* Manual override path (forced dark via data-theme) */
-html[data-theme="dark"] body{ background:#2f3336 !important; }
+html[data-theme="dark"] body{ background:#131210 !important; }
 html[data-theme="dark"] #colorGrid{
   filter: brightness(1.05) contrast(0.95) drop-shadow(0 2px 12px rgba(0,0,0,0.35)) !important;
 }
@@ -1092,6 +1209,13 @@ html[data-theme="dark"] .bar{ fill:#9ecff0 !important; }
   visibility: visible;
 }
 
+/* Score display and color grid must never bleed through Display B */
+body:has(#displayB.open):not(.score-open) #scoreDisplay {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
 /* Hide +/- row and sidebar when score is displayed */
 body.score-open .plus-row,
 body.score-open .comp-panel,
@@ -1102,7 +1226,135 @@ body.score-open .examples * {
   pointer-events: none !important;
 }
 
+/* ===================== Nightmare Video Display ===================== */
+.nightmare-display {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5000;
+  background: rgba(0, 0, 0, 0.92);
+  transition: opacity 320ms ease, visibility 0s linear 0s;
+}
+.nightmare-display.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 320ms ease, visibility 0s linear 320ms;
+}
+.nightmare-video {
+  max-width: 88vw;
+  max-height: 88vh;
+  width: auto;
+  height: auto;
+  display: block;
+  cursor: pointer;
+}
+body.nightmare-open .plus-row,
+body.nightmare-open .comp-panel,
+body.nightmare-open .comp-panel *,
+body.nightmare-open .examples,
+body.nightmare-open .examples * {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 /* Prevent scrolling on mobile when score is displayed */
+/* ===================== Mobile Comp List ===================== */
+/* ── Ambient circles canvas (mobile only) ── */
+#ambientCircles {
+  display: none;
+}
+@media (max-width: 768px) {
+  #ambientCircles {
+    display: block;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 80;
+    opacity: 0;
+    transition: opacity 400ms ease;
+  }
+  body.b-list-open #ambientCircles {
+    opacity: 1;
+  }
+}
+
+/* ── Mobile comp list ───────────────────────────────────── */
+.b-mobile-list {
+  display: none; /* desktop: hidden entirely */
+}
+
+@media (max-width: 768px) {
+  /* Full-screen transparent hit area — captures taps outside items */
+  .b-mobile-list {
+    display: flex;
+    position: fixed;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    inset: 0;
+    pointer-events: none;
+    z-index: 4500;
+  }
+  .b-mobile-item {
+    background: none;
+    border: none;
+    padding: 13px 0;
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    font-variant-caps: all-small-caps;
+    color: #1a1a1a;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(14px);
+    /* Entry: staggered spring rise */
+    transition: opacity 360ms ease, transform 520ms cubic-bezier(0.19, 1, 0.22, 1);
+    pointer-events: none;
+    -webkit-tap-highlight-color: transparent;
+    white-space: nowrap;
+  }
+  /* Stagger on entry only (JS overrides on exit) */
+  body.b-list-open .b-mobile-item:nth-child(1) { transition-delay: 0ms; }
+  body.b-list-open .b-mobile-item:nth-child(2) { transition-delay: 85ms; }
+  body.b-list-open .b-mobile-item:nth-child(3) { transition-delay: 170ms; }
+
+  body.b-list-open .b-mobile-list { pointer-events: auto; }
+  body.b-list-open .b-mobile-item {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  /* Shape: hides with slight compress, reveals via JS spring */
+  #bStage {
+    transition: opacity 260ms ease, transform 260ms ease;
+    transform-origin: center center;
+  }
+  body.b-list-open #bStage {
+    opacity: 0;
+    transform: scale(0.91);
+  }
+
+  /* Lift pill above the list overlay so it stays clickable when the list is open */
+  body.b-list-open .pill {
+    z-index: 5500;
+    pointer-events: auto;
+  }
+
+  /* Hide +/− nav when list is open — no escape hatch mid-exploration */
+  body.b-list-open .plus-row {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms ease;
+  }
+}
+
 @media (max-width: 768px) {
   body.score-open,
   body.lightbox-open {
@@ -1135,14 +1387,15 @@ body.score-open .examples * {
 }
 
 .score-title {
-  font-size: clamp(20px, 2.5vw, 28px);
-  font-weight: 500;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: clamp(19px, 2.5vw, 26px);
+  font-weight: 400;
   margin: 8vh 0 0.3em 0;
-  letter-spacing: -0.01em;
 }
 
 .score-subtitle {
-  font-size: clamp(14px, 1.8vw, 18px);
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: clamp(13px, 1.8vw, 18px);
   font-style: italic;
   font-weight: 400;
   margin: 1vh 0 0 0;
@@ -1194,14 +1447,15 @@ body.score-open .examples * {
 }
 
 .score-arrow {
-  font-size: clamp(11px, 1.3vw, 14px);
+  font-size: clamp(12px, 1.5vw, 15px);
   letter-spacing: 0.12em;
   white-space: nowrap;
 }
 
 /* Attribution */
 .score-attribution {
-  font-size: clamp(10px, 1.2vw, 13px);
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: clamp(14px, 1.5vw, 16px);
   font-style: italic;
   opacity: 0.85;
   position: absolute;
@@ -1209,83 +1463,18 @@ body.score-open .examples * {
   white-space: nowrap;
 }
 
-/* ===================== Acknowledgment Display ===================== */
-.acknowledgment-display {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 5000;
-  box-sizing: border-box;
-  cursor: pointer;
-  background: rgba(255, 255, 255, 0.95);
-}
-
-@media (prefers-color-scheme: dark) {
-  .acknowledgment-display {
-    background: rgba(0, 0, 0, 0.92);
-  }
-}
-
-.acknowledgment-display.is-hidden {
-  opacity: 0 !important;
-  pointer-events: none;
-  visibility: hidden;
-}
-
-.acknowledgment-display:not(.is-hidden) {
-  opacity: 1;
-  pointer-events: auto;
-  visibility: visible;
-}
-
-/* Hide +/- row and sidebar when acknowledgment is displayed */
-body.acknowledgment-open .plus-row,
-body.acknowledgment-open .comp-panel,
-body.acknowledgment-open .comp-panel *,
-body.acknowledgment-open .examples,
-body.acknowledgment-open .examples *,
-body.acknowledgment-open .pill {
-  opacity: 0 !important;
-  pointer-events: none !important;
-}
-
-/* Acknowledgment content container */
-.acknowledgment-content {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  color: #111;
-}
-
-.acknowledgment-text {
-  font-size: clamp(13px, 1.2vw, 15px);
-  font-weight: 400;
-  margin: 0;
-  letter-spacing: 0.08em;
-  line-height: 1;
-  white-space: nowrap;
-  text-align: center;
-}
-
-/* Mobile fix for centering - use transform for precision */
 @media (max-width: 768px) {
-  .acknowledgment-text {
-    transform: translateX(20px);
-  }
-}
-
-/* Dark mode */
-@media (prefers-color-scheme: dark) {
-  .acknowledgment-content {
-    color: #F6F4E8;
+  .score-attribution {
+    position: relative;
+    bottom: auto;
+    white-space: normal;
+    text-align: center;
+    font-size: 12px;
+    margin-top: 8vh;
+    padding-bottom: 6vh;
+    left: auto;
+    right: auto;
+    line-height: 1.8;
   }
 }
 
@@ -1451,10 +1640,13 @@ body.overlay-open .plus-row.is-yielding-reset {
     <div id="galleryCarousel" class="gallery-carousel is-hidden">
       <div class="carousel-track">
         <div class="carousel-slide active" data-index="0">
-          <img src="images/coffee-cups.jpeg" alt="Street photography" draggable="false">
+          <img src="images/IMG_0328.jpeg" alt="Street photography" draggable="false">
         </div>
         <div class="carousel-slide" data-index="1">
-          <img src="images/IMG_0720.JPG" alt="Street photography" draggable="false">
+          <img src="images/coffee-cups.jpeg" alt="Street photography" draggable="false">
+        </div>
+        <div class="carousel-slide" data-index="2">
+          <img src="images/IMG_0156.jpeg" alt="Street photography" draggable="false">
         </div>
       </div>
       <button class="carousel-nav carousel-nav-left" aria-label="Previous image">
@@ -1493,16 +1685,25 @@ body.overlay-open .plus-row.is-yielding-reset {
           <p>Shape dynamics to articulate interplay.</p>
           <p>Converge, disrupt, and resolve — let meaning emerge.</p>
         </div>
-        <p class="score-attribution">For Aleksander Bošković and Chris Caes, George E. Lewis, and Brian Greene</p>
-      </div>
-    </div>
-    <!-- Acknowledgment Display (desktop) -->
-    <div id="acknowledgmentDisplay" class="acknowledgment-display is-hidden">
-      <div class="acknowledgment-content">
-        <p class="acknowledgment-text">With gratitude to —</p>
+        <p class="score-attribution">For Aleksander&nbsp;Bošković and Chris&nbsp;Caes, George&nbsp;E.&nbsp;Lewis, and&nbsp;Brian&nbsp;Greene</p>
       </div>
     </div>
   </div>
+</div>
+
+<!-- Ambient mobile circles (full-screen, mobile only) -->
+<canvas id="ambientCircles"></canvas>
+
+<!-- Mobile comp list -->
+<div id="bMobileList" class="b-mobile-list" aria-hidden="true">
+  <button class="b-mobile-item" data-comp="scores">Composition #3</button>
+  <button class="b-mobile-item" data-comp="nightmare">Nightmare</button>
+  <button class="b-mobile-item" data-comp="gallery">Zelig</button>
+</div>
+
+<!-- Nightmare Video Overlay -->
+<div id="nightmareDisplay" class="nightmare-display is-hidden" aria-hidden="true">
+  <video id="nightmareVideo" class="nightmare-video" src="videos/nightmare.mov" playsinline></video>
 </div>
 
 <!-- Lightbox Overlay -->
@@ -1550,50 +1751,52 @@ body.overlay-open .plus-row.is-yielding-reset {
         <p>Shape dynamics to articulate interplay.</p>
         <p>Converge, disrupt, and resolve — let meaning emerge.</p>
       </div>
-      <p class="score-attribution">For Aleksander Bošković and Chris Caes, George E. Lewis, and Brian Greene</p>
+      <p class="score-attribution">For Aleksander&nbsp;Bošković and Chris&nbsp;Caes, George&nbsp;E.&nbsp;Lewis, and&nbsp;Brian&nbsp;Greene</p>
     </div>
   </div>
 </div>
 
 <div class="display" id="displayC">
+  <img class="wkcr-illus wkcr-illus-desktop" src="images/Project 1.JPG" alt="" draggable="false">
+  <img class="wkcr-illus wkcr-illus-mobile" src="images/wkcr-mobile.png" alt="" draggable="false">
   <div class="card contact-card">
     <div class="contact-topline">
       <span class="contact-name">Michael Shea Hussey</span>
-      <a class="contact-cta" href="mailto:mike.shea.huss@gmail.com">contact</a>
     </div>
-    <div class="contact-role">Literary Media Developer</div>
+    <div class="contact-role">Creative Developer & Producer</div>
+    <a class="contact-cta" href="mailto:mike.shea.huss@gmail.com">mike.shea.huss@gmail.com</a>
   </div>
 </div>
 
 <div class="comp-panel" id="compPanel">
-  <div class="comp-item" data-comp="gallery" style="--i:0">
+  <div class="comp-item" data-comp="scores" style="--i:0">
     <button class="comp-btn">
       <svg class="plusminus" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
         <rect class="hBar bar" x="15" y="46" width="70" height="8"></rect>
         <rect class="vBar bar" x="46" y="15" width="8" height="70"></rect>
       </svg>
     </button>
-    <span class="comp-label">Gallery</span>
+    <span class="comp-label">Composition #3</span>
   </div>
 
-  <div class="comp-item" data-comp="letters" style="--i:1">
+  <div class="comp-item" data-comp="nightmare" style="--i:1">
     <button class="comp-btn">
       <svg class="plusminus" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
         <rect class="hBar bar" x="15" y="46" width="70" height="8"></rect>
         <rect class="vBar bar" x="46" y="15" width="8" height="70"></rect>
       </svg>
     </button>
-    <span class="comp-label">Letters</span>
+    <span class="comp-label">Nightmare</span>
   </div>
 
-  <div class="comp-item" data-comp="scores" style="--i:2">
+  <div class="comp-item" data-comp="gallery" style="--i:2">
     <button class="comp-btn">
       <svg class="plusminus" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
         <rect class="hBar bar" x="15" y="46" width="70" height="8"></rect>
         <rect class="vBar bar" x="46" y="15" width="8" height="70"></rect>
       </svg>
     </button>
-    <span class="comp-label">Scores</span>
+    <span class="comp-label">Zelig</span>
   </div>
 
   <div class="examples" id="examples">
@@ -1621,7 +1824,7 @@ body.overlay-open .plus-row.is-yielding-reset {
   // Aggressive preloading with decoding for instant display
   var galleryImageCache = {};
   var galleryImagesDecoded = {};
-  var GALLERY_IMAGES = ['images/coffee-cups.jpeg', 'images/IMG_0720.JPG'];
+  var GALLERY_IMAGES = ['images/IMG_0328.jpeg', 'images/coffee-cups.jpeg', 'images/IMG_0156.jpeg'];
 
   function preloadAndDecodeImage(src) {
     if (galleryImagesDecoded[src]) return Promise.resolve();
@@ -1698,6 +1901,18 @@ body.overlay-open .plus-row.is-yielding-reset {
 
   // Prime immediately and again after load
   primeGalleryDOMImages();
+
+  // Pre-decode Display C illustration so it's compositor-ready before the overlay opens
+  (function primeCIllustration(){
+    var illus = document.querySelector('.wkcr-illus');
+    if (!illus) return;
+    var prime = function(){
+      if (illus.decode) { illus.decode().catch(function(){}); }
+      void illus.offsetHeight;
+    };
+    if (illus.complete && illus.naturalWidth > 0) { prime(); }
+    else { illus.addEventListener('load', prime, { once: true }); }
+  })();
 
   // Warm up compositor by briefly showing carousel (invisible to user)
   function warmUpCarouselCompositor() {
@@ -2071,6 +2286,7 @@ body.overlay-open .plus-row.is-yielding-reset {
         return;
       }
     }
+
   });
 
   /* ================== Spin/Shimmer helpers ================== */
@@ -2087,9 +2303,10 @@ body.overlay-open .plus-row.is-yielding-reset {
 
   /* ================== Compositions + Examples ================== */
   var EXAMPLE_LABELS = {
-    gallery: ["Streets"],
-    letters:  ["Treatment for Absence", "Acknowledgments"],
-    scores:    ["Composition #3"]
+    gallery:   ["Zelig"],
+    letters:   [],
+    scores:    ["Composition #3"],
+    nightmare: []
   };
 
   function applyExampleLabels(compId){
@@ -2145,11 +2362,10 @@ body.overlay-open .plus-row.is-yielding-reset {
     display.classList.toggle('open', open);
     display.setAttribute('aria-hidden', open ? 'false' : 'true');
 
-    // When C opens/closes, toggle proximity engine
-    if (display === dC) setCtaProximityActive(open);
-
     updateBVisibility();
   }
+
+  var _pillDelayTimer = null;
 
   function applyOverlayState(openB, openC){
     var prev = isOverlayOpen;
@@ -2167,6 +2383,7 @@ body.overlay-open .plus-row.is-yielding-reset {
     positionCompPanel();
 
     updatePillForTransition(prev, anyOpen);
+
     if (openB) showCompositionsFromB(); else hideCompositions();
 
     requestAnimationFrame(function(){ layoutExamplesToRows(); });
@@ -2174,6 +2391,7 @@ body.overlay-open .plus-row.is-yielding-reset {
 
   window.setToggleRaw = setToggleRaw;
   window.applyOverlayState = applyOverlayState;
+  window.updateBVisibility = updateBVisibility;
 
 
   var PRE_HOLD_C = 140; // couture pause
@@ -2182,6 +2400,7 @@ body.overlay-open .plus-row.is-yielding-reset {
     // Pre-decode gallery images when opening displayB
     if (willOpenB) {
       primeGalleryDOMImages();
+      bChime();
     }
     applyOverlayState(willOpenB, false);
     if (e.detail) tB.blur();
@@ -2189,7 +2408,7 @@ body.overlay-open .plus-row.is-yielding-reset {
   tC.addEventListener('click', function(e){
     var willOpenC = tC.getAttribute('aria-expanded')!=='true';
     if (willOpenC){
-      coutureCue(); // whisper-tick at the start of the pre-hold
+      cHighChirp(); // high chirp for right + button
       setTimeout(function(){ applyOverlayState(false, true); }, PRE_HOLD_C);
     } else {
       applyOverlayState(false, false);
@@ -2239,6 +2458,10 @@ body.overlay-open .plus-row.is-yielding-reset {
   }
 
   function showCompositionsFromB(){
+    // Ensure score display from Display A is hidden before Display B opens
+    var scoreDisplay = $('scoreDisplay');
+    if (scoreDisplay) scoreDisplay.classList.add('is-hidden');
+    document.body.classList.remove('score-open');
     compPanel.classList.add('open');
     compPanel.setAttribute('aria-hidden','false');
 
@@ -2343,22 +2566,64 @@ body.overlay-open .plus-row.is-yielding-reset {
   compPanel.addEventListener('click', function(e){
     var item = e.target.closest('.comp-item');
     if (!item) return;
+    var compId = item.getAttribute('data-comp') || '';
+    var isMobileView = window.matchMedia('(max-width: 768px)').matches;
+    var scoreDisplay = $('scoreDisplay');
+    var galleryCarousel = $('galleryCarousel');
 
-    var compBtn = item.querySelector('.comp-btn');
-    if(!compBtn) return;
-
-    if (compBtn.classList.contains('open')) {
-        closeComp(compBtn);
-        hideExamples();
-        // Hide score and acknowledgment displays when closing any composition
-        var scoreDisplay = $('scoreDisplay');
-        var acknowledgmentDisplay = $('acknowledgmentDisplay');
-        if (scoreDisplay) scoreDisplay.classList.add('is-hidden');
-        if (acknowledgmentDisplay) acknowledgmentDisplay.classList.add('is-hidden');
-        document.body.classList.remove('score-open');
-        document.body.classList.remove('acknowledgment-open');
+    if (compPanel.getAttribute('data-open') === compId) {
+      /* ── Toggle OFF: collapse content, stay in Display B, restore circle ── */
+      if (scoreDisplay) scoreDisplay.classList.add('is-hidden');
+      if (galleryCarousel) galleryCarousel.classList.add('is-hidden');
+      document.body.classList.remove('score-open');
+      compPanel.classList.remove('one-open');
+      compPanel.removeAttribute('data-open');
+      var btns = compPanel.querySelectorAll('.comp-btn');
+      for (var bi=0; bi<btns.length; bi++) { btns[bi].classList.remove('open','active'); }
+      var citems = compPanel.querySelectorAll('.comp-item');
+      for (var ci=0; ci<citems.length; ci++) { citems[ci].classList.remove('active'); }
+      hideExamples(true); /* also calls updateBVisibility → restores bStage circle */
     } else {
-        openComp(compBtn);
+      /* ── Toggle ON: open Display B if needed, show content ── */
+      if (tB.getAttribute('aria-expanded') !== 'true') applyOverlayState(true, false);
+
+      /* Mark comp panel state */
+      compPanel.classList.add('one-open');
+      compPanel.setAttribute('data-open', compId);
+      compPanel.querySelectorAll('.comp-btn').forEach(function(b){ b.classList.remove('open','active'); });
+      compPanel.querySelectorAll('.comp-item').forEach(function(i){ i.classList.remove('active'); });
+      var compBtn = item.querySelector('.comp-btn');
+      if (compBtn) { compBtn.classList.add('open','active'); }
+      item.classList.add('active');
+
+      /* Hide shared elements */
+      bStage.style.display = 'none';
+      bText.style.display  = 'none';
+
+      if (compId === 'gallery') {
+        if (scoreDisplay) scoreDisplay.classList.add('is-hidden');
+        document.body.classList.remove('score-open');
+        if (galleryCarousel) galleryCarousel.classList.add('is-hidden');
+        if (window.__GALLERY_CAROUSEL__ && window.__GALLERY_CAROUSEL__.openLightbox) {
+          window.__GALLERY_CAROUSEL__.openLightbox();
+        }
+      } else if (compId === 'nightmare') {
+        if (galleryCarousel) galleryCarousel.classList.add('is-hidden');
+        if (scoreDisplay) scoreDisplay.classList.add('is-hidden');
+        document.body.classList.remove('score-open');
+        if (window.__NIGHTMARE__) window.__NIGHTMARE__.open();
+      } else if (compId === 'scores') {
+        if (galleryCarousel) galleryCarousel.classList.add('is-hidden');
+        if (isMobileView) {
+          if (scoreDisplay) scoreDisplay.classList.add('is-hidden');
+          document.body.classList.remove('score-open');
+          if (window.__SCORE_LIGHTBOX__) window.__SCORE_LIGHTBOX__.open();
+        } else {
+          if (scoreDisplay) scoreDisplay.classList.remove('is-hidden');
+          document.body.classList.add('score-open');
+        }
+      }
+      if (window.__CONTEXTUAL_YIELD__) window.__CONTEXTUAL_YIELD__.reset();
     }
   });
 
@@ -2414,17 +2679,14 @@ body.overlay-open .plus-row.is-yielding-reset {
     var compLabel = compId ? (compPanel.querySelector('.comp-item[data-comp="'+compId+'"] .comp-label') ? compPanel.querySelector('.comp-item[data-comp="'+compId+'"] .comp-label').textContent : '') : '';
     var exLabel = ex.getAttribute('data-ex-label') || ex.textContent.replace(/^\s+|\s+$/g,'');
 
-    // Show carousel for gallery, score display for scores, acknowledgment for acknowledgments, text for others
+    // Show carousel for gallery, score display for scores, text for others
     var galleryCarousel = $('galleryCarousel');
     var scoreDisplay = $('scoreDisplay');
-    var acknowledgmentDisplay = $('acknowledgmentDisplay');
 
     if (compId === 'gallery' && galleryCarousel) {
-      // Hide score and acknowledgment displays
+      // Hide score display
       if (scoreDisplay) scoreDisplay.classList.add('is-hidden');
-      if (acknowledgmentDisplay) acknowledgmentDisplay.classList.add('is-hidden');
       document.body.classList.remove('score-open');
-      document.body.classList.remove('acknowledgment-open');
       // On mobile, skip carousel and go directly to lightbox
       if (isMobileView && window.__GALLERY_CAROUSEL__ && window.__GALLERY_CAROUSEL__.openLightbox) {
         bStage.style.display = 'none';
@@ -2439,10 +2701,8 @@ body.overlay-open .plus-row.is-yielding-reset {
         galleryCarousel.classList.remove('is-hidden');
       }
     } else if (compId === 'scores') {
-      // Hide carousel, text, and acknowledgment display
+      // Hide carousel and text
       if (galleryCarousel) galleryCarousel.classList.add('is-hidden');
-      if (acknowledgmentDisplay) acknowledgmentDisplay.classList.add('is-hidden');
-      document.body.classList.remove('acknowledgment-open');
       bText.style.display = 'none';
       bStage.style.display = 'none';
 
@@ -2457,23 +2717,11 @@ body.overlay-open .plus-row.is-yielding-reset {
         document.body.classList.add('score-open');
       }
       if (window.__CONTEXTUAL_YIELD__) window.__CONTEXTUAL_YIELD__.reset();
-    } else if (compId === 'letters' && exLabel === 'Acknowledgments') {
-      // Show acknowledgment display fullscreen
-      if (galleryCarousel) galleryCarousel.classList.add('is-hidden');
-      if (scoreDisplay) scoreDisplay.classList.add('is-hidden');
-      document.body.classList.remove('score-open');
-      bStage.style.display = 'none';
-      bText.style.display = 'none';
-      if (acknowledgmentDisplay) acknowledgmentDisplay.classList.remove('is-hidden');
-      document.body.classList.add('acknowledgment-open');
-      if (window.__CONTEXTUAL_YIELD__) window.__CONTEXTUAL_YIELD__.reset();
     } else {
-      // Hide carousel, score display, and acknowledgment display; show text
+      // Hide carousel and score display; show text
       if (galleryCarousel) galleryCarousel.classList.add('is-hidden');
       if (scoreDisplay) scoreDisplay.classList.add('is-hidden');
-      if (acknowledgmentDisplay) acknowledgmentDisplay.classList.add('is-hidden');
       document.body.classList.remove('score-open');
-      document.body.classList.remove('acknowledgment-open');
       bStage.style.display = 'none';
       bText.style.display = 'block';
       // For "letters" composition, show only the example label without prefix
@@ -2602,52 +2850,6 @@ body.overlay-open .plus-row.is-yielding-reset {
     teleportCrossfade(!!nextOverlayOpen);
   }
 
-  /* ================== Proximity CTA (Display C) ================== */
-  var contactLink = document.querySelector('#displayC .contact-cta');
-  var proxActive = false;
-  var mouseX = 0, mouseY = 0;
-  var ticking = false;
-
-  function setCtaProximityActive(active){
-    var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var noHover = window.matchMedia('(hover: none)').matches;
-    proxActive = !!active && !prefersReduced && !noHover && !!contactLink;
-
-    if (!proxActive){
-      document.documentElement.style.setProperty('--cta-prox', '0');
-      window.removeEventListener('mousemove', onMouseMove, { passive:true });
-      return;
-    }
-    window.addEventListener('mousemove', onMouseMove, { passive:true });
-  }
-
-  function onMouseMove(e){
-    mouseX = e.clientX; mouseY = e.clientY;
-    if (!ticking){
-      ticking = true;
-      requestAnimationFrame(updateProximity);
-    }
-  }
-
-  function updateProximity(){
-    ticking = false;
-    if (!proxActive || !contactLink) return;
-
-    var rect = contactLink.getBoundingClientRect();
-    var cx = rect.left + rect.width/2;
-    var cy = rect.top + rect.height/2;
-    var dx = mouseX - cx;
-    var dy = mouseY - cy;
-    var dist = Math.sqrt(dx*dx + dy*dy);
-
-    var R = 140; // px influence radius
-    var prox = 1 - (dist / R);
-    if (isNaN(prox) || prox < 0) prox = 0;
-    if (prox > 1) prox = 1;
-
-    document.documentElement.style.setProperty('--cta-prox', prox.toFixed(3));
-  }
-
   /* ================== Accessibility & keys ================== */
   canvas.addEventListener('pointerdown', function(){ if (document.activeElement !== canvas) canvas.focus(); });
 
@@ -2687,32 +2889,100 @@ body.overlay-open .plus-row.is-yielding-reset {
     }
   }
   function coutureCue() {
-    var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var isTouch = window.matchMedia('(hover: none)').matches;
-    if (prefersReduced || isTouch) return;
-
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     initCueCtx();
     if (!cueCtx) return;
 
-    var t0 = cueCtx.currentTime + 0.01;
-    var dur = 0.12; // 120ms tick
-    var osc = cueCtx.createOscillator();
-    var gain = cueCtx.createGain();
-    var hp  = cueCtx.createBiquadFilter();
+    function play() {
+      var t0  = cueCtx.currentTime + 0.01;
+      var dur = 0.65;
 
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(980, t0);
-    osc.frequency.exponentialRampToValueAtTime(1400, t0 + dur * 0.6);
+      // Single pure sine — no drift, no complexity, no movement
+      // C5: the frequency where pure sines are warmest. Just presence.
+      var oscA = cueCtx.createOscillator();
+      oscA.type = 'sine';
+      oscA.frequency.setValueAtTime(523.25, t0);
 
-    hp.type = 'highpass';
-    hp.frequency.value = 600;
+      var master = cueCtx.createGain();
+      master.gain.setValueAtTime(0, t0);
+      master.gain.linearRampToValueAtTime(0.016, t0 + 0.009);
+      master.gain.setValueAtTime(0.016, t0 + 0.012);
+      master.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+      master.connect(cueCtx.destination);
 
-    gain.gain.setValueAtTime(0.015, t0);
-    gain.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+      oscA.connect(master);
+      oscA.start(t0); oscA.stop(t0 + dur + 0.02);
+    }
 
-    osc.connect(hp).connect(gain).connect(cueCtx.destination);
-    osc.start(t0);
-    osc.stop(t0 + dur + 0.02);
+    if (cueCtx.state === 'suspended') {
+      cueCtx.resume().then(play).catch(function(){});
+    } else {
+      play();
+    }
+  }
+
+  /* ================== High chirp — right + button ================== */
+  function cHighChirp() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    initCueCtx();
+    if (!cueCtx) return;
+    function play() {
+      var t0  = cueCtx.currentTime + 0.01;
+      var dur = 0.12;
+      var osc  = cueCtx.createOscillator();
+      var gain = cueCtx.createGain();
+      var hp   = cueCtx.createBiquadFilter();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(980, t0);
+      osc.frequency.exponentialRampToValueAtTime(1400, t0 + dur * 0.6);
+      hp.type = 'highpass';
+      hp.frequency.value = 600;
+      gain.gain.setValueAtTime(0.015, t0);
+      gain.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+      osc.connect(hp).connect(gain).connect(cueCtx.destination);
+      osc.start(t0); osc.stop(t0 + dur + 0.02);
+    }
+    if (cueCtx.state === 'suspended') { cueCtx.resume().then(play).catch(function(){}); } else { play(); }
+  }
+
+  /* ================== Bell chime — left + button ================== */
+  function bChime() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    initCueCtx();
+    if (!cueCtx) return;
+
+    function play() {
+      var t0  = cueCtx.currentTime + 0.01;
+      var dur = 0.72;
+
+      // Two oscillators tuned 1.5Hz apart — creates a natural 1.5Hz
+      // amplitude tremolo (acoustic beating). Felt as much as heard.
+      var oscA = cueCtx.createOscillator();
+      var oscB = cueCtx.createOscillator();
+      oscA.type = 'sine';
+      oscB.type = 'sine';
+      oscA.frequency.setValueAtTime(440.0, t0);   // A4
+      oscB.frequency.setValueAtTime(441.5, t0);   // A4 + 1.5Hz
+
+      // Shared envelope — soft attack, long natural decay
+      var master = cueCtx.createGain();
+      master.gain.setValueAtTime(0, t0);
+      master.gain.linearRampToValueAtTime(0.017, t0 + 0.009);
+      master.gain.setValueAtTime(0.017, t0 + 0.012);
+      master.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+      master.connect(cueCtx.destination);
+
+      oscA.connect(master);
+      oscB.connect(master);
+      oscA.start(t0); oscA.stop(t0 + dur + 0.02);
+      oscB.start(t0); oscB.stop(t0 + dur + 0.02);
+    }
+
+    if (cueCtx.state === 'suspended') {
+      cueCtx.resume().then(play).catch(function(){});
+    } else {
+      play();
+    }
   }
 
   /* ================== Display B — BlackLabel RO · ULTRA ================== */
@@ -2720,6 +2990,258 @@ body.overlay-open .plus-row.is-yielding-reset {
   var bCtx = bCanvas.getContext('2d', { alpha: true });
   var bAnimationRunning = false;
   var bAnimationStart = 0;
+
+  /* === Three-Body Problem (desktop only) === */
+  // ── Display B: multi-mode generative canvas ─────────────────
+  var B3_DURATION = 70000; // ms active before fade
+  var B3_FADEOUT  = 3500;  // ms fade duration
+  var b3mode = 0, b3startTime = null, b3paused = false, b3lastT = null, b3firstFrame = true;
+  var b3mNX = 0, b3mNY = 0; // normalised cursor pos [-0.5..0.5] on canvas
+
+  // cursor tracking — electric field mode uses this
+  (function(){
+    var cv = document.getElementById('glassCanvas');
+    if(!cv) return;
+    cv.addEventListener('mousemove', function(e){
+      var r = cv.getBoundingClientRect();
+      b3mNX = (e.clientX - r.left)/r.width  - 0.5;
+      b3mNY = (e.clientY - r.top )/r.height - 0.5;
+    });
+  })();
+
+  // offscreen canvas — used by accumulating modes (harmonograph, Clifford)
+  var b3off = null, b3offCtx = null, b3offPending = false;
+  function b3ensureOff(W,H){
+    if(b3off&&b3off.width===W&&b3off.height===H) return true;
+    // Defer GPU surface allocation — never block during a CSS transition
+    if(!b3offPending){
+      b3offPending=true;
+      var cW=W,cH=H;
+      setTimeout(function(){
+        b3offPending=false;
+        b3off=document.createElement('canvas'); b3off.width=cW; b3off.height=cH;
+        b3offCtx=b3off.getContext('2d');
+      },0);
+    }
+    return false;
+  }
+
+  // ── MODE 0: Three-body ───────────────────────────────────────
+  var B3_GM_C=0.00220, B3_GM_B=0.00022, B3_TRAIL=600;
+  var b3bodies, b3trails;
+  function m0Init(){
+    b3bodies=[]; b3trails=[[],[],[]];
+    for(var i=0;i<3;i++){
+      var ang=-Math.PI/2+(i/3)*Math.PI*2, r=0.24+i*0.005, v=Math.sqrt(B3_GM_C/r);
+      var nudge=(Math.random()-0.5)*0.018;
+      b3bodies.push({nx:r*Math.cos(ang),ny:r*Math.sin(ang),nvx:-v*Math.sin(ang)+nudge,nvy:v*Math.cos(ang)-nudge*0.5});
+    }
+  }
+  function b3Accel(bods,i){
+    var bx=bods[i].nx,by=bods[i].ny,ax=0,ay=0;
+    var rc2=bx*bx+by*by+1e-8,rc=Math.sqrt(rc2);
+    ax-=B3_GM_C*bx/(rc2*rc); ay-=B3_GM_C*by/(rc2*rc);
+    for(var j=0;j<bods.length;j++){
+      if(j===i) continue;
+      var dx=bods[j].nx-bx,dy=bods[j].ny-by,d2=dx*dx+dy*dy+1e-8,d=Math.sqrt(d2);
+      ax+=B3_GM_B*dx/(d2*d); ay+=B3_GM_B*dy/(d2*d);
+    }
+    return {ax:ax,ay:ay};
+  }
+  function b3Step(dt){
+    var h=Math.min(dt,0.035),i,acc0=[],acc1=[];
+    for(i=0;i<3;i++) acc0.push(b3Accel(b3bodies,i));
+    for(i=0;i<3;i++){b3bodies[i].nvx+=0.5*acc0[i].ax*h;b3bodies[i].nvy+=0.5*acc0[i].ay*h;}
+    for(i=0;i<3;i++){b3bodies[i].nx+=b3bodies[i].nvx*h;b3bodies[i].ny+=b3bodies[i].nvy*h;}
+    for(i=0;i<3;i++) acc1.push(b3Accel(b3bodies,i));
+    for(i=0;i<3;i++){b3bodies[i].nvx+=0.5*acc1[i].ax*h;b3bodies[i].nvy+=0.5*acc1[i].ay*h;}
+    for(i=0;i<3;i++){
+      var b=b3bodies[i],r=Math.sqrt(b.nx*b.nx+b.ny*b.ny);
+      if(r>0.30){b.nx*=0.30/r;b.ny*=0.30/r;var ux=b.nx/0.30,uy=b.ny/0.30,vr=b.nvx*ux+b.nvy*uy;if(vr>0){b.nvx-=1.9*vr*ux;b.nvy-=1.9*vr*uy;}}
+    }
+  }
+  function m0Draw(W,H,dt,cx,cy,sc,col,fade){
+    b3Step(dt);
+    for(var i=0;i<3;i++){b3trails[i].push({nx:b3bodies[i].nx,ny:b3bodies[i].ny});if(b3trails[i].length>B3_TRAIL)b3trails[i].shift();}
+    var dark=window.matchMedia('(prefers-color-scheme:dark)').matches;
+    var tMax=dark?0.55:0.40,dAlpha=dark?0.95:0.80;
+    bCtx.globalCompositeOperation=dark?'lighter':'source-over';
+    for(var i=0;i<3;i++){
+      var tr=b3trails[i],n=tr.length;
+      for(var j=1;j<n;j++){bCtx.strokeStyle=col+((j/n)*tMax*fade)+')';bCtx.lineWidth=1.5*bDPR;bCtx.beginPath();bCtx.moveTo(cx+tr[j-1].nx*sc,cy+tr[j-1].ny*sc);bCtx.lineTo(cx+tr[j].nx*sc,cy+tr[j].ny*sc);bCtx.stroke();}
+      var bx=cx+b3bodies[i].nx*sc,by_=cy+b3bodies[i].ny*sc;
+      bCtx.fillStyle=col+(dAlpha*fade)+')';bCtx.beginPath();bCtx.arc(bx,by_,3.5*bDPR,0,Math.PI*2);bCtx.fill();
+      var grd=bCtx.createRadialGradient(bx,by_,0,bx,by_,11*bDPR);
+      grd.addColorStop(0,col+((dark?0.45:0.18)*fade)+')');grd.addColorStop(1,col+'0)');
+      bCtx.fillStyle=grd;bCtx.beginPath();bCtx.arc(bx,by_,11*bDPR,0,Math.PI*2);bCtx.fill();
+    }
+  }
+
+  // ── MODE 1: Harmonograph ─────────────────────────────────────
+  var hg = null;
+  function m1Init(){
+    var rv=function(a,b){return a+(b-a)*Math.random();};
+    var pairs=[[1,2],[2,3],[3,4],[3,5],[4,5],[5,6],[2,5]];
+    var p=pairs[Math.floor(Math.random()*pairs.length)];
+    hg={f1:p[0],f2:p[1],p1:rv(0,Math.PI*2),p2:rv(0,Math.PI*2),
+        p3:rv(0,Math.PI*2),p4:rv(0,Math.PI*2),
+        d:rv(0.0003,0.0007),t:0,lastPt:null};
+  }
+  function m1Draw(W,H,dt,cx,cy,sc,col,fade){
+    if(!b3ensureOff(W,H)) return;
+    var p=hg,steps=Math.ceil(dt*500),dts=dt/steps;
+    var dark=window.matchMedia('(prefers-color-scheme:dark)').matches;
+    b3offCtx.strokeStyle=dark?'rgba(247,247,245,0.30)':'rgba(14,14,15,0.22)';
+    b3offCtx.lineWidth=1.1*bDPR;
+    b3offCtx.beginPath(); var drew=false;
+    for(var s=0;s<steps;s++){
+      p.t+=dts;
+      var t=p.t,e=Math.exp(-p.d*t);
+      if(e<0.004) break;
+      var x=cx+(Math.sin(p.f1*t+p.p1)*0.55+Math.sin(p.f2*t+p.p2)*0.45)*e*sc*0.30;
+      var y=cy+(Math.sin(p.f1*t*1.007+p.p3)*0.55+Math.cos(p.f2*t+p.p4)*0.45)*e*sc*0.30;
+      if(p.lastPt){if(!drew){b3offCtx.moveTo(p.lastPt.x,p.lastPt.y);drew=true;}b3offCtx.lineTo(x,y);}
+      p.lastPt={x:x,y:y};
+    }
+    if(drew) b3offCtx.stroke();
+    bCtx.globalAlpha=fade; bCtx.globalCompositeOperation='source-over';
+    bCtx.drawImage(b3off,0,0); bCtx.globalAlpha=1;
+  }
+
+  // ── MODE 2: Clifford Attractor ───────────────────────────────
+  var cf = null;
+  function m2Init(){
+    var rv=function(a,b){return a+(b-a)*Math.random();};
+    var a=rv(-2,2),b=rv(-2,2),c=rv(-2,2),d=rv(-2,2);
+    // Start with a safe default bounds — defer heavy precompute off the main thread
+    cf={a:a,b:b,c:c,d:d,x:0.1,y:0,bounds:null};
+    setTimeout(function(){
+      if(!cf||cf.a!==a) return; // mode changed, discard
+      var x=0.1,y=0,mx=0,my=0;
+      for(var s=0;s<3000;s++){var nx=Math.sin(a*y)+c*Math.cos(a*x);var ny=Math.sin(b*x)+d*Math.cos(b*y);x=nx;y=ny;mx=Math.max(mx,Math.abs(x));my=Math.max(my,Math.abs(y));}
+      cf.bounds=Math.max(mx,my,0.1); cf.x=x; cf.y=y;
+    }, 80);
+  }
+  function m2Draw(W,H,dt,cx,cy,sc,col,fade){
+    if(!cf.bounds) return;
+    if(!b3ensureOff(W,H)) return;
+    var p=cf,s2=sc*0.30/p.bounds;
+    var dark=window.matchMedia('(prefers-color-scheme:dark)').matches;
+    b3offCtx.fillStyle=dark?'rgba(247,247,245,0.06)':'rgba(14,14,15,0.045)';
+    var steps=Math.min(Math.ceil(dt*4000),900);
+    var hs=bDPR*0.6;
+    for(var s=0;s<steps;s++){
+      var nx=Math.sin(p.a*p.y)+p.c*Math.cos(p.a*p.x);
+      var ny=Math.sin(p.b*p.x)+p.d*Math.cos(p.b*p.y);
+      p.x=nx; p.y=ny;
+      b3offCtx.fillRect(cx+p.x*s2-hs,cy+p.y*s2-hs,bDPR,bDPR);
+    }
+    bCtx.globalAlpha=fade; bCtx.globalCompositeOperation='source-over';
+    bCtx.drawImage(b3off,0,0); bCtx.globalAlpha=1;
+  }
+
+  // ── MODE 3: Flow Field ───────────────────────────────────────
+  var ff = null;
+  function m3Spawn(){ var a=Math.random()*Math.PI*2,r=Math.random()*0.26; return {nx:r*Math.cos(a),ny:r*Math.sin(a),trail:[]}; }
+  function m3Init(){
+    ff={particles:[],elapsed:0};
+    for(var i=0;i<240;i++) ff.particles.push(m3Spawn());
+  }
+  function m3Angle(nx,ny,t){
+    return Math.sin(nx*3.1+t*0.34)*Math.cos(ny*2.7+t*0.27)*Math.PI*2 + Math.sin((nx+ny)*2.2+t*0.19)*1.3;
+  }
+  function m3Draw(W,H,dt,cx,cy,sc,col,fade){
+    ff.elapsed+=dt;
+    var t=ff.elapsed,speed=0.0043,maxLen=58,R2=0.29*0.29;
+    for(var i=0;i<ff.particles.length;i++){
+      var pt=ff.particles[i],ang=m3Angle(pt.nx,pt.ny,t);
+      pt.nx+=Math.cos(ang)*speed; pt.ny+=Math.sin(ang)*speed;
+      if(pt.nx*pt.nx+pt.ny*pt.ny>R2){ff.particles[i]=m3Spawn();continue;}
+      pt.trail.push({nx:pt.nx,ny:pt.ny});
+      if(pt.trail.length>maxLen) pt.trail.shift();
+    }
+    bCtx.globalCompositeOperation='source-over'; bCtx.lineWidth=1.2*bDPR;
+    for(var i=0;i<ff.particles.length;i++){
+      var tr=ff.particles[i].trail,n=tr.length;
+      for(var j=1;j<n;j++){bCtx.strokeStyle=col+((j/n)*0.40*fade)+')';bCtx.beginPath();bCtx.moveTo(cx+tr[j-1].nx*sc,cy+tr[j-1].ny*sc);bCtx.lineTo(cx+tr[j].nx*sc,cy+tr[j].ny*sc);bCtx.stroke();}
+    }
+  }
+
+  // ── MODE 4: Electric Field Lines — cursor reactive ────────────
+  var ef = null;
+  function m4Init(){
+    ef={charges:[]};
+    var signs=[1,-1,1,-1,1];
+    for(var i=0;i<5;i++){
+      var ang=Math.random()*Math.PI*2,rad=0.06+Math.random()*0.18;
+      ef.charges.push({nx:rad*Math.cos(ang),ny:rad*Math.sin(ang),q:signs[i]*(0.8+Math.random()*0.4)});
+    }
+  }
+  function efField(charges,nx,ny){
+    var ex=0,ey=0;
+    for(var i=0;i<charges.length;i++){var c=charges[i],dx=nx-c.nx,dy=ny-c.ny,d2=dx*dx+dy*dy+6e-5,d=Math.sqrt(d2);ex+=c.q*dx/(d2*d);ey+=c.q*dy/(d2*d);}
+    return {ex:ex,ey:ey};
+  }
+  function m4Draw(W,H,dt,cx,cy,sc,col,fade){
+    var charges=ef.charges.concat([{nx:b3mNX*0.85,ny:b3mNY*0.85,q:0.55}]);
+    var posC=charges.filter(function(c){return c.q>0;});
+    bCtx.globalCompositeOperation='source-over'; bCtx.lineWidth=1.0*bDPR;
+    for(var ci=0;ci<posC.length;ci++){
+      var ch=posC[ci];
+      for(var li=0;li<10;li++){
+        var ang=(li/10)*Math.PI*2,nx=ch.nx+0.007*Math.cos(ang),ny=ch.ny+0.007*Math.sin(ang);
+        bCtx.beginPath(); bCtx.moveTo(cx+nx*sc,cy+ny*sc);
+        for(var step=0;step<200;step++){
+          var f=efField(charges,nx,ny),mag=Math.sqrt(f.ex*f.ex+f.ey*f.ey)+1e-9;
+          nx+=f.ex/mag*0.005; ny+=f.ey/mag*0.005;
+          if(nx*nx+ny*ny>0.085) break;
+          var stop=false;
+          for(var k=0;k<charges.length;k++){if(charges[k].q<0){var ddx=nx-charges[k].nx,ddy=ny-charges[k].ny;if(ddx*ddx+ddy*ddy<9e-4){stop=true;break;}}}
+          if(stop) break;
+          bCtx.lineTo(cx+nx*sc,cy+ny*sc);
+        }
+        bCtx.strokeStyle=col+(0.36*fade)+')'; bCtx.stroke();
+      }
+    }
+    for(var ci=0;ci<ef.charges.length;ci++){
+      var c=ef.charges[ci];
+      bCtx.fillStyle=col+(0.72*fade)+')';
+      bCtx.beginPath();bCtx.arc(cx+c.nx*sc,cy+c.ny*sc,(c.q>0?4.5:3)*bDPR,0,Math.PI*2);bCtx.fill();
+    }
+  }
+
+  // ── Dispatcher ───────────────────────────────────────────────
+  function b3Reset(){
+    b3mode=Math.floor(Math.random()*5);
+    b3startTime=null; b3paused=false; b3lastT=null;
+    b3mNX=0; b3mNY=0;
+    b3off=null; b3offCtx=null; b3offPending=false;
+    if(b3mode===0)      m0Init();
+    else if(b3mode===1) m1Init();
+    else if(b3mode===2) m2Init();
+    else if(b3mode===3) m3Init();
+    else                m4Init();
+  }
+
+  function b3Draw(W,H,now){
+    if(b3paused) return;
+    if(!b3startTime) b3startTime=now;
+    var elapsed=now-b3startTime;
+    var fade=elapsed>B3_DURATION ? 1-(elapsed-B3_DURATION)/B3_FADEOUT : 1;
+    if(fade<=0){b3paused=true;return;}
+    var cx=W*0.5,cy=H*0.52,sc=Math.min(W,H);
+    var dark=window.matchMedia('(prefers-color-scheme:dark)').matches;
+    var col=dark?'rgba(247,247,245,':'rgba(14,14,15,';
+    var dt=b3lastT ? Math.min((now-b3lastT)/1000,0.1) : 0.016;
+    b3lastT=now;
+    bCtx.save();
+    if(b3mode===0)      m0Draw(W,H,dt,cx,cy,sc,col,fade);
+    else if(b3mode===1) m1Draw(W,H,dt,cx,cy,sc,col,fade);
+    else if(b3mode===2) m2Draw(W,H,dt,cx,cy,sc,col,fade);
+    else if(b3mode===3) m3Draw(W,H,dt,cx,cy,sc,col,fade);
+    else                m4Draw(W,H,dt,cx,cy,sc,col,fade);
+    bCtx.restore();
+  }
 
   const BLACKLABEL_PARAMS = {
     SPEED:0.45,
@@ -2861,32 +3383,44 @@ body.overlay-open .plus-row.is-yielding-reset {
 
   function loopBlackLabel(now){
     if(!bAnimationRunning) return;
+    /* Shōmon engine owns the canvas on mobile — BlackLabel must not draw */
+    if(window.matchMedia('(max-width: 768px)').matches) return;
     const dt = (now - bAnimationStart)/1000;
     const t = dt * BLACKLABEL_PARAMS.SPEED;
     const W = bCanvas.width, H = bCanvas.height;
     const cx = W*0.5, cy = H*0.52;
 
+    var _dark=window.matchMedia('(prefers-color-scheme:dark)').matches;
     bCtx.clearRect(0,0,W,H);
+    bCtx.fillStyle=_dark?'#131210':'#F6F4E8';
+    bCtx.fillRect(0,0,W,H);
     drawGrid(W,H,cx,cy,t);
     drawAperture(W,H,cx,cy,t);
     drawRing(W,H,cx,cy,t);
     drawNodes(W,H,cx,cy,t);
     drawGlint(W,H,cx,cy,t);
+    b3Draw(W,H,now);
 
     requestAnimationFrame(loopBlackLabel);
   }
 
   // Draw a single frame synchronously (for flicker-free reveal)
   function drawBlackLabelFrame(){
-    const t = 0; // Start at t=0 for initial frame
+    /* Shōmon engine owns the canvas on mobile — BlackLabel must not draw */
+    if(window.matchMedia('(max-width: 768px)').matches) return;
+    const t = 0;
     const W = bCanvas.width, H = bCanvas.height;
     const cx = W*0.5, cy = H*0.52;
+    var _dark=window.matchMedia('(prefers-color-scheme:dark)').matches;
     bCtx.clearRect(0,0,W,H);
+    bCtx.fillStyle=_dark?'#131210':'#F6F4E8';
+    bCtx.fillRect(0,0,W,H);
     drawGrid(W,H,cx,cy,t);
     drawAperture(W,H,cx,cy,t);
     drawRing(W,H,cx,cy,t);
     drawNodes(W,H,cx,cy,t);
     drawGlint(W,H,cx,cy,t);
+    b3Draw(W,H,performance.now());
   }
 
   function startBlackLabel() {
@@ -2894,6 +3428,7 @@ body.overlay-open .plus-row.is-yielding-reset {
     if (bAnimationRunning || prefersReduced) return;
     bAnimationRunning = true;
     bAnimationStart = performance.now();
+    b3Reset();
     resizeBlackLabel();
     requestAnimationFrame(loopBlackLabel);
   }
@@ -2909,9 +3444,16 @@ body.overlay-open .plus-row.is-yielding-reset {
     var galleryCarousel = document.getElementById('galleryCarousel');
 
     if (show){
-      // Show shape, hide text and carousel
+      // Show shape, hide text, carousel, score display
       bText.style.display = 'none';
       if (galleryCarousel) galleryCarousel.classList.add('is-hidden');
+      var scoreDisplay = document.getElementById('scoreDisplay');
+      if (scoreDisplay) scoreDisplay.classList.add('is-hidden');
+      document.body.classList.remove('score-open');
+      // Hide color grid before ring draws — visibility:hidden is not affected by
+      // displayB's opacity transition, so it can't bleed through a semi-transparent parent
+      var cgc = document.getElementById('colorGridContainer');
+      if (cgc) cgc.style.visibility = 'hidden';
       // Reset contextual yield when showing shape
       if (window.__CONTEXTUAL_YIELD__) {
         window.__CONTEXTUAL_YIELD__.reset();
@@ -2926,9 +3468,136 @@ body.overlay-open .plus-row.is-yielding-reset {
     } else {
       bStage.style.display = 'none';
       stopBlackLabel();
+      document.body.classList.remove('b-list-open'); // collapse mobile veil/list
+      // Restore color grid so it can fade back in via its CSS opacity transition
+      var cgc = document.getElementById('colorGridContainer');
+      if (cgc) cgc.style.visibility = '';
       // Don't auto-show bText here - let the click handler decide what to show
     }
   }
+
+  /* ================== Mobile comp list ================== */
+  (function(){
+    var mobileList = document.getElementById('bMobileList');
+    if (!mobileList) return;
+
+    function openMobileList() {
+      /* Flush any stale inline styles left by a mid-flight close animation.
+         Without this, items stay invisible (inline opacity:0 beats CSS class rules). */
+      var items = mobileList.querySelectorAll('.b-mobile-item');
+      items.forEach(function(item) {
+        item.style.transition      = '';
+        item.style.transitionDelay = '';
+        item.style.transform       = '';
+        item.style.opacity         = '';
+      });
+      /* Clear bStage spring styles so CSS class rules re-engage cleanly.
+         We defer the class addition by one rAF so the inline-style flush is
+         committed to the compositor before the CSS transition starts — prevents
+         a one-frame snap/jump on mobile Safari when both happen synchronously. */
+      bStage.style.transition = '';
+      bStage.style.transform  = '';
+      bStage.style.opacity    = '';
+
+      requestAnimationFrame(function() {
+        document.body.classList.add('b-list-open');
+        mobileList.setAttribute('aria-hidden', 'false');
+        if (window.__AMBIENT_CIRCLES__) window.__AMBIENT_CIRCLES__.start();
+        coutureCue();
+      });
+    }
+
+    function collapseMobileList() {
+      if (!document.body.classList.contains('b-list-open')) return;
+      var items = mobileList.querySelectorAll('.b-mobile-item');
+
+      /* ── Phase 1: items snap out — fast, contra-direction (upward), no stagger ── */
+      items.forEach(function(item) {
+        item.style.transitionDelay = '0ms';
+        item.style.transition = 'opacity 140ms ease, transform 180ms cubic-bezier(0.4,0,1,1)';
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(-9px)';
+      });
+
+      /* ── Phase 2: 110ms gap — then shape materialises with a spring punch ── */
+      setTimeout(function() {
+        /* Prime shape at compressed state (no transition — instant set) */
+        bStage.style.transition = 'none';
+        bStage.style.transform  = 'scale(0.86)';
+        bStage.style.opacity    = '0';
+        void bStage.offsetHeight; /* force reflow so browser registers start state */
+
+        /* Remove class now so CSS ambient/list rules disengage */
+        document.body.classList.remove('b-list-open');
+        mobileList.setAttribute('aria-hidden', 'true');
+
+        /* Spring the shape forward — arrives fast, settles with weight */
+        requestAnimationFrame(function() {
+          bStage.style.transition = 'opacity 680ms cubic-bezier(0.19,1,0.22,1), transform 680ms cubic-bezier(0.19,1,0.22,1)';
+          bStage.style.transform  = 'scale(1)';
+          bStage.style.opacity    = '1';
+        });
+      }, 110);
+
+      /* ── Phase 3: clean up inline styles after spring completes ── */
+      setTimeout(function() {
+        if (!document.body.classList.contains('b-list-open')) {
+          bStage.style.transition = '';
+          bStage.style.transform  = '';
+          bStage.style.opacity    = '';
+          items.forEach(function(item) {
+            item.style.transition      = '';
+            item.style.transitionDelay = '';
+            item.style.transform       = '';
+            item.style.opacity         = '';
+          });
+        }
+      }, 860);
+
+      /* ── Stop circles after CSS fade-out (fires after b-list-open removed at 110ms) ── */
+      setTimeout(function() {
+        if (!document.body.classList.contains('b-list-open')) {
+          if (window.__AMBIENT_CIRCLES__) window.__AMBIENT_CIRCLES__.stop();
+        }
+      }, 570);
+    }
+
+    function toggleMobileList() {
+      if (!window.matchMedia('(max-width: 768px)').matches) return;
+      if (document.body.classList.contains('b-list-open')) {
+        collapseMobileList();
+      } else {
+        openMobileList();
+      }
+    }
+
+    // Tap shape to toggle list
+    var didScroll = false;
+    bStage.addEventListener('touchstart', function(){ didScroll = false; }, { passive: true });
+    bStage.addEventListener('touchmove',  function(){ didScroll = true;  }, { passive: true });
+    bStage.addEventListener('touchend', function(e) {
+      if (didScroll) return;
+      if (!window.matchMedia('(max-width: 768px)').matches) return;
+      e.preventDefault();
+      toggleMobileList();
+    });
+
+    // Tap anywhere in list container — item opens comp, background dismisses
+    mobileList.addEventListener('click', function(e) {
+      var btn = e.target.closest('.b-mobile-item');
+      if (!btn) {
+        collapseMobileList(); // tapped surrounding space
+        return;
+      }
+      var compId = btn.getAttribute('data-comp');
+      collapseMobileList();
+      var compItem = compPanel.querySelector('.comp-item[data-comp="' + compId + '"]');
+      if (compItem) compItem.click();
+    });
+
+    // Collapse when Display B closes
+    tB.addEventListener('click', collapseMobileList);
+  })();
 
   /* ================== Init ================ */
   positionCompPanel();
@@ -3000,7 +3669,8 @@ body.overlay-open .plus-row.is-yielding-reset {
   animation: bCardIn 720ms cubic-bezier(0.19,1,0.22,1) both 160ms;
 }
 #displayB.open .card::before{
-  animation: bVeil 680ms cubic-bezier(0.19,1,0.22,1) both 160ms;
+  /* bVeil animation removed — white gradient flash was visible in dark mode */
+  opacity: 0;
 }
 #displayB:not(.open) .card{
   transition: opacity 420ms cubic-bezier(0.19,1,0.22,1),
@@ -3243,8 +3913,8 @@ body.overlay-open .plus-row.is-yielding-reset {
     /* ---- A → C : concierge escort (decisive) ---- */
     if (fromA && openC && !openB){
       // C has its own cadence vars
-      setVar('--overlay-in-c',   820);
-      setVar('--overlay-delay-c',240);
+      setVar('--overlay-in-c',   340);
+      setVar('--overlay-delay-c',120);
       // Also align base overlay vars for container fade
       setVar('--overlay-in',  820);
       setVar('--overlay-out', 980);
@@ -3329,14 +3999,7 @@ body.overlay-open .plus-row.is-yielding-reset {
     if (reserve > 0){
       topline.style.setProperty('--reserve', reserve + 'px');
     }
-    var tlw = Math.max(0, Math.ceil(tlRect.width));
-    if (tlw > 0){
-      role.style.width = tlw + 'px';
-      role.style.marginLeft  = 'auto';
-      role.style.marginRight = 'auto';
-      role.style.display = 'block';
-      // keep center alignment via existing text-align center on card
-    }
+    /* role naturally left-aligns with card's align-items:flex-start — no margin override needed */
   }
 
   // Recalculate when Display C opens/closes
@@ -3583,7 +4246,7 @@ body.overlay-open .plus-row.is-yielding-reset {
   window.addEventListener('resize', resize, {passive:true});
 
   // ======== Shōmon core (ring + mobile-only inner nodes) ========
-  var SPEED=0.48, THICK=1.2, EDGE=1.18, SPECTRAL=0.22, GLOW=1.05, GRID=0.06;
+  var SPEED=0.48, THICK=1.2, EDGE=1.18, SPECTRAL=0.22, GLOW=1.05, GRID=0;
   function spectral(x){
     var r=0.5+0.5*Math.sin(6.0*x+0.0);
     var g=0.5+0.5*Math.sin(6.0*x+2.0944);
@@ -3693,7 +4356,20 @@ body.overlay-open .plus-row.is-yielding-reset {
     return B.classList.contains('open') && B.getAttribute('aria-hidden')!=='true' && !anyCategoryOpen;
   }
 
-  var mo = new MutationObserver(function(){ if (isOpen()) start(); else stop(); });
+  var mo = new MutationObserver(function(){
+    if (isOpen()) {
+      // Defer two frames: bStage may still have display:none inline style from the
+      // previous close (set by updateBVisibility). Without the delay, resize() sees
+      // a zero-dimension canvas → 1×1 clamp → shape jumps on first open.
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          if (isOpen()) start();
+        });
+      });
+    } else {
+      stop();
+    }
+  });
   mo.observe(B, { attributes:true, attributeFilter:['class','style','aria-hidden'] });
   // Also observe compPanel for tab open/close state changes
   var cp = document.getElementById('compPanel');
@@ -3726,32 +4402,30 @@ body.overlay-open .plus-row.is-yielding-reset {
   var currentIndex = 0;
   var isAnimating = false;
   var lightboxOpen = false;
+  var _openingLightbox = false; /* guard: prevents observer from closing during open sequence */
 
   // Update navigation arrow visibility based on current position
   function updateNavArrows() {
-    // Force hide carousel arrows on mobile - use tap zones only
-    if (window.matchMedia('(max-width: 768px)').matches) {
-      if (navLeft) navLeft.style.display = 'none';
-      if (navRight) navRight.style.display = 'none';
-      return;
-    }
-
-    // Hide left arrow on first image (index 0)
-    // Hide right arrow on last image (index === slides.length - 1)
     var hideLeft = currentIndex === 0;
     var hideRight = currentIndex === slides.length - 1;
 
-    // Carousel arrows
-    if (navLeft) {
-      navLeft.style.display = hideLeft ? 'none' : '';
-      navLeft.disabled = hideLeft;
-    }
-    if (navRight) {
-      navRight.style.display = hideRight ? 'none' : '';
-      navRight.disabled = hideRight;
+    if (window.matchMedia('(max-width: 768px)').matches) {
+      // Carousel arrows already hidden by CSS on mobile; just update lightbox arrows
+      if (navLeft) navLeft.style.display = 'none';
+      if (navRight) navRight.style.display = 'none';
+    } else {
+      // Desktop: hide carousel arrows at boundaries
+      if (navLeft) {
+        navLeft.style.display = hideLeft ? 'none' : '';
+        navLeft.disabled = hideLeft;
+      }
+      if (navRight) {
+        navRight.style.display = hideRight ? 'none' : '';
+        navRight.disabled = hideRight;
+      }
     }
 
-    // Lightbox arrows
+    // Lightbox arrows: hide at boundaries on all screen sizes
     if (lightboxNavLeft) {
       lightboxNavLeft.style.display = hideLeft ? 'none' : '';
       lightboxNavLeft.disabled = hideLeft;
@@ -3875,6 +4549,10 @@ body.overlay-open .plus-row.is-yielding-reset {
     var img = currentSlide.querySelector('img');
     if (!img) return;
 
+    // Raise guard so the MutationObserver can't close us mid-open
+    _openingLightbox = true;
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ _openingLightbox = false; }); });
+
     lightboxImage.src = img.src;
     lightboxImage.alt = img.alt;
     lightbox.style.display = 'flex';
@@ -3892,10 +4570,34 @@ body.overlay-open .plus-row.is-yielding-reset {
     document.body.classList.remove('lightbox-open');
     lightboxOpen = false;
     document.body.style.overflow = '';
+    currentIndex = 0; /* always reopen from first image */
+    updateNavArrows();  /* sync arrow visibility to index 0 */
 
     setTimeout(function(){
       lightbox.style.display = 'none';
     }, 300);
+
+    // Reset comp panel from one-open state back to default Display B view
+    var panel = document.getElementById('compPanel');
+    if (panel) {
+      panel.classList.remove('one-open');
+      panel.removeAttribute('data-open');
+      var btns = panel.querySelectorAll('.comp-btn');
+      for (var bi=0; bi<btns.length; bi++) btns[bi].classList.remove('open','active');
+      var items = panel.querySelectorAll('.comp-item');
+      for (var ci=0; ci<items.length; ci++) items[ci].classList.remove('active');
+    }
+    // Clear examples panel
+    var examplesEl = document.getElementById('examples');
+    if (examplesEl) {
+      examplesEl.classList.remove('visible', 'is-singular');
+      var activeBtn = examplesEl.querySelector('.example-btn.active');
+      if (activeBtn) activeBtn.classList.remove('active');
+    }
+    // Restore bStage circle
+    if (typeof window.updateBVisibility === 'function') {
+      window.updateBVisibility();
+    }
   }
 
   function updateLightboxImage(){
@@ -3948,10 +4650,10 @@ body.overlay-open .plus-row.is-yielding-reset {
       var galleryBtn = galleryItem ? galleryItem.querySelector('.comp-btn') : null;
       var isGalleryOpen = galleryBtn && galleryBtn.classList.contains('open');
 
-      // Hide carousel if gallery tab is closed
+      // Hide carousel if gallery tab is closed (guard against firing during programmatic open)
       if (!isGalleryOpen) {
         carousel.classList.add('is-hidden');
-        if (lightboxOpen) closeLightbox();
+        if (lightboxOpen && !_openingLightbox) closeLightbox();
       }
     });
 
@@ -4055,6 +4757,16 @@ body.overlay-open .plus-row.is-yielding-reset {
     scoreLightbox.removeEventListener('touchmove', preventScroll);
     scoreLightbox.removeEventListener('wheel', preventScroll);
     document.removeEventListener('touchmove', preventScroll);
+
+    // Collapse comp panel state so Display B shape is restored
+    var cp = document.getElementById('compPanel');
+    if (cp) {
+      cp.classList.remove('one-open');
+      cp.removeAttribute('data-open');
+      cp.querySelectorAll('.comp-btn').forEach(function(b){ b.classList.remove('open','active'); });
+      cp.querySelectorAll('.comp-item').forEach(function(i){ i.classList.remove('active'); });
+    }
+    if (typeof window.updateBVisibility === 'function') window.updateBVisibility();
   }
 
   // Close on backdrop click
@@ -4087,16 +4799,29 @@ body.overlay-open .plus-row.is-yielding-reset {
   function closeScoreDisplay() {
     scoreDisplay.classList.add('is-hidden');
     document.body.classList.remove('score-open');
-    // Deactivate the example button so clicking Composition #3 works again
+
+    // Reset comp panel from one-open state back to default Display B view
+    var panel = document.getElementById('compPanel');
+    if (panel) {
+      panel.classList.remove('one-open');
+      panel.removeAttribute('data-open');
+      var btns = panel.querySelectorAll('.comp-btn');
+      for (var bi=0; bi<btns.length; bi++) btns[bi].classList.remove('open','active');
+      var items = panel.querySelectorAll('.comp-item');
+      for (var ci=0; ci<items.length; ci++) items[ci].classList.remove('active');
+    }
+
+    // Clear examples panel
     var examplesEl = document.getElementById('examples');
     if (examplesEl) {
+      examplesEl.classList.remove('visible', 'is-singular');
       var activeBtn = examplesEl.querySelector('.example-btn.active');
       if (activeBtn) activeBtn.classList.remove('active');
-      examplesEl.classList.remove('is-singular');
     }
-    // Stay in Display B (Scores view) - ensure overlay state is B open, C closed
-    if (typeof window.applyOverlayState === 'function') {
-      window.applyOverlayState(true, false);
+
+    // Restore bStage circle (updateBVisibility checks tB aria-expanded + one-open state)
+    if (typeof window.updateBVisibility === 'function') {
+      window.updateBVisibility();
     }
   }
 
@@ -4114,39 +4839,66 @@ body.overlay-open .plus-row.is-yielding-reset {
 })();
 </script>
 
-<script id="acknowledgment-display-desktop">
+<script id="nightmare-engine">
 (function(){
   'use strict';
-  var acknowledgmentDisplay = document.getElementById('acknowledgmentDisplay');
-  if (!acknowledgmentDisplay) return;
 
-  function closeAcknowledgmentDisplay() {
-    acknowledgmentDisplay.classList.add('is-hidden');
-    document.body.classList.remove('acknowledgment-open');
-    // Deactivate the example button so clicking Acknowledgments works again
+  var display = document.getElementById('nightmareDisplay');
+  var video   = document.getElementById('nightmareVideo');
+  if (!display || !video) return;
+
+  function openNightmare() {
+    display.classList.remove('is-hidden');
+    display.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('nightmare-open');
+    video.currentTime = 0;
+    video.play();
+  }
+
+  function closeNightmare() {
+    video.pause();
+    display.classList.add('is-hidden');
+    display.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('nightmare-open');
+
+    // Reset comp panel back to default Display B state
+    var panel = document.getElementById('compPanel');
+    if (panel) {
+      panel.classList.remove('one-open');
+      panel.removeAttribute('data-open');
+      var btns = panel.querySelectorAll('.comp-btn');
+      for (var bi = 0; bi < btns.length; bi++) btns[bi].classList.remove('open', 'active');
+      var items = panel.querySelectorAll('.comp-item');
+      for (var ci = 0; ci < items.length; ci++) items[ci].classList.remove('active');
+    }
     var examplesEl = document.getElementById('examples');
     if (examplesEl) {
+      examplesEl.classList.remove('visible', 'is-singular');
       var activeBtn = examplesEl.querySelector('.example-btn.active');
       if (activeBtn) activeBtn.classList.remove('active');
-      examplesEl.classList.remove('is-singular');
     }
-    // Stay in Display B (Letters view) - ensure overlay state is B open, C closed
-    if (typeof window.applyOverlayState === 'function') {
-      window.applyOverlayState(true, false);
+    if (typeof window.updateBVisibility === 'function') {
+      window.updateBVisibility();
     }
   }
 
-  // Click anywhere on acknowledgmentDisplay closes it
-  acknowledgmentDisplay.addEventListener('click', function(e) {
-    closeAcknowledgmentDisplay();
+  // Click on video → toggle play / pause
+  video.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (video.paused) { video.play(); } else { video.pause(); }
   });
 
-  // Close on Escape key
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && !acknowledgmentDisplay.classList.contains('is-hidden')) {
-      closeAcknowledgmentDisplay();
-    }
+  // Click on backdrop (outside video) → close
+  display.addEventListener('click', function(e) {
+    if (e.target === display) closeNightmare();
   });
+
+  // Escape key → close
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && !display.classList.contains('is-hidden')) closeNightmare();
+  });
+
+  window.__NIGHTMARE__ = { open: openNightmare, close: closeNightmare };
 })();
 </script>
 
@@ -4348,6 +5100,122 @@ body.overlay-open .plus-row.is-yielding-reset {
     update: updateYield,
     reset: resetYield
   };
+})();
+</script>
+
+<script id="ambient-circles-engine">
+/* Scatter circles — mobile only, active only while list is open */
+(function(){
+  'use strict';
+  if (!window.matchMedia('(max-width: 768px)').matches) return;
+
+  var canvas = document.getElementById('ambientCircles');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var dpr = window.devicePixelRatio || 1;
+  var W = 0, H = 0;
+  var rafId = null;
+  var t = 0;
+  var N = 8;
+  var particles = [];
+
+  function spectralColor(i) {
+    var h = (i / N * 280 + 200) % 360;
+    return 'hsla(' + Math.round(h) + ',65%,62%,';
+  }
+
+  function resize() {
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width  = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    canvas.style.width  = W + 'px';
+    canvas.style.height = H + 'px';
+  }
+
+  /* Scatter from shape center with outward burst, then settle into drift */
+  function scatter() {
+    var cx = W * 0.5;
+    var cy = H * 0.5;
+    particles = [];
+    for (var i = 0; i < N; i++) {
+      var angle = (i / N) * Math.PI * 2 + (Math.random() - 0.5) * 0.6;
+      var speed = 1.4 + Math.random() * 0.9;
+      particles.push({
+        x:     cx + (Math.random() - 0.5) * 16,
+        y:     cy + (Math.random() - 0.5) * 16,
+        vx:    Math.cos(angle) * speed,
+        vy:    Math.sin(angle) * speed,
+        r:     3.5 + Math.random() * 2.5,
+        color: spectralColor(i),
+        phase: Math.random() * Math.PI * 2,
+        decay: 0.987 + Math.random() * 0.007  /* burst slows to lazy drift */
+      });
+    }
+    t = 0;
+  }
+
+  function draw() {
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    t += 0.007;
+
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+
+      /* Decay burst velocity toward a minimum drift */
+      p.vx *= p.decay;
+      p.vy *= p.decay;
+      var spd = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+      if (spd < 0.2) {
+        var a = Math.atan2(p.vy, p.vx);
+        p.vx = Math.cos(a) * 0.2;
+        p.vy = Math.sin(a) * 0.2;
+      }
+
+      p.x += p.vx;
+      p.y += p.vy;
+
+      /* Soft bounce */
+      if (p.x < p.r)     { p.x = p.r;     p.vx =  Math.abs(p.vx); }
+      if (p.x > W - p.r) { p.x = W - p.r; p.vx = -Math.abs(p.vx); }
+      if (p.y < p.r)     { p.y = p.r;     p.vy =  Math.abs(p.vy); }
+      if (p.y > H - p.r) { p.y = H - p.r; p.vy = -Math.abs(p.vy); }
+
+      /* Gentle breath */
+      var r = p.r * (1 + 0.07 * Math.sin(t * 1.1 + p.phase));
+
+      ctx.strokeStyle = p.color + '0.4)';
+      ctx.lineWidth   = 1.5;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    rafId = requestAnimationFrame(draw);
+  }
+
+  function start() {
+    resize();
+    scatter();
+    if (rafId) cancelAnimationFrame(rafId);
+    draw();
+  }
+
+  function stop() {
+    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+    /* Clear canvas so nothing lingers if it flashes back */
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+  }
+
+  window.addEventListener('resize', resize);
+
+  /* Pre-size on load so first open has correct dimensions */
+  if (document.readyState === 'complete') { resize(); }
+  else { window.addEventListener('load', resize); }
+
+  window.__AMBIENT_CIRCLES__ = { start: start, stop: stop };
 })();
 </script>
 </body>
