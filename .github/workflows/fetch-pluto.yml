@@ -1,0 +1,60 @@
+name: Refresh Pluto TV stream URLs
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  fetch-pluto:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch Pluto TV channel list
+        run: |
+          curl -fsSL "https://api.pluto.tv/v2/channels.json" \
+            -H "Accept: application/json" \
+            -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36" \
+            -o /tmp/pluto-raw.json
+
+      - name: Extract stream URLs for our channels
+        run: |
+          node -e "
+            const fs   = require('fs');
+            const raw  = JSON.parse(fs.readFileSync('/tmp/pluto-raw.json', 'utf8'));
+            const TARGETS = {
+              '5f36d726234ce10007784f2a': 'Bob Ross',
+              '67352ed93a61d4000881f9fa': 'Twilight Zone',
+              '68758038552299d2b08162e3': 'Law & Order',
+              '637e55347427a40007fac703': 'Sailor Moon',
+              '636adc255bcf470007d6e0e2': 'Top Gear UK',
+              '5aec96ec5126c2157123c657': 'Jerry Springer',
+              '6283d51144ad8f0007fa382d': 'Judge Judy',
+              '5cf96dad1652631e36d43320': 'Comedy Central es',
+            };
+            const channels = Array.isArray(raw) ? raw : (raw.data || raw.channels || raw.channel || []);
+            const urls = {};
+            for (const ch of channels) {
+              if (!TARGETS[ch._id]) continue;
+              const list = (ch.stitched || {}).urls || [];
+              const hls = list.find(u => (u.type || '').toLowerCase().includes('hls')) || list[0];
+              if (hls && hls.url) urls[ch._id] = hls.url;
+            }
+            const found = Object.keys(urls).length;
+            console.log('Extracted ' + found + ' of ' + Object.keys(TARGETS).length + ' channels');
+            if (found === 0) { console.error('No URLs extracted'); process.exit(1); }
+            fs.mkdirSync('data', { recursive: true });
+            fs.writeFileSync('data/pluto-channels.json', JSON.stringify({ updated: new Date().toISOString(), urls }, null, 2));
+          "
+
+      - name: Commit if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/pluto-channels.json
+          git diff --staged --quiet || git commit -m "chore: refresh Pluto TV stream URLs"
+          git push
