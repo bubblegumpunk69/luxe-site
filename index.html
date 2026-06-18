@@ -6511,12 +6511,9 @@ var TV_SQUARES = [
   /* PLUTO_URLS_END */
 
   function buildPlutoUrl(plutoId) {
-    return _plutoUrls[plutoId] || (
-      'https://service-stitcher.clusters.pluto.tv/v1/stitch/embed/hls/channel/'
-      + plutoId + '/master.m3u8'
-      + '?deviceId=luxe-' + Math.random().toString(36).slice(2)
-      + '&appName=web&appVersion=6.0.0&clientDeviceType=0&serverSideAds=false'
-    );
+    var full = _plutoUrls[plutoId];
+    if (!full) return '';
+    return full.replace('https://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv', '/pluto-proxy');
   }
 
   function loadHls(callback) {
