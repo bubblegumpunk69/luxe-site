@@ -297,8 +297,8 @@ body.overlay-open #gridCubeWrapper {
   height: 100%;
   transform: rotateY(-90deg) translateZ(calc(var(--grid-size) / 2));
 }
-/* Back face: live copy of radio grid canvas */
-#colorGridBack {
+/* Back face: literary grid — achromatic grey palette */
+#cubeGridBack {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -2079,7 +2079,7 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
     </div>
     <canvas id="cubeGrid"></canvas>
     <canvas id="cubeGridLeft"></canvas>
-    <canvas id="colorGridBack"></canvas>
+    <canvas id="cubeGridBack"></canvas>
     <div class="cube-side cube-side-top"></div>
     <div class="cube-side cube-side-bottom"></div>
   </div>
@@ -5967,7 +5967,7 @@ var TV_SQUARES = [
 
   var cubeGrid       = document.getElementById('cubeGrid');        /* right literary face */
   var cubeGridLeft   = document.getElementById('cubeGridLeft');    /* left  literary face */
-  var colorGridBack  = document.getElementById('colorGridBack');   /* back face (mirrors radio) */
+  var cubeGridBack   = document.getElementById('cubeGridBack');    /* back face (grey literary) */
   var colorGridFront = document.getElementById('colorGrid');       /* front radio canvas */
   var colorContainer = document.getElementById('colorGridContainer');
   var preview  = document.getElementById('readingPreview');
@@ -6188,21 +6188,6 @@ var TV_SQUARES = [
     }).observe(document.body, { attributes: true, attributeFilter: ['class'] });
   })();
 
-  /* ── Back-face sync: copy radio grid canvas to back face each frame ──
-     Only needed when the back face could be visible (transition through back).
-     Skip entirely when on radio or literary faces to avoid a drawImage per frame
-     for a canvas that is hidden by backface-visibility:hidden. */
-  if (colorGridBack && colorGridFront) {
-    var _backCtx = colorGridBack.getContext('2d');
-    (function syncBackFace(){
-      if (faceState !== 'radio' && _backCtx && colorGridFront.width > 0 && colorGridFront.height > 0){
-        if (colorGridBack.width  !== colorGridFront.width)  colorGridBack.width  = colorGridFront.width;
-        if (colorGridBack.height !== colorGridFront.height) colorGridBack.height = colorGridFront.height;
-        _backCtx.drawImage(colorGridFront, 0, 0);
-      }
-      requestAnimationFrame(syncBackFace);
-    })();
-  }
 
   /* ── Literary grid canvas animation ─────────────────────────
      Water-flowing aesthetic: horizontal wave propagation, caustic
@@ -6212,6 +6197,7 @@ var TV_SQUARES = [
   var LIT_COLS = 4, LIT_ROWS = 4;
   var litCtx     = cubeGrid     ? cubeGrid.getContext('2d')     : null;
   var litCtxLeft = cubeGridLeft ? cubeGridLeft.getContext('2d') : null;
+  var litCtxBack = cubeGridBack ? cubeGridBack.getContext('2d') : null;
   var litBB = new Array(16);
 
   /* Dark palette — left face: near-black ink through charcoal to warm paper */
@@ -6316,6 +6302,7 @@ var TV_SQUARES = [
     var sz = wrapper.clientWidth || 280;
     if (cubeGrid)     { cubeGrid.width     = sz; cubeGrid.height     = sz; }
     if (cubeGridLeft) { cubeGridLeft.width = sz; cubeGridLeft.height = sz; }
+    if (cubeGridBack) { cubeGridBack.width = sz; cubeGridBack.height = sz; }
   }
   resizeLitCanvases();
   window.addEventListener('resize', resizeLitCanvases, { passive: true });
@@ -6398,6 +6385,7 @@ var TV_SQUARES = [
       var leftPal  = dark ? LIT_COLOURS_GREEN : LIT_COLOURS_BRIGHT;
       if (litCtx     && cubeGrid.width     > 0) drawLitFrame(litCtx,     cubeGrid.width,     cubeGrid.height,     time, rightPal);
       if (litCtxLeft && cubeGridLeft.width > 0) drawLitFrame(litCtxLeft, cubeGridLeft.width, cubeGridLeft.height, time, leftPal);
+      if (litCtxBack && cubeGridBack.width > 0) drawLitFrame(litCtxBack, cubeGridBack.width, cubeGridBack.height, time, LIT_COLOURS);
     } else {
       /* Advance time tracking only — keeps lerp state fresh on return */
       _lastLitTime = time;
