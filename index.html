@@ -6487,12 +6487,14 @@ var TV_SQUARES = [
       _radioAutoPaused = false;
     }
 
+    var mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    var ap = mobile ? '&autoplay=1' : '&autoplay=1&mute=1';
     var fr = document.createElement('iframe');
     fr.src = ch.ytList
-      ? 'https://www.youtube.com/embed/videoseries?list=' + ch.ytList + '&autoplay=1'
+      ? 'https://www.youtube.com/embed/videoseries?list=' + ch.ytList + ap
       : ch.ytChannel
-        ? 'https://www.youtube.com/embed/live_stream?channel=' + ch.ytChannel + '&autoplay=1'
-        : 'https://www.youtube.com/embed/' + ch.ytId + '?autoplay=1';
+        ? 'https://www.youtube.com/embed/live_stream?channel=' + ch.ytChannel + ap
+        : 'https://www.youtube.com/embed/' + ch.ytId + '?' + ap.slice(1);
     fr.allow = 'autoplay; fullscreen; picture-in-picture';
     fr.allowFullscreen = true;
     fr.addEventListener('load', function(){ player.classList.remove('loading'); });
