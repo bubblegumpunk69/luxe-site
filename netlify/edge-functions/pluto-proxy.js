@@ -2,16 +2,17 @@ export default async (request) => {
   const url = new URL(request.url);
   const rest = url.pathname.replace(/^\/pluto-proxy/, '');
 
-  // Patch required Pluto params that must be non-empty
+  // Patch required Pluto params
   const params = url.searchParams;
   if (!params.get('deviceId') || params.get('deviceId') === 'unknown') {
     params.set('deviceId', 'luxe-' + crypto.randomUUID());
   }
-  if (!params.get('clientTime')) {
-    params.set('clientTime', new Date().toISOString());
-  }
-  if (!params.get('appName'))    params.set('appName',    'web');
-  if (!params.get('appVersion')) params.set('appVersion', '6.0.0');
+  if (!params.get('clientTime'))  params.set('clientTime',  new Date().toISOString());
+  if (!params.get('appName'))     params.set('appName',     'web');
+  if (!params.get('appVersion'))  params.set('appVersion',  '6.0.0');
+  if (!params.get('deviceMake'))  params.set('deviceMake',  'Apple');
+  if (!params.get('deviceModel')) params.set('deviceModel', 'MacIntel');
+  if (!params.get('deviceType'))  params.set('deviceType',  'web');
 
   const targetUrl = 'https://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv' + rest + '?' + params.toString();
 
