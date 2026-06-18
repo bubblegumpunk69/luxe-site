@@ -6525,5 +6525,77 @@ var TV_SQUARES = [
   window.closeTVChannel  = closeTVChannel;
 })();
 </script>
+
+<!-- ── Gesture hint ── -->
+<style>
+#gestureHint {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 9990;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+#gestureHint svg {
+  display: block;
+  width: 88px;
+  height: 122px;
+  opacity: 0;
+  animation: gesture-hint 5.4s 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+@keyframes gesture-hint {
+  /* Appear */
+  0%   { opacity: 0;    transform: translateY(14px) scale(0.87);         }
+  8%   { opacity: 0.82; transform: translateY(0)    scale(1);            }
+  12%  { opacity: 0.82; transform: translate(0, 0)  rotate(0deg);        }
+  /* Swipe left */
+  28%  { opacity: 0.82; transform: translate(-62px, 0) rotate(10deg);    }
+  33%  { opacity: 0.82; transform: translate(-62px, 0) rotate(10deg);    }
+  /* Swipe right */
+  52%  { opacity: 0.82; transform: translate(62px, 0)  rotate(-10deg);   }
+  56%  { opacity: 0.82; transform: translate(62px, 0)  rotate(-10deg);   }
+  /* Return centre */
+  64%  { opacity: 0.82; transform: translate(0, 0) rotate(0deg);         }
+  /* Tap 1 */
+  70%  { opacity: 0.82; transform: translate(0, 28px)  scale(0.94);      }
+  76%  { opacity: 0.82; transform: translate(0, 0)     scale(1);         }
+  /* Tap 2 */
+  83%  { opacity: 0.82; transform: translate(0, 28px)  scale(0.94);      }
+  89%  { opacity: 0.82; transform: translate(0, 0)     scale(1);         }
+  /* Fade out */
+  100% { opacity: 0;    transform: translate(0, -10px) scale(0.9);       }
+}
+</style>
+<script>
+/* Gesture hint — first-visit only */
+(function () {
+  if (localStorage.getItem('luxe-hint-seen')) return;
+  var el = document.createElement('div');
+  el.id = 'gestureHint';
+  el.innerHTML = '<svg viewBox="0 0 88 122" fill="white" xmlns="http://www.w3.org/2000/svg">'
+    + '<defs><filter id="gh-ds" x="-30%" y="-30%" width="160%" height="160%">'
+    + '<feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="rgba(0,0,0,0.24)"/>'
+    + '</filter></defs>'
+    + '<g filter="url(#gh-ds)">'
+    /* ring finger */
+    + '<rect x="5"  y="14" width="21" height="56" rx="10.5"/>'
+    /* middle finger */
+    + '<rect x="30" y="6"  width="21" height="64" rx="10.5"/>'
+    /* index finger */
+    + '<rect x="55" y="12" width="21" height="58" rx="10.5"/>'
+    /* palm */
+    + '<rect x="2"  y="52" width="75" height="52" rx="20"/>'
+    /* thumb */
+    + '<ellipse cx="78" cy="81" rx="13" ry="21" transform="rotate(18 78 81)"/>'
+    /* cuff */
+    + '<rect x="12" y="100" width="52" height="20" rx="10"/>'
+    + '</g></svg>';
+  document.body.appendChild(el);
+  el.querySelector('svg').addEventListener('animationend', function () {
+    localStorage.setItem('luxe-hint-seen', '1');
+    el.remove();
+  });
+}());
+</script>
 </body>
 </html>
