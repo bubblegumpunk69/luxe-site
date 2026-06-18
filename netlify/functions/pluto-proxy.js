@@ -22,14 +22,19 @@ exports.handler = async (event) => {
 
   const targetUrl = 'https://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv' + rest + '?' + params.toString();
 
+  // Forward the real browser IP so Pluto geo-detects the user (US), not our server (AWS)
+  const clientIp = (event.headers || {})['x-nf-client-connection-ip'] ||
+                   (event.headers || {})['x-forwarded-for'] || '';
+
   let resp;
   try {
     resp = await fetch(targetUrl, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36',
-        'Origin':     'https://pluto.tv',
-        'Referer':    'https://pluto.tv/',
-        'Accept':     '*/*',
+        'User-Agent':      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36',
+        'Origin':          'https://pluto.tv',
+        'Referer':         'https://pluto.tv/',
+        'Accept':          '*/*',
+        ...(clientIp ? { 'X-Forwarded-For': clientIp } : {}),
       },
     });
   } catch (e) {
