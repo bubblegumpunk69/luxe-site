@@ -6497,11 +6497,18 @@ var TV_SQUARES = [
   var _hlsLoading = false;
   var _hlsLoaded  = false;
   var _radioAutoPaused = false;
-  var _plutoUrls = {};
-  fetch('/data/pluto-channels.json')
-    .then(function(r){ return r.ok ? r.json() : {}; })
-    .then(function(d){ _plutoUrls = (d && d.urls) || {}; })
-    .catch(function(){});
+  /* PLUTO_URLS_START */
+  var _plutoUrls = {
+    '5aec96ec5126c2157123c657': 'https://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/5aec96ec5126c2157123c657/master.m3u8?advertisingId=&appName=&appVersion=unknown&architecture=&buildVersion=&clientTime=&deviceDNT=0&deviceId=unknown&deviceLat=40.7500&deviceLon=-73.9900&deviceMake=&deviceModel=&deviceType=&deviceVersion=unknown&includeExtendedEvents=false&marketingRegion=US&sid=&userId=',
+    '5cf96dad1652631e36d43320': 'https://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/5cf96dad1652631e36d43320/master.m3u8?advertisingId=&appName=&appVersion=unknown&architecture=&buildVersion=&clientTime=&deviceDNT=0&deviceId=unknown&deviceLat=40.7500&deviceLon=-73.9900&deviceMake=&deviceModel=&deviceType=&deviceVersion=unknown&includeExtendedEvents=false&marketingRegion=US&sid=&userId=',
+    '5f36d726234ce10007784f2a': 'https://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/5f36d726234ce10007784f2a/master.m3u8?advertisingId=&appName=&appVersion=unknown&architecture=&buildVersion=&clientTime=&deviceDNT=0&deviceId=unknown&deviceLat=40.7500&deviceLon=-73.9900&deviceMake=&deviceModel=&deviceType=&deviceVersion=unknown&includeExtendedEvents=false&marketingRegion=US&sid=&userId=',
+    '6283d51144ad8f0007fa382d': 'https://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/6283d51144ad8f0007fa382d/master.m3u8?advertisingId=&appName=&appVersion=unknown&architecture=&buildVersion=&clientTime=&deviceDNT=0&deviceId=unknown&deviceLat=40.7500&deviceLon=-73.9900&deviceMake=&deviceModel=&deviceType=&deviceVersion=unknown&includeExtendedEvents=false&marketingRegion=US&sid=&userId=',
+    '636adc255bcf470007d6e0e2': 'https://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/636adc255bcf470007d6e0e2/master.m3u8?advertisingId=&appName=&appVersion=unknown&architecture=&buildVersion=&clientTime=&deviceDNT=0&deviceId=unknown&deviceLat=40.7500&deviceLon=-73.9900&deviceMake=&deviceModel=&deviceType=&deviceVersion=unknown&includeExtendedEvents=false&marketingRegion=US&sid=&userId=',
+    '637e55347427a40007fac703': 'https://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/637e55347427a40007fac703/master.m3u8?advertisingId=&appName=&appVersion=unknown&architecture=&buildVersion=&clientTime=&deviceDNT=0&deviceId=unknown&deviceLat=40.7500&deviceLon=-73.9900&deviceMake=&deviceModel=&deviceType=&deviceVersion=unknown&includeExtendedEvents=false&marketingRegion=US&sid=&userId=',
+    '67352ed93a61d4000881f9fa': 'https://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/67352ed93a61d4000881f9fa/master.m3u8?advertisingId=&appName=&appVersion=unknown&architecture=&buildVersion=&clientTime=&deviceDNT=0&deviceId=unknown&deviceLat=40.7500&deviceLon=-73.9900&deviceMake=&deviceModel=&deviceType=&deviceVersion=unknown&includeExtendedEvents=false&marketingRegion=US&sid=&userId=',
+    '68758038552299d2b08162e3': 'https://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/68758038552299d2b08162e3/master.m3u8?advertisingId=&appName=&appVersion=unknown&architecture=&buildVersion=&clientTime=&deviceDNT=0&deviceId=unknown&deviceLat=40.7500&deviceLon=-73.9900&deviceMake=&deviceModel=&deviceType=&deviceVersion=unknown&includeExtendedEvents=false&marketingRegion=US&sid=&userId='
+  };
+  /* PLUTO_URLS_END */
 
   function buildPlutoUrl(plutoId) {
     return _plutoUrls[plutoId] || (
