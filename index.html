@@ -2008,7 +2008,7 @@ body.overlay-open .plus-row.is-yielding-reset {
   background: #000;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.35s ease;
+  transition: opacity 0.18s ease;
 }
 #tvPlayer.visible {
   opacity: 1;
@@ -2048,6 +2048,13 @@ body.overlay-open .plus-row.is-yielding-reset {
   text-transform: uppercase;
   pointer-events: none;
   -webkit-font-smoothing: antialiased;
+}
+@keyframes tv-label-pulse {
+  0%,100% { opacity: 0.42; }
+  50%      { opacity: 0.18; }
+}
+#tvPlayer.visible.loading #tvLabel {
+  animation: tv-label-pulse 1.4s ease-in-out infinite;
 }
 /* tv-open: hides cube and UI without triggering the overlay-open safety net */
 body.tv-open #gridCubeWrapper {
@@ -6549,11 +6556,13 @@ var TV_SQUARES = [
       fr.src = src;
       fr.allow = 'autoplay; fullscreen; picture-in-picture';
       fr.allowFullscreen = true;
+      fr.addEventListener('load', function(){ player.classList.remove('loading'); });
       inner.appendChild(fr);
     } else if (ch.type === 'pluto') {
       var vid = document.createElement('video');
       vid.autoplay = true;
       vid.playsInline = true;
+      vid.addEventListener('canplay', function(){ player.classList.remove('loading'); });
       inner.appendChild(vid);
       var url = buildPlutoUrl(ch.plutoId);
       loadHls(function() {
@@ -6569,12 +6578,12 @@ var TV_SQUARES = [
       });
     }
 
-    player.classList.add('visible');
+    player.classList.add('visible', 'loading');
   }
 
   function closeTVChannel() {
     if (!player.classList.contains('visible')) return;
-    player.classList.remove('visible');
+    player.classList.remove('visible', 'loading');
     player.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('tv-open');
     if (_hls) { _hls.destroy(); _hls = null; }
