@@ -2679,18 +2679,18 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
 
   function pausePlayback(){
     if (!stationPlaying || isPaused) return;
-    fadeVolume(activePlayer, 0, 200, () => activePlayer.pause());
     isPaused = true;
-    isLoading = false; // Clear loading state
+    isLoading = false;
+    try { activePlayer.pause(); } catch(_e){}
     pill.classList.remove('loading');
     updatePillForTransition(isOverlayOpen, isOverlayOpen);
   }
   function resumePlayback(){
     if (!stationPlaying || !isPaused) return;
-    activePlayer.play().catch(function(){});
-    fadeVolume(activePlayer, 1.0, 200); // Always full volume
     isPaused = false;
-    isLoading = false; // Clear loading state
+    isLoading = false;
+    activePlayer.volume = 1.0;
+    activePlayer.play().catch(function(){});
     pill.classList.remove('loading');
     updatePillForTransition(isOverlayOpen, isOverlayOpen);
   }
