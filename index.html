@@ -2013,6 +2013,17 @@ body.overlay-open .plus-row.is-yielding-reset {
   border: none;
   display: block;
 }
+/* Pluto embed: clip their nav bar (top) and channel guide (bottom) */
+#tvPlayerInner.pluto-embed {
+  overflow: hidden;
+}
+#tvPlayerInner.pluto-embed iframe {
+  top: -65px;
+  height: calc(100% + 65px + 230px);
+  inset: unset;
+  left: 0;
+  width: 100%;
+}
 #tvClose {
   position: absolute;
   top: 20px;
@@ -6492,8 +6503,10 @@ var TV_SQUARES = [
       fr.src = ch.ytChannel
         ? 'https://www.youtube.com/embed/live_stream?channel=' + ch.ytChannel + '&autoplay=1'
         : 'https://www.youtube.com/embed/' + ch.ytId + '?autoplay=1';
+      inner.classList.remove('pluto-embed');
     } else {
       fr.src = 'https://pluto.tv/live-tv/' + ch.slug;
+      inner.classList.add('pluto-embed');
     }
     fr.allow = 'autoplay; fullscreen; picture-in-picture';
     fr.allowFullscreen = true;
@@ -6509,6 +6522,7 @@ var TV_SQUARES = [
     player.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('tv-open');
     inner.innerHTML = '';
+    inner.classList.remove('pluto-embed');
     if (label) label.textContent = '';
 
     if (_radioAutoPaused) {
