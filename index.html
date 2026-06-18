@@ -6030,13 +6030,15 @@ var TV_SQUARES = [
       arcLeft.setAttribute('aria-label','Show literary grid');
       arcRight.setAttribute('aria-label','Show literary grid');
     } else if (faceState === 'right'){
-      /* right literary: left chevron → return to radio */
       arcLeft.classList.add('arc-return');
       arcLeft.setAttribute('aria-label','Return to radio grid');
+      arcRight.classList.add('arc-visible');
+      arcRight.setAttribute('aria-label','Show back face');
     } else if (faceState === 'left'){
-      /* left literary: right chevron → return to radio */
       arcRight.classList.add('arc-return');
       arcRight.setAttribute('aria-label','Return to radio grid');
+      arcLeft.classList.add('arc-visible');
+      arcLeft.setAttribute('aria-label','Show back face');
     } else {
       /* back face: show the return chevron for the direction we came from */
       if (backCameFrom === 'right'){
@@ -6098,11 +6100,13 @@ var TV_SQUARES = [
   if (arcLeft)  arcLeft.addEventListener('click',  function(){
     if      (faceState === 'radio')  flipToReadingLeft();
     else if (faceState === 'back')   returnFromBack();
+    else if (faceState === 'left')   flipToBack();
     else                             flipToRadio();
   });
   if (arcRight) arcRight.addEventListener('click', function(){
     if      (faceState === 'radio')  flipToReading();
     else if (faceState === 'back')   returnFromBack();
+    else if (faceState === 'right')  flipToBack();
     else                             flipToRadio();
   });
 
