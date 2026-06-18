@@ -6394,8 +6394,8 @@ var TV_SQUARES = [
          All other contexts: dark ink right, bright linen left. */
       var mob  = window.__MQ__.mobile;
       var dark = window.__MQ__.dark;
-      var rightPal = (mob && dark) ? LIT_COLOURS_BLUE  : LIT_COLOURS;
-      var leftPal  = (mob && dark) ? LIT_COLOURS_GREEN : LIT_COLOURS_BRIGHT;
+      var rightPal = dark ? LIT_COLOURS_BLUE  : LIT_COLOURS;
+      var leftPal  = dark ? LIT_COLOURS_GREEN : LIT_COLOURS_BRIGHT;
       if (litCtx     && cubeGrid.width     > 0) drawLitFrame(litCtx,     cubeGrid.width,     cubeGrid.height,     time, rightPal);
       if (litCtxLeft && cubeGridLeft.width > 0) drawLitFrame(litCtxLeft, cubeGridLeft.width, cubeGridLeft.height, time, leftPal);
     } else {
