@@ -2057,6 +2057,25 @@ body.overlay-open .plus-row.is-yielding-reset {
 #tvPlayer.visible.loading #tvLabel {
   animation: tv-label-pulse 1.4s ease-in-out infinite;
 }
+/* TV tile hover / touch label */
+#tvTileLabel {
+  position: fixed;
+  pointer-events: none;
+  z-index: 200;
+  padding: 3px 9px 4px;
+  background: rgba(10,10,10,0.72);
+  color: rgba(255,255,255,0.88);
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.12s ease;
+  -webkit-font-smoothing: antialiased;
+}
+#tvTileLabel.visible { opacity: 1; }
 /* tv-open: hides cube and UI without triggering the overlay-open safety net */
 body.tv-open #gridCubeWrapper {
   opacity: 0;
@@ -2109,6 +2128,7 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
 <div id="tvPlayer" aria-hidden="true">
   <div id="tvPlayerInner"></div>
   <div id="tvLabel"></div>
+<div id="tvTileLabel"></div>
   <button id="tvClose" aria-label="Close channel"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="2" y1="2" x2="14" y2="14" stroke="white" stroke-width="0.8"/><line x1="14" y1="2" x2="2" y2="14" stroke="white" stroke-width="0.8"/></svg></button>
 </div>
 
@@ -6409,6 +6429,43 @@ var TV_SQUARES = [
   }
   if (cubeGrid)     cubeGrid.addEventListener('click',     function(e){ handleLitClick(e,cubeGrid,    'right'); });
   if (cubeGridLeft) cubeGridLeft.addEventListener('click', function(e){ handleLitClick(e,cubeGridLeft,'left');  });
+
+  /* ── TV tile label on hover / touch ── */
+  (function(){
+    var lbl = document.getElementById('tvTileLabel');
+    if (!lbl || !cubeGridLeft) return;
+
+    function cellFromPoint(clientX, clientY){
+      var rect = cubeGridLeft.getBoundingClientRect();
+      var col  = Math.max(0, Math.min(LIT_COLS-1, Math.floor((clientX - rect.left)  / (rect.width  / LIT_COLS))));
+      var row  = Math.max(0, Math.min(LIT_ROWS-1, Math.floor((clientY - rect.top)   / (rect.height / LIT_ROWS))));
+      return { col:col, row:row, rect:rect };
+    }
+
+    function showLabel(clientX, clientY){
+      if (faceState !== 'left') return;
+      var c   = cellFromPoint(clientX, clientY);
+      var tv  = (typeof TV_SQUARES !== 'undefined') && TV_SQUARES[c.row * LIT_COLS + c.col];
+      if (!tv) return;
+      var tileW = c.rect.width  / LIT_COLS;
+      var tileH = c.rect.height / LIT_ROWS;
+      lbl.textContent  = tv.label;
+      lbl.style.left   = (c.rect.left + (c.col + 0.5) * tileW) + 'px';
+      lbl.style.top    = (c.rect.top  + (c.row + 1)   * tileH - 26) + 'px';
+      lbl.classList.add('visible');
+    }
+
+    function hideLabel(){ lbl.classList.remove('visible'); }
+
+    cubeGridLeft.addEventListener('mousemove',  function(e){ showLabel(e.clientX, e.clientY); });
+    cubeGridLeft.addEventListener('mouseleave', hideLabel);
+    cubeGridLeft.addEventListener('touchstart', function(e){
+      if (e.touches.length === 1) showLabel(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: true });
+    cubeGridLeft.addEventListener('touchend',    hideLabel, { passive: true });
+    cubeGridLeft.addEventListener('touchcancel', hideLabel, { passive: true });
+  })();
+
 
   function showPinned(data){
     rpSource.textContent=data.label; rpTitle.textContent=data.title;
