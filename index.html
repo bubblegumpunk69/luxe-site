@@ -2013,17 +2013,6 @@ body.overlay-open .plus-row.is-yielding-reset {
   border: none;
   display: block;
 }
-/* Pluto embed: clip their nav bar (top) and channel guide (bottom) */
-#tvPlayerInner.pluto-embed {
-  overflow: hidden;
-}
-#tvPlayerInner.pluto-embed iframe {
-  top: -65px;
-  height: calc(100% + 65px + 230px);
-  inset: unset;
-  left: 0;
-  width: 100%;
-}
 #tvClose {
   position: absolute;
   top: 20px;
@@ -5938,15 +5927,15 @@ var READING_SQUARES = [
 ];
 
 var TV_SQUARES = [
-  /* ── Pluto TV 8 ── */
-  { id:'bob-ross',    type:'plutoEmbed', label:'Bob Ross',                slug:'the-bob-ross-channel' },
-  { id:'twilight',    type:'plutoEmbed', label:'Twilight Zone',           slug:'the-twilight-zone-ptv' },
-  { id:'law-order',   type:'plutoEmbed', label:'Law & Order',             slug:'law-and-order' },
-  { id:'sailor-moon', type:'plutoEmbed', label:'Sailor Moon',             slug:'sailor-moon' },
-  { id:'top-gear',    type:'plutoEmbed', label:'Top Gear UK',             slug:'top-gear-ptv1' },
-  { id:'springer',    type:'plutoEmbed', label:'Jerry Springer',          slug:'nosey' },
-  { id:'judge-judy',  type:'plutoEmbed', label:'Judge Judy',              slug:'the-judge-judy-channel' },
-  { id:'comedy-es',   type:'plutoEmbed', label:'Comedy Central en español', slug:'comedy-central-en-espanol' },
+  /* ── YouTube — Channel TV ── */
+  { id:'adam-curtis',  type:'youtube', label:'JustAdamCurtis',        ytList:'UUa1LiBedgAciIiHqBAWEo7Q' },
+  { id:'art21',        type:'youtube', label:'Art21',                  ytList:'UU6Z_Gbfo7xwSMs6Ahkv-m3Q' },
+  { id:'avgeeks',      type:'youtube', label:'A/V Geeks 16mm',         ytList:'UUV78nuSmJxTtHaD4wnzPJkA' },
+  { id:'thrasher',     type:'youtube', label:'Thrasher',               ytList:'UUt16NSYjauKclK67LCXvQyA' },
+  { id:'wsf',          type:'youtube', label:'World Science Festival', ytList:'UUgzD7Qo3ea6fer_QdtBVJng' },
+  { id:'desert-art',   type:'youtube', label:'Desert Art Centre',      ytList:'UUyk6JFcn7hd2sM_GPM4g_OA' },
+  { id:'mst3k',        type:'youtube', label:'MST3K',                  ytId:'Ai8jOHPBggM' },
+  { id:'srf',          type:'youtube', label:'SRF Sternstunden',       ytList:'UUh_GQqobenO55IJ9sYZWndA' },
   /* ── YouTube — Sacred / Cosmic ── */
   { id:'iss',         type:'youtube', label:'NASA ISS',                ytId:'FuuC4dpSQ1M' },
   { id:'wall',        type:'youtube', label:'Western Wall',            ytId:'77akujLn4k8' },
@@ -6499,15 +6488,11 @@ var TV_SQUARES = [
     }
 
     var fr = document.createElement('iframe');
-    if (ch.type === 'youtube') {
-      fr.src = ch.ytChannel
+    fr.src = ch.ytList
+      ? 'https://www.youtube.com/embed/videoseries?list=' + ch.ytList + '&autoplay=1'
+      : ch.ytChannel
         ? 'https://www.youtube.com/embed/live_stream?channel=' + ch.ytChannel + '&autoplay=1'
         : 'https://www.youtube.com/embed/' + ch.ytId + '?autoplay=1';
-      inner.classList.remove('pluto-embed');
-    } else {
-      fr.src = 'https://pluto.tv/live-tv/' + ch.slug;
-      inner.classList.add('pluto-embed');
-    }
     fr.allow = 'autoplay; fullscreen; picture-in-picture';
     fr.allowFullscreen = true;
     fr.addEventListener('load', function(){ player.classList.remove('loading'); });
@@ -6522,7 +6507,6 @@ var TV_SQUARES = [
     player.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('tv-open');
     inner.innerHTML = '';
-    inner.classList.remove('pluto-embed');
     if (label) label.textContent = '';
 
     if (_radioAutoPaused) {
