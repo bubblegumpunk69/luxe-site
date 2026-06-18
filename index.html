@@ -5939,14 +5939,14 @@ var READING_SQUARES = [
 
 var TV_SQUARES = [
   /* ── Pluto TV 8 ── */
-  { id:'bob-ross',    type:'pluto',   label:'Bob Ross',                plutoId:'5f36d726234ce10007784f2a' },
-  { id:'twilight',    type:'pluto',   label:'Twilight Zone',           plutoId:'67352ed93a61d4000881f9fa' },
-  { id:'law-order',   type:'pluto',   label:'Law & Order',             plutoId:'68758038552299d2b08162e3' },
-  { id:'sailor-moon', type:'pluto',   label:'Sailor Moon',             plutoId:'637e55347427a40007fac703' },
-  { id:'top-gear',    type:'pluto',   label:'Top Gear UK',             plutoId:'636adc255bcf470007d6e0e2' },
-  { id:'springer',    type:'pluto',   label:'Jerry Springer',          plutoId:'5aec96ec5126c2157123c657' },
-  { id:'judge-judy',  type:'pluto',   label:'Judge Judy',              plutoId:'6283d51144ad8f0007fa382d' },
-  { id:'comedy-es',   type:'pluto',   label:'Comedy Central en español', plutoId:'5cf96dad1652631e36d43320' },
+  { id:'bob-ross',    type:'plutoEmbed', label:'Bob Ross',                slug:'the-bob-ross-channel' },
+  { id:'twilight',    type:'plutoEmbed', label:'Twilight Zone',           slug:'the-twilight-zone-ptv' },
+  { id:'law-order',   type:'plutoEmbed', label:'Law & Order',             slug:'law-and-order' },
+  { id:'sailor-moon', type:'plutoEmbed', label:'Sailor Moon',             slug:'sailor-moon' },
+  { id:'top-gear',    type:'plutoEmbed', label:'Top Gear UK',             slug:'top-gear-ptv1' },
+  { id:'springer',    type:'plutoEmbed', label:'Jerry Springer',          slug:'nosey' },
+  { id:'judge-judy',  type:'plutoEmbed', label:'Judge Judy',              slug:'the-judge-judy-channel' },
+  { id:'comedy-es',   type:'plutoEmbed', label:'Comedy Central en español', slug:'comedy-central-en-espanol' },
   /* ── YouTube — Sacred / Cosmic ── */
   { id:'iss',         type:'youtube', label:'NASA ISS',                ytId:'FuuC4dpSQ1M' },
   { id:'wall',        type:'youtube', label:'Western Wall',            ytId:'77akujLn4k8' },
@@ -6500,41 +6500,9 @@ var TV_SQUARES = [
   var btn    = document.getElementById('tvClose');
   if (!player || !inner) return;
 
-  var _hls = null;
-  var _hlsLoading = false;
-  var _hlsLoaded  = false;
   var _radioAutoPaused = false;
-  /* PLUTO_URLS_START */
-  var _plutoUrls = {
-    '5aec96ec5126c2157123c657': 'https://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/5aec96ec5126c2157123c657/master.m3u8?advertisingId=&appName=&appVersion=unknown&architecture=&buildVersion=&clientTime=&deviceDNT=0&deviceId=unknown&deviceLat=40.7500&deviceLon=-73.9900&deviceMake=&deviceModel=&deviceType=&deviceVersion=unknown&includeExtendedEvents=false&marketingRegion=US&sid=&userId=',
-    '5cf96dad1652631e36d43320': 'https://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/5cf96dad1652631e36d43320/master.m3u8?advertisingId=&appName=&appVersion=unknown&architecture=&buildVersion=&clientTime=&deviceDNT=0&deviceId=unknown&deviceLat=40.7500&deviceLon=-73.9900&deviceMake=&deviceModel=&deviceType=&deviceVersion=unknown&includeExtendedEvents=false&marketingRegion=US&sid=&userId=',
-    '5f36d726234ce10007784f2a': 'https://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/5f36d726234ce10007784f2a/master.m3u8?advertisingId=&appName=&appVersion=unknown&architecture=&buildVersion=&clientTime=&deviceDNT=0&deviceId=unknown&deviceLat=40.7500&deviceLon=-73.9900&deviceMake=&deviceModel=&deviceType=&deviceVersion=unknown&includeExtendedEvents=false&marketingRegion=US&sid=&userId=',
-    '6283d51144ad8f0007fa382d': 'https://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/6283d51144ad8f0007fa382d/master.m3u8?advertisingId=&appName=&appVersion=unknown&architecture=&buildVersion=&clientTime=&deviceDNT=0&deviceId=unknown&deviceLat=40.7500&deviceLon=-73.9900&deviceMake=&deviceModel=&deviceType=&deviceVersion=unknown&includeExtendedEvents=false&marketingRegion=US&sid=&userId=',
-    '636adc255bcf470007d6e0e2': 'https://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/636adc255bcf470007d6e0e2/master.m3u8?advertisingId=&appName=&appVersion=unknown&architecture=&buildVersion=&clientTime=&deviceDNT=0&deviceId=unknown&deviceLat=40.7500&deviceLon=-73.9900&deviceMake=&deviceModel=&deviceType=&deviceVersion=unknown&includeExtendedEvents=false&marketingRegion=US&sid=&userId=',
-    '637e55347427a40007fac703': 'https://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/637e55347427a40007fac703/master.m3u8?advertisingId=&appName=&appVersion=unknown&architecture=&buildVersion=&clientTime=&deviceDNT=0&deviceId=unknown&deviceLat=40.7500&deviceLon=-73.9900&deviceMake=&deviceModel=&deviceType=&deviceVersion=unknown&includeExtendedEvents=false&marketingRegion=US&sid=&userId=',
-    '67352ed93a61d4000881f9fa': 'https://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/67352ed93a61d4000881f9fa/master.m3u8?advertisingId=&appName=&appVersion=unknown&architecture=&buildVersion=&clientTime=&deviceDNT=0&deviceId=unknown&deviceLat=40.7500&deviceLon=-73.9900&deviceMake=&deviceModel=&deviceType=&deviceVersion=unknown&includeExtendedEvents=false&marketingRegion=US&sid=&userId=',
-    '68758038552299d2b08162e3': 'https://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/68758038552299d2b08162e3/master.m3u8?advertisingId=&appName=&appVersion=unknown&architecture=&buildVersion=&clientTime=&deviceDNT=0&deviceId=unknown&deviceLat=40.7500&deviceLon=-73.9900&deviceMake=&deviceModel=&deviceType=&deviceVersion=unknown&includeExtendedEvents=false&marketingRegion=US&sid=&userId='
-  };
-  /* PLUTO_URLS_END */
-
-  function buildPlutoUrl(plutoId) {
-    var full = _plutoUrls[plutoId];
-    if (!full) return '';
-    return full.replace('https://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv', '/pluto-proxy');
-  }
-
-  function loadHls(callback) {
-    if (_hlsLoaded) { callback(); return; }
-    if (_hlsLoading) { document.addEventListener('hls-ready', callback, { once: true }); return; }
-    _hlsLoading = true;
-    var s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/hls.js@1.5.7/dist/hls.min.js';
-    s.onload = function() { _hlsLoaded = true; document.dispatchEvent(new Event('hls-ready')); callback(); };
-    document.head.appendChild(s);
-  }
 
   function openTVChannel(ch) {
-    if (_hls) { _hls.destroy(); _hls = null; }
     inner.innerHTML = '';
     if (label) label.textContent = ch.label || '';
     player.setAttribute('aria-hidden', 'false');
@@ -6548,35 +6516,18 @@ var TV_SQUARES = [
       _radioAutoPaused = false;
     }
 
+    var fr = document.createElement('iframe');
     if (ch.type === 'youtube') {
-      var src = ch.ytChannel
+      fr.src = ch.ytChannel
         ? 'https://www.youtube.com/embed/live_stream?channel=' + ch.ytChannel + '&autoplay=1'
         : 'https://www.youtube.com/embed/' + ch.ytId + '?autoplay=1';
-      var fr = document.createElement('iframe');
-      fr.src = src;
-      fr.allow = 'autoplay; fullscreen; picture-in-picture';
-      fr.allowFullscreen = true;
-      fr.addEventListener('load', function(){ player.classList.remove('loading'); });
-      inner.appendChild(fr);
-    } else if (ch.type === 'pluto') {
-      var vid = document.createElement('video');
-      vid.autoplay = true;
-      vid.playsInline = true;
-      vid.addEventListener('canplay', function(){ player.classList.remove('loading'); });
-      inner.appendChild(vid);
-      var url = buildPlutoUrl(ch.plutoId);
-      loadHls(function() {
-        if (typeof Hls !== 'undefined' && Hls.isSupported()) {
-          _hls = new Hls();
-          _hls.loadSource(url);
-          _hls.attachMedia(vid);
-          _hls.on(Hls.Events.MANIFEST_PARSED, function(){ vid.play(); });
-        } else if (vid.canPlayType('application/vnd.apple.mpegurl')) {
-          vid.src = url;
-          vid.play();
-        }
-      });
+    } else {
+      fr.src = 'https://pluto.tv/live-tv/' + ch.slug;
     }
+    fr.allow = 'autoplay; fullscreen; picture-in-picture';
+    fr.allowFullscreen = true;
+    fr.addEventListener('load', function(){ player.classList.remove('loading'); });
+    inner.appendChild(fr);
 
     player.classList.add('visible', 'loading');
   }
@@ -6586,7 +6537,6 @@ var TV_SQUARES = [
     player.classList.remove('visible', 'loading');
     player.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('tv-open');
-    if (_hls) { _hls.destroy(); _hls = null; }
     inner.innerHTML = '';
     if (label) label.textContent = '';
 
