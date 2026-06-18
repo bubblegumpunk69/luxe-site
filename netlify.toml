@@ -1,3 +1,5 @@
-[[edge_functions]]
-  path = "/pluto-proxy/*"
-  function = "pluto-proxy"
+[[redirects]]
+  from   = "/pluto-proxy/*"
+  to     = "/.netlify/functions/pluto-proxy"
+  status = 200
+  force  = true
