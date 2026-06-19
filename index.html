@@ -8,6 +8,16 @@
 <meta name="full-screen" content="yes"/>
 <meta name="theme-color" content="#F6F4E8" />
 <meta name="description" content="Michael Shea Hussey — Creative Developer & Producer." />
+<link rel="canonical" href="https://msh.bio/" />
+<meta property="og:type"         content="website" />
+<meta property="og:url"          content="https://msh.bio/" />
+<meta property="og:title"        content="Michael Shea Hussey" />
+<meta property="og:description"  content="Creative Developer & Producer." />
+<meta property="og:image"        content="https://msh.bio/images/Project%201.JPG" />
+<meta name="twitter:card"        content="summary_large_image" />
+<meta name="twitter:title"       content="Michael Shea Hussey" />
+<meta name="twitter:description" content="Creative Developer & Producer." />
+<meta name="twitter:image"       content="https://msh.bio/images/Project%201.JPG" />
 <title>Michael Shea Hussey</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -5471,7 +5481,7 @@ body.overlay-open #cubeGridLeft {
     display.setAttribute('aria-hidden', 'false');
     document.body.classList.add('nightmare-open');
     video.currentTime = 0;
-    video.play();
+    video.play().catch(function(){});
 
     // Pause the radio while the video plays; remember if we were the ones who paused it
     var radio = window.__LUXE_RADIO__;
@@ -5520,7 +5530,7 @@ body.overlay-open #cubeGridLeft {
   // Click on video → toggle play / pause
   video.addEventListener('click', function(e) {
     e.stopPropagation();
-    if (video.paused) { video.play(); } else { video.pause(); }
+    if (video.paused) { video.play().catch(function(){}); } else { video.pause(); }
   });
 
   // Click on backdrop (outside video) → close
@@ -5844,7 +5854,7 @@ body.overlay-open #cubeGridLeft {
     ctx.clearRect(0, 0, W, H);
   }
 
-  window.addEventListener('resize', resize);
+  window.addEventListener('resize', resize, { passive: true });
 
   /* Pre-size on load so first open has correct dimensions */
   if (document.readyState === 'complete') { resize(); }
