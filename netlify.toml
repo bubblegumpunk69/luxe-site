@@ -1,5 +1,1 @@
-[[redirects]]
-  from   = "/pluto-proxy/*"
-  to     = "/.netlify/functions/pluto-proxy"
-  status = 200
-  force  = true
+# Netlify configuration
