@@ -6573,7 +6573,7 @@ var TV_SQUARES = [
   pointer-events: none;
   transform: translate(-50%, -50%);
 }
-#gestureHint svg { display: block; width: 180px; height: auto; opacity: 0;
+#gestureHint svg { display: block; width: 220px; height: auto; opacity: 0;
                    animation: gh-glove 8s 1s both; }
 .gh-swl   { opacity: 0; animation: gh-swl 1.8s 2.3s both; }
 .gh-swr   { opacity: 0; animation: gh-swr 1.8s 4.5s both; }
@@ -6613,49 +6613,19 @@ var TV_SQUARES = [
   if (localStorage.getItem('luxe-hint-seen')) return;
   var el = document.createElement('div');
   el.id = 'gestureHint';
-  el.innerHTML = '<svg viewBox="0 0 280 160" xmlns="http://www.w3.org/2000/svg">'
-    + '<defs>'
-    + '<radialGradient id="gh-p" cx="40%" cy="32%" r="65%">'
-    + '<stop offset="0%" stop-color="#FFFFFF"/>'
-    + '<stop offset="55%" stop-color="#F4F1EC"/>'
-    + '<stop offset="100%" stop-color="#C8C4BC"/>'
-    + '</radialGradient>'
-    + '<radialGradient id="gh-f" cx="50%" cy="20%" r="68%">'
-    + '<stop offset="0%" stop-color="#FFFFFF"/>'
-    + '<stop offset="100%" stop-color="#D4D0C8"/>'
-    + '</radialGradient>'
-    + '<filter id="gh-s" x="-80%" y="-40%" width="260%" height="200%">'
-    + '<feDropShadow dx="2" dy="6" stdDeviation="8" flood-color="rgba(0,0,0,0.22)"/>'
-    + '</filter>'
-    + '</defs>'
-    /* glove — centered at (140,80), original coords offset +85,+6 */
-    + '<g class="gh-glove" filter="url(#gh-s)" stroke="#1a1a1a" stroke-linecap="round" stroke-linejoin="round" transform="translate(85,6)">'
-    + '<rect x="22" y="114" width="68" height="30" rx="15" fill="url(#gh-p)" stroke-width="2.2"/>'
-    + '<ellipse cx="56" cy="138" rx="28" ry="8" fill="#C0BCB4" stroke-width="1.8"/>'
-    + '<line x1="26" y1="125" x2="86" y2="125" stroke="#1a1a1a" stroke-width="1.4"/>'
-    + '<ellipse cx="56" cy="90" rx="36" ry="32" fill="url(#gh-p)" stroke-width="2.2"/>'
-    + '<path d="M 24,104 Q 10,96 10,82 Q 10,66 22,64 Q 34,62 34,76 L 28,90" fill="url(#gh-p)" stroke-width="2"/>'
-    + '<rect x="18" y="10" width="16" height="62" rx="8" fill="url(#gh-f)" stroke-width="2" transform="rotate(-15,26,72)"/>'
-    + '<rect x="33" y="4" width="17" height="64" rx="8.5" fill="url(#gh-f)" stroke-width="2" transform="rotate(-5,42,68)"/>'
-    + '<rect x="50" y="2" width="17" height="66" rx="8.5" fill="url(#gh-f)" stroke-width="2" transform="rotate(5,58,68)"/>'
-    + '<rect x="68" y="8" width="16" height="64" rx="8" fill="url(#gh-f)" stroke-width="2" transform="rotate(15,76,72)"/>'
-    + '<ellipse cx="26" cy="18" rx="6" ry="3.5" fill="rgba(255,255,255,0.82)" stroke="none" transform="rotate(-15,26,72)"/>'
-    + '<ellipse cx="41" cy="12" rx="6.5" ry="3.5" fill="rgba(255,255,255,0.82)" stroke="none" transform="rotate(-5,42,68)"/>'
-    + '<ellipse cx="58" cy="10" rx="6.5" ry="3.5" fill="rgba(255,255,255,0.82)" stroke="none" transform="rotate(5,58,68)"/>'
-    + '<ellipse cx="76" cy="16" rx="6" ry="3.5" fill="rgba(255,255,255,0.82)" stroke="none" transform="rotate(15,76,72)"/>'
-    + '</g>'
+  el.innerHTML = '<svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg">'
     /* swipe-left arrow: line + chevron pointing ← */
     + '<g class="gh-swl" stroke="#1a1a1a" stroke-linecap="round" stroke-linejoin="round" fill="none">'
-    + '<line x1="110" y1="98" x2="22" y2="98" stroke-width="3.5"/>'
-    + '<polyline points="38,82 18,98 38,114" stroke-width="3.5"/>'
+    + '<line x1="130" y1="50" x2="22" y2="50" stroke-width="3.5"/>'
+    + '<polyline points="38,34 18,50 38,66" stroke-width="3.5"/>'
     + '</g>'
     /* swipe-right arrow: line + chevron pointing → */
     + '<g class="gh-swr" stroke="#1a1a1a" stroke-linecap="round" stroke-linejoin="round" fill="none">'
-    + '<line x1="170" y1="98" x2="258" y2="98" stroke-width="3.5"/>'
-    + '<polyline points="242,82 262,98 242,114" stroke-width="3.5"/>'
+    + '<line x1="150" y1="50" x2="258" y2="50" stroke-width="3.5"/>'
+    + '<polyline points="242,34 262,50 242,66" stroke-width="3.5"/>'
     + '</g>'
-    /* tap ripple centred on palm */
-    + '<circle class="gh-tap" cx="141" cy="96" r="22" fill="none" stroke="#1a1a1a" stroke-width="2.5"/>'
+    /* tap ripple centred */
+    + '<circle class="gh-tap" cx="140" cy="50" r="22" fill="none" stroke="#1a1a1a" stroke-width="2.5"/>'
     + '</svg>';
   document.body.appendChild(el);
   setTimeout(function () {
