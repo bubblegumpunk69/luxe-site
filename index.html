@@ -267,14 +267,11 @@ body.overlay-open #gridCubeWrapper {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   overflow: hidden;
-  background: #2C2A28;
 }
 #cubeGridBack_cv {
   display: block;
   width: 100%;
   height: 100%;
-  position: absolute;
-  inset: 0;
 }
 .game-grid {
   position: absolute;
@@ -285,20 +282,18 @@ body.overlay-open #gridCubeWrapper {
   grid-template-rows: repeat(4, 1fr);
   width: 100%;
   height: 100%;
+  pointer-events: none;
 }
 .game-tile {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: default;
-  overflow: hidden;
-  background: transparent;
+  pointer-events: auto;
+  cursor: pointer;
 }
-.game-tile--link { cursor: pointer; }
-.game-tile--link:hover { background: rgba(255,255,255,0.08); }
+.game-tile:hover { background: rgba(255,255,255,0.08); }
 .game-tile-label {
-  color: rgba(255,255,255,0.72);
+  color: rgba(255,255,255,0.78);
   font-size: 9px;
   font-weight: 600;
   text-transform: uppercase;
@@ -306,6 +301,28 @@ body.overlay-open #gridCubeWrapper {
   text-align: center;
   line-height: 1.35;
   text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+/* Light mode: liquid glass tiles over cream background */
+@media (prefers-color-scheme: light) {
+  #cubeGridBack { background: #F6F4E8; }
+  #cubeGridBack_cv { display: none; }
+  .game-grid { pointer-events: auto; }
+  .game-tile {
+    background: rgba(255,255,255,0.45);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 0.5px solid rgba(0,0,0,0.06);
+    box-shadow: inset 0 0.5px 0 rgba(255,255,255,0.7), 0 4px 16px rgba(0,0,0,0.04);
+  }
+  .game-tile:hover {
+    background: rgba(255,255,255,0.6);
+    box-shadow: inset 0 0.5px 0 rgba(255,255,255,0.8), 0 6px 20px rgba(0,0,0,0.06);
+  }
+  .game-tile-label {
+    color: rgba(0,0,0,0.5);
+    text-shadow: none;
+  }
 }
 
 /* ── Chevron navigation ──────────────────────────────────────
@@ -6006,41 +6023,28 @@ var READING_SQUARES = [
 
 /* ── Games back-face data ── */
 var GAME_TILES = [
-  { c:'#3C3C3C', h:'#504E4E' },
-  { c:'#8A8580', h:'#9E9890' },
-  { c:'#8A8580', h:'#9E9890' },
-  { c:'#1A1A1A', h:'#2E2E2E', id:'doom-gallery', label:'DOOM Gallery', url:'https://bobatealee.itch.io/doom-the-gallery-experience' },
-  { c:'#5A5652', h:'#6E6A64' },
-  { c:'#2A2826', h:'#3E3C38' },
-  { c:'#2A2826', h:'#3E3C38' },
-  { c:'#5A5850', h:'#6E6C62' },
-  { c:'#B0A8A0', h:'#C4BCB2' },
-  { c:'#787068', h:'#8C847A', id:'earth-reviews', label:'Earth Reviews', url:'https://neal.fun/earth-reviews/' },
-  { c:'#707068', h:'#84847A' },
-  { c:'#B0A898', h:'#C4BCAA' },
-  { c:'#C0B8B0', h:'#D4CCC2' },
-  { c:'#B8B0A8', h:'#CCC4BA' },
-  { c:'#B0A898', h:'#C4BCAA', id:'kong-studios', label:'Kong Studios', url:'https://kongstudios.gorillaz.com' },
-  { c:'#B8B0A0', h:'#CCC4B2' }
+  { label:'DOOM Gallery',  url:'https://bobatealee.itch.io/doom-the-gallery-experience', col:4, row:1 },
+  { label:'Earth Reviews', url:'https://neal.fun/earth-reviews/',                        col:2, row:3 },
+  { label:'Kong Studios',  url:'https://kongstudios.gorillaz.com',                       col:3, row:4 }
 ];
 
 (function buildGameGrid(){
   var grid = document.getElementById('gameGrid');
   if (!grid) return;
-  GAME_TILES.forEach(function(t){
+  GAME_TILES.forEach(function(g){
     var tile = document.createElement('div');
-    tile.className = 'game-tile' + (t.url ? ' game-tile--link' : '');
-    if (t.url) {
-      tile.setAttribute('role', 'button');
-      tile.setAttribute('tabindex', '0');
-      tile.setAttribute('aria-label', t.label);
-      var lbl = document.createElement('span');
-      lbl.className = 'game-tile-label';
-      lbl.textContent = t.label;
-      tile.appendChild(lbl);
-      tile.addEventListener('click', function(){ window.open(t.url, '_blank', 'noopener'); });
-      tile.addEventListener('keydown', function(e){ if (e.key === 'Enter') window.open(t.url, '_blank', 'noopener'); });
-    }
+    tile.className = 'game-tile';
+    tile.style.gridColumn = g.col;
+    tile.style.gridRow = g.row;
+    tile.setAttribute('role', 'button');
+    tile.setAttribute('tabindex', '0');
+    tile.setAttribute('aria-label', g.label);
+    var lbl = document.createElement('span');
+    lbl.className = 'game-tile-label';
+    lbl.textContent = g.label;
+    tile.appendChild(lbl);
+    tile.addEventListener('click', function(){ window.open(g.url, '_blank', 'noopener'); });
+    tile.addEventListener('keydown', function(e){ if (e.key === 'Enter') window.open(g.url, '_blank', 'noopener'); });
     grid.appendChild(tile);
   });
 }());
