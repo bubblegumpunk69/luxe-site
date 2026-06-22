@@ -314,10 +314,28 @@ body.overlay-open #gridCubeWrapper {
     -webkit-backdrop-filter: blur(8px);
     border: 0.5px solid rgba(0,0,0,0.06);
     box-shadow: inset 0 0.5px 0 rgba(255,255,255,0.7), 0 4px 16px rgba(0,0,0,0.04);
+    transition: backdrop-filter 0.5s ease, -webkit-backdrop-filter 0.5s ease,
+                background 0.4s ease, box-shadow 0.4s ease;
+    overflow: hidden;
+  }
+  .game-tile::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255,255,255,0.0) var(--spec-x, 30%),
+      rgba(255,255,255,0.85) calc(var(--spec-x, 30%) + 8%),
+      rgba(255,255,255,0.0) calc(var(--spec-x, 30%) + 16%),
+      transparent 100%);
+    pointer-events: none;
   }
   .game-tile:hover {
-    background: rgba(255,255,255,0.6);
-    box-shadow: inset 0 0.5px 0 rgba(255,255,255,0.8), 0 6px 20px rgba(0,0,0,0.06);
+    background: rgba(255,255,255,0.22);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    box-shadow: inset 0 0.5px 0 rgba(255,255,255,0.9), 0 6px 20px rgba(0,0,0,0.06);
   }
   .game-tile-label {
     color: rgba(0,0,0,0.5);
@@ -6052,6 +6070,19 @@ var GAME_TILES = [
       grid.appendChild(tile);
     }
   }
+}());
+
+(function specularTrack(){
+  var grid = document.getElementById('gameGrid');
+  if (!grid) return;
+  grid.addEventListener('mousemove', function(e){
+    var tiles = grid.querySelectorAll('.game-tile');
+    for (var i = 0; i < tiles.length; i++){
+      var r = tiles[i].getBoundingClientRect();
+      var pct = Math.max(0, Math.min(100, ((e.clientX - r.left) / (r.width || 1)) * 100));
+      tiles[i].style.setProperty('--spec-x', pct + '%');
+    }
+  }, { passive: true });
 }());
 
 var TV_SQUARES = [
