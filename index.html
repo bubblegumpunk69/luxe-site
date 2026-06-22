@@ -39,10 +39,6 @@
 <!-- Preload fonts — eliminates FOUT on Garamond text -->
 <link rel="preload" href="fonts/EBGaramond.ttf"        as="font" type="font/truetype" crossorigin="anonymous">
 <link rel="preload" href="fonts/EBGaramond-Italic.ttf" as="font" type="font/truetype" crossorigin="anonymous">
-<!-- Preload gallery images for instant display -->
-<link rel="preload" href="images/IMG_0328.jpeg" as="image" fetchpriority="high">
-<link rel="preload" href="images/coffee-cups.jpeg" as="image">
-<link rel="preload" href="images/Project 1.JPG" as="image" fetchpriority="high">
 
 <script>
 (function(){
@@ -307,15 +303,16 @@ body.overlay-open #gridCubeWrapper {
 @media (prefers-color-scheme: light) {
   #cubeGridBack { background: #F6F4E8; }
   #cubeGridBack_cv { display: none; }
-  .game-grid { pointer-events: auto; }
-  .game-tile {
-    background: rgba(255,255,255,0.45);
+  .game-grid {
+    pointer-events: auto;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
+  }
+  .game-tile {
+    background: rgba(255,255,255,0.45);
     border: 0.5px solid rgba(0,0,0,0.06);
     box-shadow: inset 0 0.5px 0 rgba(255,255,255,0.7), 0 4px 16px rgba(0,0,0,0.04);
-    transition: backdrop-filter 0.5s ease, -webkit-backdrop-filter 0.5s ease,
-                background 0.4s ease, box-shadow 0.4s ease;
+    transition: background 0.4s ease, box-shadow 0.4s ease;
     overflow: hidden;
   }
   .game-tile::after {
@@ -332,9 +329,7 @@ body.overlay-open #gridCubeWrapper {
     pointer-events: none;
   }
   .game-tile:hover {
-    background: rgba(255,255,255,0.22);
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
+    background: rgba(255,255,255,0.18);
     box-shadow: inset 0 0.5px 0 rgba(255,255,255,0.9), 0 6px 20px rgba(0,0,0,0.06);
   }
   .game-tile-label {
@@ -2324,7 +2319,7 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
 
 <!-- Nightmare Video Overlay -->
 <div id="nightmareDisplay" class="nightmare-display is-hidden" aria-hidden="true">
-  <video id="nightmareVideo" class="nightmare-video" src="videos/nightmare.mov" playsinline></video>
+  <video id="nightmareVideo" class="nightmare-video" src="videos/nightmare.mov" playsinline preload="none"></video>
 </div>
 
 <!-- Lightbox Overlay -->
@@ -2640,6 +2635,12 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
   window.addEventListener('keydown', _unlockAudioOnce,  { once:true, capture:true });
   document.addEventListener('click', _unlockAudioOnce,   { once:true, capture:true });
 
+  document.addEventListener('visibilitychange', function(){
+    var ac = window.__LUXE_AC__;
+    if (!ac) return;
+    if (document.hidden) { ac.suspend().catch(function(){}); }
+    else { ac.resume().catch(function(){}); }
+  });
 
   /* ================== Volume ================== */
   function fadeVolume(element, to, duration, onComplete) {
@@ -2761,9 +2762,15 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
         ctx.fillStyle = grad; ctx.fillRect(x0,y0,w,h);
       }
     }
-    requestAnimationFrame(animTick);
+    if (!gridPaused && (!window.__LUXE_FACE__ || window.__LUXE_FACE__ === 'radio'))
+      requestAnimationFrame(animTick);
+    else
+      window.__radioAnimStopped = true;
   }
   animTick();
+  window.__restartRadioAnim = function(){
+    if (window.__radioAnimStopped) { window.__radioAnimStopped = false; animTick(); }
+  };
 
   /* ================== Playback ================== */
   var stations = window.STATIONS || [];
@@ -6187,6 +6194,8 @@ var TV_SQUARES = [
     if (faceState === 'back' && prev !== 'back') toggleBackfaces(true);
     if (faceState !== 'back' && prev === 'back') toggleBackfaces(false);
     window.__LUXE_FACE__ = faceState;
+    if (faceState === 'radio' && window.__restartRadioAnim) window.__restartRadioAnim();
+    if (faceState !== 'radio' && window.__restartLitAnim) window.__restartLitAnim();
     updateArrows(); closePreview();
   }
   var RSS2JSON  = 'https://api.rss2json.com/v1/api.json?count=1&rss_url=';
@@ -6564,9 +6573,13 @@ var TV_SQUARES = [
       /* Advance time tracking only — keeps lerp state fresh on return */
       _lastLitTime = time;
     }
-    requestAnimationFrame(litTick);
+    if (onLit) requestAnimationFrame(litTick);
+    else window.__litAnimStopped = true;
   }
   litTick();
+  window.__restartLitAnim = function(){
+    if (window.__litAnimStopped) { window.__litAnimStopped = false; litTick(); }
+  };
 
   /* ── Square clicks — shared handler for both faces ── */
   function handleLitClick(e, canvas, activeFace){
