@@ -3968,20 +3968,8 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
 
   var _b3elapsed = 0;
   function b3spec(offset, alpha){
-    var t = _b3elapsed*0.00008 + offset;
-    var s = Math.sin(t)*0.5+0.5;
     var dark = window.__MQ__.dark;
-    var r,g,b;
-    if (dark) {
-      r = Math.round(200 + 55*s);
-      g = Math.round(195 + 30*s - 15*(1-s));
-      b = Math.round(170 - 30*s + 70*(1-s));
-    } else {
-      r = Math.round(60 + 80*s);
-      g = Math.round(55 + 25*s - 10*(1-s));
-      b = Math.round(35 - 15*s + 95*(1-s));
-    }
-    return 'rgba('+r+','+g+','+b+','+alpha+')';
+    return dark ? 'rgba(240,237,228,'+alpha+')' : 'rgba(14,14,15,'+alpha+')';
   }
 
   function b3Draw(W,H,now){
