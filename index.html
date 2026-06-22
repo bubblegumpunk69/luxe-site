@@ -3969,7 +3969,7 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
   var _b3elapsed = 0;
   function b3spec(offset, alpha){
     var dark = window.__MQ__.dark;
-    return dark ? 'rgba(240,237,228,'+alpha+')' : 'rgba(14,14,15,'+alpha+')';
+    return dark ? 'rgba(235,230,240,'+alpha+')' : 'rgba(18,14,26,'+alpha+')';
   }
 
   function b3Draw(W,H,now){
@@ -3998,6 +3998,10 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
     }
     bCtx.closePath();
     bCtx.clip();
+    var dark=window.__MQ__.dark;
+    bCtx.globalCompositeOperation='source-over';
+    bCtx.fillStyle=dark?'rgba(14,14,15,0.06)':'rgba(246,244,232,0.06)';
+    bCtx.fill();
     if(b3mode===0)      m0Draw(W,H,dt,cx,cy,sc,col,fade);
     else if(b3mode===1) m1Draw(W,H,dt,cx,cy,sc,col,fade);
     else if(b3mode===2) m2Draw(W,H,dt,cx,cy,sc,col,fade);
