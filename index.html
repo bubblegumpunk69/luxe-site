@@ -3790,7 +3790,7 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
   ];
 
   var _formFn, _formTrail, _formT;
-  var _ripple = 1;
+  var _flash = 0;
 
   function b3Reset(){
     b3startTime=null; b3paused=false; b3lastT=null;
@@ -3830,12 +3830,17 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
     bCtx.globalCompositeOperation='source-over';
     bCtx.fillStyle=dark?'rgba(14,14,15,0.02)':'rgba(246,244,232,0.02)';
     bCtx.fill();
-    _ripple += (_ripple > 1.01) ? (1 - _ripple) * 0.03 : 0;
-    if (_ripple < 1.005) _ripple = 1;
-    var steps = Math.max(1, Math.round(dt * 150 * _ripple));
+    if (_flash > 0.01) {
+      bCtx.globalCompositeOperation='source-over';
+      bCtx.fillStyle=dark?'rgba(240,237,228,'+_flash.toFixed(2)+')':'rgba(14,14,15,'+(_flash*0.7).toFixed(2)+')';
+      bCtx.fill();
+      _flash *= 0.88;
+      if (_flash < 0.01) _flash = 0;
+    }
+    var steps = Math.max(1, Math.round(dt * 150));
     var stepSize = dt / steps;
     for(var s=0; s<steps; s++){
-      _formT += stepSize * 0.9 * _ripple;
+      _formT += stepSize * 0.9;
       var p = _formFn(_formT, stepSize);
       if(p&&isFinite(p.x)&&isFinite(p.y)) cbPush(_formTrail, p.x, p.y);
     }
@@ -3870,6 +3875,7 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
     var dx = e.clientX - rect.left - cx, dy = e.clientY - rect.top - cy;
     var r = Math.sqrt(dx*dx+dy*dy), limit = Math.min(rect.width,rect.height)*0.36;
     if (r < limit) {
+      _flash = 0.85;
       _formFn = FORMS[Math.floor(Math.random()*FORMS.length)]();
       _formTrail = makeCB(2000);
       _formT = 0;
