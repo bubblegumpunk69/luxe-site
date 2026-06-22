@@ -6166,6 +6166,26 @@ var TV_SQUARES = [
   var RSS2JSON  = 'https://api.rss2json.com/v1/api.json?count=1&rss_url=';
   var cache = {};
 
+  /* ── Cube peek: first visit, tilt to reveal the edge of the next face ── */
+  if (!localStorage.getItem('luxe-peek-done')) {
+    setTimeout(function(){
+      if (faceState !== 'radio') return;
+      var orig = 'translateZ(' + HALF_Z + ') rotateY(0deg)';
+      var peek = 'translateZ(' + HALF_Z + ') rotateY(-8deg)';
+      gridCube.style.transition = 'transform 1.2s cubic-bezier(0.34,1.56,0.64,1)';
+      gridCube.style.transform = peek;
+      setTimeout(function(){
+        gridCube.style.transition = 'transform 0.9s cubic-bezier(0.22,1,0.36,1)';
+        gridCube.style.transform = orig;
+        setTimeout(function(){
+          gridCube.style.transition = '';
+          gridCube.style.removeProperty('transform');
+          localStorage.setItem('luxe-peek-done', '1');
+        }, 1000);
+      }, 800);
+    }, 1500);
+  }
+
   /* Auto-kill edge pulse and swipe hint after 14s */
   setTimeout(function(){
     window.__GRID_HINT_DONE__ = true;
