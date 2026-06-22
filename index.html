@@ -2730,7 +2730,7 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
   var gridPaused = false;
 
   function animTick(){
-    if (!gridPaused){
+    if (!gridPaused && (!window.__LUXE_FACE__ || window.__LUXE_FACE__ === 'radio')){
       var time = performance.now()*0.001;
       var tileW = canvas.width/cols, tileH = canvas.height/rows;
       var amplitude = Math.min(tileW, tileH)*0.1;
@@ -6075,13 +6075,21 @@ GAME_TILES.forEach(function(g){ _gameOccupied[g.col+','+g.row] = true; });
 (function specularTrack(){
   var grid = document.getElementById('gameGrid');
   if (!grid) return;
+  var tiles = grid.querySelectorAll('.game-tile');
+  var rects = null, pending = false;
+  function cacheRects(){ rects = []; for (var i=0;i<tiles.length;i++) rects.push(tiles[i].getBoundingClientRect()); }
+  window.addEventListener('resize', function(){ rects = null; }, { passive: true });
   grid.addEventListener('mousemove', function(e){
-    var tiles = grid.querySelectorAll('.game-tile');
-    for (var i = 0; i < tiles.length; i++){
-      var r = tiles[i].getBoundingClientRect();
-      var pct = Math.max(0, Math.min(100, ((e.clientX - r.left) / (r.width || 1)) * 100));
-      tiles[i].style.setProperty('--spec-x', pct + '%');
-    }
+    if (pending) return;
+    pending = true;
+    requestAnimationFrame(function(){
+      if (!rects) cacheRects();
+      for (var i=0;i<tiles.length;i++){
+        var pct = Math.max(0, Math.min(100, ((e.clientX - rects[i].left) / (rects[i].width || 1)) * 100));
+        tiles[i].style.setProperty('--spec-x', pct + '%');
+      }
+      pending = false;
+    });
   }, { passive: true });
 }());
 
@@ -6178,6 +6186,7 @@ var TV_SQUARES = [
     if (faceState !== 'radio') window.__GRID_HINT_DONE__ = true;
     if (faceState === 'back' && prev !== 'back') toggleBackfaces(true);
     if (faceState !== 'back' && prev === 'back') toggleBackfaces(false);
+    window.__LUXE_FACE__ = faceState;
     updateArrows(); closePreview();
   }
   var RSS2JSON  = 'https://api.rss2json.com/v1/api.json?count=1&rss_url=';
@@ -6486,7 +6495,7 @@ var TV_SQUARES = [
     return { r:Math.round(litLerp(c0.r,c1.r,t)), g:Math.round(litLerp(c0.g,c1.g,t)), b:Math.round(litLerp(c0.b,c1.b,t)) };
   }
 
-  function drawLitFrame(ctx, W, H, time, colours){
+  function drawLitFrame(ctx, W, H, time, colours, skipMask){
     /* dt-based phase accumulation — prevents sine jump when caustic speed changes */
     var dt = (_lastLitTime >= 0) ? Math.min(time - _lastLitTime, 0.1) : 0;
     _lastLitTime = time;
@@ -6498,6 +6507,7 @@ var TV_SQUARES = [
     ctx.clearRect(0,0,W,H);
     for (var k=0; k<litTiles.length; k++){
       var tile=litTiles[k];
+      if (skipMask && !skipMask[(tile.col+1)+','+(tile.row+1)]) { litBB[k]=null; continue; }
       /* Slow horizontal undulation — column phase makes ripple travel left→right */
       var wave = Math.sin(time*0.72 + tile.phaseX*0.85 - tile.phaseY*0.18);
       /* Caustic: accumulated phase prevents glitch on speed change */
@@ -6548,13 +6558,8 @@ var TV_SQUARES = [
       var leftPal  = dark ? LIT_COLOURS_GREEN : LIT_COLOURS_BRIGHT;
       if (litCtx     && cubeGrid.width     > 0) drawLitFrame(litCtx,     cubeGrid.width,     cubeGrid.height,     time, rightPal);
       if (litCtxLeft && cubeGridLeft.width > 0) drawLitFrame(litCtxLeft, cubeGridLeft.width, cubeGridLeft.height, time, leftPal);
-      if (litCtxBack && backCv.width > 0) {
-        drawLitFrame(litCtxBack, backCv.width, backCv.height, time, LIT_COLOURS_GRAY);
-        var tW = backCv.width / 4, tH = backCv.height / 4;
-        for (var gr = 0; gr < 4; gr++)
-          for (var gc = 0; gc < 4; gc++)
-            if (!_gameOccupied[(gc+1)+','+(gr+1)]) litCtxBack.clearRect(gc*tW, gr*tH, tW, tH);
-      }
+      if (litCtxBack && backCv.width > 0)
+        drawLitFrame(litCtxBack, backCv.width, backCv.height, time, LIT_COLOURS_GRAY, _gameOccupied);
     } else {
       /* Advance time tracking only — keeps lerp state fresh on return */
       _lastLitTime = time;
