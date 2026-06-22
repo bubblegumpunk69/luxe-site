@@ -284,36 +284,34 @@ body.overlay-open #gridCubeWrapper {
 .glass-tile {
   position: relative;
   border-radius: 18px;
-  background: rgba(255,255,255,0.06);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 0.5px solid rgba(255,255,255,0.22);
+  background: transparent;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 0.5px solid rgba(255,255,255,0.15);
   box-shadow:
-    inset 0 0.5px 0 rgba(255,255,255,0.35),
-    0 6px 20px rgba(0,0,0,0.04);
+    inset 0 0.5px 0 rgba(255,255,255,0.2),
+    0 4px 16px rgba(0,0,0,0.03);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  transition: background 180ms ease, box-shadow 180ms ease;
+  transition: background 180ms ease, border-color 180ms ease;
 }
 .glass-tile--active {
-  background: rgba(255,255,255,0.10);
-  border-color: rgba(255,255,255,0.30);
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.28);
   box-shadow:
-    inset 0 0.5px 0 rgba(255,255,255,0.45),
-    0 8px 28px rgba(0,0,0,0.06);
+    inset 0 0.5px 0 rgba(255,255,255,0.3),
+    0 6px 24px rgba(0,0,0,0.04);
   cursor: pointer;
 }
 .glass-tile--active:hover {
-  background: rgba(255,255,255,0.18);
-  box-shadow:
-    inset 0 0.5px 0 rgba(255,255,255,0.55),
-    0 10px 36px rgba(0,0,0,0.09);
+  background: rgba(255,255,255,0.10);
+  border-color: rgba(255,255,255,0.4);
 }
 .glass-tile-label {
-  color: rgba(255,255,255,0.75);
+  color: rgba(255,255,255,0.7);
   font-size: 9px;
   font-weight: 600;
   text-transform: uppercase;
@@ -323,11 +321,10 @@ body.overlay-open #gridCubeWrapper {
   padding: 0 4px;
 }
 @media (prefers-color-scheme: light) {
-  .glass-tile { border-color: rgba(0,0,0,0.08);
-    box-shadow: inset 0 0.5px 0 rgba(255,255,255,0.6), 0 6px 20px rgba(0,0,0,0.05); }
-  .glass-tile--active { border-color: rgba(0,0,0,0.12);
-    box-shadow: inset 0 0.5px 0 rgba(255,255,255,0.7), 0 8px 28px rgba(0,0,0,0.07); }
-  .glass-tile-label { color: rgba(0,0,0,0.55); }
+  .glass-tile { border-color: rgba(0,0,0,0.06);
+    box-shadow: inset 0 0.5px 0 rgba(255,255,255,0.5), 0 4px 16px rgba(0,0,0,0.04); }
+  .glass-tile--active { border-color: rgba(0,0,0,0.10); }
+  .glass-tile-label { color: rgba(0,0,0,0.45); }
 }
 
 /* ── Chevron navigation ──────────────────────────────────────
@@ -6099,20 +6096,35 @@ var TV_SQUARES = [
   if (!wrapper || !gridCube) return;
 
   /* ── Face state: 'radio' | 'right' | 'back' | 'left' ── */
-  var faceState    = 'radio';
-  var backCameFrom = null;  /* 'right' or 'left' — tracks approach direction to back face */
+  var faceState  = 'radio';
+  var cubeAngle  = 0;
+  var FACE_ORDER = ['radio','left','back','right'];
+  var HALF_Z     = 'calc(-1 * var(--grid-size) / 2)';
 
-  /* Inline-style rotation helpers — allows continuous angle tracking so
-     the cube animates through the correct arc regardless of starting state. */
-  var HALF_Z = 'calc(-1 * var(--grid-size) / 2)';
   function setCubeRot(deg){
     gridCube.style.transform = 'translateZ('+HALF_Z+') rotateY('+deg+'deg)';
   }
-  /* Apply class-based rotation (right/left literary faces) and clear inline override. */
-  function setCubeClass(cls){
-    gridCube.style.removeProperty('transform');
+
+  function toggleBackfaces(show){
+    var faces = [colorContainer, document.getElementById('cubeGrid'), document.getElementById('cubeGridLeft')];
+    var val = show ? 'visible' : '';
+    faces.forEach(function(f){ if(f){ f.style.backfaceVisibility = val; f.style.webkitBackfaceVisibility = val; }});
+  }
+
+  function rotateCube(dir){
+    var mob = window.__MQ__.mobile;
+    cubeAngle += dir * 90;
+    var n = ((cubeAngle % 360) + 360) % 360;
+    if (mob && n === 180){ cubeAngle += dir * 90; n = ((cubeAngle % 360) + 360) % 360; }
+    var prev = faceState;
+    faceState = FACE_ORDER[n / 90];
     gridCube.classList.remove('reading-face','reading-face-left');
-    if (cls) gridCube.classList.add(cls);
+    setCubeRot(cubeAngle);
+    if (colorContainer) colorContainer.style.pointerEvents = faceState === 'radio' ? '' : 'none';
+    if (faceState !== 'radio') window.__GRID_HINT_DONE__ = true;
+    if (faceState === 'back' && prev !== 'back') toggleBackfaces(true);
+    if (faceState !== 'back' && prev === 'back') toggleBackfaces(false);
+    updateArrows(); closePreview();
   }
   var RSS2JSON  = 'https://api.rss2json.com/v1/api.json?count=1&rss_url=';
   var cache = {};
@@ -6145,23 +6157,9 @@ var TV_SQUARES = [
     if (faceState === 'radio'){
       arcLeft.classList.add('arc-visible');
       arcRight.classList.add('arc-visible');
-      arcLeft.setAttribute('aria-label','Show literary grid');
-      arcRight.setAttribute('aria-label','Show literary grid');
-    } else if (faceState === 'right'){
-      arcLeft.classList.add('arc-return');
-      arcLeft.setAttribute('aria-label','Return to radio grid');
-    } else if (faceState === 'left'){
-      arcRight.classList.add('arc-return');
-      arcRight.setAttribute('aria-label','Return to radio grid');
     } else {
-      /* back face: show the return chevron for the direction we came from */
-      if (backCameFrom === 'right'){
-        arcLeft.classList.add('arc-return');
-        arcLeft.setAttribute('aria-label','Return to literary grid');
-      } else {
-        arcRight.classList.add('arc-return');
-        arcRight.setAttribute('aria-label','Return to literary grid');
-      }
+      arcLeft.classList.add('arc-return');
+      arcRight.classList.add('arc-return');
     }
   }
 
@@ -6195,34 +6193,12 @@ var TV_SQUARES = [
   });
 
   function handleSwipe(dx){
-    /* On mobile there is no back face — swiping past a literary face returns to radio. */
-    var mob = window.__MQ__.mobile;
-    if (dx < 0){ /* swipe left → show right-side / deeper CCW */
-      if      (faceState === 'radio')  flipToReading();
-      else if (faceState === 'right')  { if (mob) flipToRadio(); else flipToBack(); }
-      else if (faceState === 'left')   flipToRadio();
-      else if (faceState === 'back')   returnFromBack();
-    } else {     /* swipe right → show left-side / deeper CW */
-      if      (faceState === 'radio')  flipToReadingLeft();
-      else if (faceState === 'left')   { if (mob) flipToRadio(); else flipToBack(); }
-      else if (faceState === 'right')  flipToRadio();
-      else if (faceState === 'back')   returnFromBack();
-    }
+    rotateCube(dx < 0 ? -1 : 1);
   }
 
   /* ── Chevron clicks ── */
-  if (arcLeft)  arcLeft.addEventListener('click',  function(){
-    if      (faceState === 'radio')  flipToReadingLeft();
-    else if (faceState === 'left')   flipToBack();
-    else if (faceState === 'back')   returnFromBack();
-    else                             flipToRadio();
-  });
-  if (arcRight) arcRight.addEventListener('click', function(){
-    if      (faceState === 'radio')  flipToReading();
-    else if (faceState === 'right')  flipToBack();
-    else if (faceState === 'back')   returnFromBack();
-    else                             flipToRadio();
-  });
+  if (arcLeft)  arcLeft.addEventListener('click',  function(){ rotateCube(1);  });
+  if (arcRight) arcRight.addEventListener('click', function(){ rotateCube(-1); });
 
   /* ── Arrow-key cube rotation ── */
   document.addEventListener('keydown', function(e){
@@ -6236,72 +6212,25 @@ var TV_SQUARES = [
     else                         { if (arcRight) arcRight.click(); }
   });
 
-  function flipToReading(){
-    faceState = 'right';
-    setCubeClass('reading-face');
-    if (colorContainer) colorContainer.style.pointerEvents = 'none';
-    window.__GRID_HINT_DONE__ = true;
-    updateArrows(); closePreview();
-  }
-
-  function flipToReadingLeft(){
-    faceState = 'left';
-    setCubeClass('reading-face-left');
-    if (colorContainer) colorContainer.style.pointerEvents = 'none';
-    window.__GRID_HINT_DONE__ = true;
-    updateArrows(); closePreview();
-  }
-
-  function flipToBack(){
-    /* Continues the rotation in the same direction already started:
-       from right (-90°) → -180°; from left (+90°) → +180°. */
-    backCameFrom = faceState; /* 'right' or 'left' */
-    faceState = 'back';
-    var deg = (backCameFrom === 'right') ? -180 : 180;
-    /* Remove class first so inline style takes sole control */
-    gridCube.classList.remove('reading-face','reading-face-left');
-    setCubeRot(deg);
-    if (colorContainer) colorContainer.style.pointerEvents = 'none';
-    window.__GRID_HINT_DONE__ = true;
-    updateArrows(); closePreview();
-  }
-
-  function returnFromBack(){
-    /* Reverse through the literary face we came from, then the caller can
-       swipe again to reach radio, or click the chevron a second time. */
-    faceState = backCameFrom || 'right';
-    var cls = (faceState === 'right') ? 'reading-face' : 'reading-face-left';
-    /* Transition from inline ±180° back to class-based ±90° */
-    gridCube.classList.remove('reading-face','reading-face-left');
-    gridCube.classList.add(cls);
-    /* Inline style must be cleared AFTER adding class so the transition fires
-       from ±180 to the class value. Use a tiny rAF delay. */
-    requestAnimationFrame(function(){
-      gridCube.style.removeProperty('transform');
-    });
-    backCameFrom = null;
-    if (colorContainer) colorContainer.style.pointerEvents = 'none';
-    updateArrows(); closePreview();
-  }
-
   function flipToRadio(){
-    faceState = 'radio';
-    backCameFrom = null;
-    setCubeClass(null); /* clears inline style + all rotation classes */
+    faceState = 'radio'; cubeAngle = 0;
+    gridCube.classList.remove('reading-face','reading-face-left');
+    setCubeRot(0);
     if (colorContainer) colorContainer.style.pointerEvents = '';
+    toggleBackfaces(false);
     updateArrows(); closePreview();
   }
 
   /* Instant snap — used when closing overlays (wrapper opacity:0, rotation invisible) */
   window.snapToRadio = function(){
     if (faceState === 'radio') return;
-    faceState = 'radio';
-    backCameFrom = null;
+    faceState = 'radio'; cubeAngle = 0;
     gridCube.style.transition = 'none';
-    gridCube.style.removeProperty('transform');
+    setCubeRot(0);
     gridCube.classList.remove('reading-face','reading-face-left');
     setTimeout(function(){ gridCube.style.removeProperty('transition'); }, 50);
     if (colorContainer) colorContainer.style.pointerEvents = '';
+    toggleBackfaces(false);
     updateArrows(); closePreview();
   };
   window.flipToRadio = flipToRadio;
