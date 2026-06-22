@@ -3897,10 +3897,11 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
     0.14,0.01, 0.15,0.00, 0.16,0.01, 0.16,0.03,
     0.15,0.04, 0.14,0.03, 0.14,0.01
   ];
+  var _mshSavedSpeed = 0;
   function _mshForm(){
-    var pts=_mshPts, len=pts.length/2, idx=0;
+    var pts=_mshPts, len=pts.length/2;
     return function(t){
-      idx = Math.min(Math.floor(t * len * 0.15), len-1);
+      var idx = Math.min(Math.floor(t * len * 0.35), len-1);
       return {x: pts[idx*2], y: pts[idx*2+1]};
     };
   }
@@ -3917,7 +3918,9 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
     if(!_mshActive && sinceLast > _MSH_INTERVAL){
       _mshActive = true;
       _mshSavedFn = _formFn;
+      _mshSavedSpeed = _traceSpeed;
       _formFn = _mshForm();
+      _traceSpeed = 1.2;
       _formTrail = makeCB(_trailCap);
       _formT = 0;
     }
@@ -3925,6 +3928,7 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
       _mshActive = false;
       _mshLastEnd = elapsed;
       _formFn = _mshSavedFn || PIECES[_curPiece].form();
+      _traceSpeed = _mshSavedSpeed || 0.9;
       _formTrail = makeCB(_trailCap);
       _formT = 0;
     }
