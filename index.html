@@ -267,64 +267,33 @@ body.overlay-open #gridCubeWrapper {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   overflow: hidden;
-  background: transparent;
 }
-.glass-grid {
-  position: relative;
-  z-index: 1;
+.game-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(4, 1fr);
-  gap: 6px;
-  padding: 6px;
   width: 100%;
   height: 100%;
-  box-sizing: border-box;
 }
-.glass-tile {
+.game-tile {
   position: relative;
-  border-radius: 18px;
-  background: transparent;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border: 0.5px solid rgba(255,255,255,0.15);
-  box-shadow:
-    inset 0 0.5px 0 rgba(255,255,255,0.2),
-    0 4px 16px rgba(0,0,0,0.03);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
+  cursor: default;
   overflow: hidden;
-  transition: background 180ms ease, border-color 180ms ease;
 }
-.glass-tile--active {
-  background: rgba(255,255,255,0.04);
-  border-color: rgba(255,255,255,0.28);
-  box-shadow:
-    inset 0 0.5px 0 rgba(255,255,255,0.3),
-    0 6px 24px rgba(0,0,0,0.04);
-  cursor: pointer;
-}
-.glass-tile--active:hover {
-  background: rgba(255,255,255,0.10);
-  border-color: rgba(255,255,255,0.4);
-}
-.glass-tile-label {
-  color: rgba(255,255,255,0.7);
+.game-tile--link { cursor: pointer; }
+.game-tile--link:hover { filter: brightness(1.12); }
+.game-tile-label {
+  color: rgba(255,255,255,0.72);
   font-size: 9px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.7px;
   text-align: center;
   line-height: 1.35;
-  padding: 0 4px;
-}
-@media (prefers-color-scheme: light) {
-  .glass-tile { border-color: rgba(0,0,0,0.06);
-    box-shadow: inset 0 0.5px 0 rgba(255,255,255,0.5), 0 4px 16px rgba(0,0,0,0.04); }
-  .glass-tile--active { border-color: rgba(0,0,0,0.10); }
-  .glass-tile-label { color: rgba(0,0,0,0.45); }
+  text-shadow: 0 1px 3px rgba(0,0,0,0.4);
 }
 
 /* ── Chevron navigation ──────────────────────────────────────
@@ -2165,7 +2134,7 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
     </div>
     <canvas id="cubeGrid"></canvas>
     <canvas id="cubeGridLeft"></canvas>
-    <div id="cubeGridBack"><div class="glass-grid" id="glassGrid"></div></div>
+    <div id="cubeGridBack"><div class="game-grid" id="gameGrid"></div></div>
     <div class="cube-side cube-side-top"></div>
     <div class="cube-side cube-side-bottom"></div>
   </div>
@@ -6024,29 +5993,43 @@ var READING_SQUARES = [
 ];
 
 /* ── Games back-face data ── */
-var GAME_SQUARES = [
-  { id:'doom-gallery', label:'DOOM Gallery',   url:'https://bobatealee.itch.io/doom-the-gallery-experience', col:1, row:1 },
-  { id:'earth-reviews',label:'Earth Reviews',  url:'https://neal.fun/earth-reviews/',                        col:3, row:2 },
-  { id:'kong-studios', label:'Kong Studios',    url:'https://kongstudios.gorillaz.com',                       col:2, row:4 }
+var GAME_TILES = [
+  { c:'#3C3C3C', h:'#504E4E' },
+  { c:'#8A8580', h:'#9E9890' },
+  { c:'#8A8580', h:'#9E9890' },
+  { c:'#1A1A1A', h:'#2E2E2E', id:'doom-gallery', label:'DOOM Gallery', url:'https://bobatealee.itch.io/doom-the-gallery-experience' },
+  { c:'#5A5652', h:'#6E6A64' },
+  { c:'#2A2826', h:'#3E3C38' },
+  { c:'#2A2826', h:'#3E3C38' },
+  { c:'#5A5850', h:'#6E6C62' },
+  { c:'#B0A8A0', h:'#C4BCB2' },
+  { c:'#787068', h:'#8C847A', id:'earth-reviews', label:'Earth Reviews', url:'https://neal.fun/earth-reviews/' },
+  { c:'#707068', h:'#84847A' },
+  { c:'#B0A898', h:'#C4BCAA' },
+  { c:'#C0B8B0', h:'#D4CCC2' },
+  { c:'#B8B0A8', h:'#CCC4BA' },
+  { c:'#B0A898', h:'#C4BCAA', id:'kong-studios', label:'Kong Studios', url:'https://kongstudios.gorillaz.com' },
+  { c:'#B8B0A0', h:'#CCC4B2' }
 ];
 
-(function buildGlassGrid(){
-  var grid = document.getElementById('glassGrid');
+(function buildGameGrid(){
+  var grid = document.getElementById('gameGrid');
   if (!grid) return;
-  GAME_SQUARES.forEach(function(g){
+  GAME_TILES.forEach(function(t){
     var tile = document.createElement('div');
-    tile.className = 'glass-tile glass-tile--active';
-    tile.style.gridColumn = g.col;
-    tile.style.gridRow = g.row;
-    tile.setAttribute('role', 'button');
-    tile.setAttribute('tabindex', '0');
-    tile.setAttribute('aria-label', g.label);
-    var lbl = document.createElement('span');
-    lbl.className = 'glass-tile-label';
-    lbl.textContent = g.label;
-    tile.appendChild(lbl);
-    tile.addEventListener('click', function(){ window.open(g.url, '_blank', 'noopener'); });
-    tile.addEventListener('keydown', function(e){ if (e.key === 'Enter') window.open(g.url, '_blank', 'noopener'); });
+    tile.className = 'game-tile' + (t.url ? ' game-tile--link' : '');
+    tile.style.background = 'radial-gradient(ellipse at 48% 42%, '+t.h+', '+t.c+')';
+    if (t.url) {
+      tile.setAttribute('role', 'button');
+      tile.setAttribute('tabindex', '0');
+      tile.setAttribute('aria-label', t.label);
+      var lbl = document.createElement('span');
+      lbl.className = 'game-tile-label';
+      lbl.textContent = t.label;
+      tile.appendChild(lbl);
+      tile.addEventListener('click', function(){ window.open(t.url, '_blank', 'noopener'); });
+      tile.addEventListener('keydown', function(e){ if (e.key === 'Enter') window.open(t.url, '_blank', 'noopener'); });
+    }
     grid.appendChild(tile);
   });
 }());
