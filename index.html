@@ -6257,6 +6257,15 @@ var TV_SQUARES = [
   if (arcLeft)  arcLeft.addEventListener('click',  function(){ rotateCube(1);  });
   if (arcRight) arcRight.addEventListener('click', function(){ rotateCube(-1); });
 
+  /* ── Escape → return to radio (only when nothing else is open) ── */
+  document.addEventListener('keydown', function(e){
+    if (e.key !== 'Escape') return;
+    if (faceState === 'radio') return;
+    if (document.body.classList.contains('overlay-open')) return;
+    if (document.body.classList.contains('tv-open')) return;
+    flipToRadio();
+  });
+
   /* ── Arrow-key cube rotation ── */
   document.addEventListener('keydown', function(e){
     if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
