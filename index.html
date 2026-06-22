@@ -267,7 +267,7 @@ body.overlay-open #gridCubeWrapper {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   overflow: hidden;
-  background: linear-gradient(135deg, #0c0a1e 0%, #1a1440 40%, #0e2a2a 100%);
+  background: linear-gradient(135deg, #6a5af0 0%, #d45fa0 35%, #f0a050 65%, #50c8e8 100%);
 }
 #cubeGridBack::before,
 #cubeGridBack::after {
@@ -277,16 +277,16 @@ body.overlay-open #gridCubeWrapper {
   pointer-events: none;
 }
 #cubeGridBack::before {
-  width: 55%; height: 55%;
-  top: -12%; left: -10%;
-  background: radial-gradient(circle, rgba(110,70,220,0.35), transparent 70%);
-  filter: blur(40px);
+  width: 70%; height: 70%;
+  top: -15%; left: -10%;
+  background: radial-gradient(circle, rgba(255,180,60,0.55), transparent 60%);
+  filter: blur(50px);
 }
 #cubeGridBack::after {
-  width: 50%; height: 50%;
-  bottom: -8%; right: -8%;
-  background: radial-gradient(circle, rgba(30,180,170,0.28), transparent 70%);
-  filter: blur(40px);
+  width: 65%; height: 65%;
+  bottom: -10%; right: -10%;
+  background: radial-gradient(circle, rgba(80,200,240,0.5), transparent 60%);
+  filter: blur(50px);
 }
 .glass-grid {
   position: relative;
@@ -302,44 +302,42 @@ body.overlay-open #gridCubeWrapper {
 }
 .glass-tile {
   position: relative;
-  border-radius: 12px;
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(18px) saturate(1.3);
-  -webkit-backdrop-filter: blur(18px) saturate(1.3);
-  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(40px) saturate(1.8);
+  -webkit-backdrop-filter: blur(40px) saturate(1.8);
+  border: 0.5px solid rgba(255,255,255,0.35);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.4),
+    inset 0 -1px 0 rgba(0,0,0,0.06),
+    0 4px 24px rgba(0,0,0,0.08);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+  transition: background 180ms ease, box-shadow 180ms ease;
 }
 .glass-tile--active {
-  background: rgba(255,255,255,0.09);
-  border-color: rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.25);
   cursor: pointer;
 }
-.glass-tile--active::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 12%; right: 12%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
-}
 .glass-tile--active:hover {
-  background: rgba(255,255,255,0.16);
-  border-color: rgba(255,255,255,0.3);
-  box-shadow: 0 0 20px rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.35);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.5),
+    inset 0 -1px 0 rgba(0,0,0,0.06),
+    0 8px 32px rgba(0,0,0,0.12);
 }
 .glass-tile-label {
-  color: rgba(255,255,255,0.82);
-  font-size: 10px;
-  font-weight: 500;
+  color: rgba(0,0,0,0.7);
+  font-size: 9px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.6px;
   text-align: center;
-  line-height: 1.3;
-  padding: 0 6px;
+  line-height: 1.35;
+  padding: 0 4px;
 }
 
 /* ── Chevron navigation ──────────────────────────────────────
