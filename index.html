@@ -3827,7 +3827,7 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
     bCtx.clip();
     var dark=window.__MQ__.dark;
     bCtx.globalCompositeOperation='source-over';
-    bCtx.fillStyle=dark?'rgba(14,14,15,0.02)':'rgba(246,244,232,0.02)';
+    bCtx.fillStyle=dark?'rgba(14,14,15,0.04)':'rgba(246,244,232,0.04)';
     bCtx.fill();
     var steps = Math.max(1, Math.round(dt * 150));
     var stepSize = dt / steps;
@@ -3839,26 +3839,28 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
     var cb=_formTrail, n=cb.len, cap=cb.cap;
     var start=(cb.head - n + cap) % cap;
     bCtx.globalCompositeOperation='lighter';
-    for(var j=1;j<n;j+=2){
+    bCtx.lineCap='round';
+    bCtx.lineJoin='round';
+    for(var j=1;j<n;j++){
       var ia=((start+j-1)%cap)*2, ib=((start+j)%cap)*2;
-      var dx=cb.buf[ib]-cb.buf[ia], dy=cb.buf[ib+1]-cb.buf[ia+1];
-      var speed=Math.sqrt(dx*dx+dy*dy)*sc;
       var t=j/n;
-      var r=(8+speed*18)*bDPR;
-      var px=cx+cb.buf[ib]*sc, py=cy+cb.buf[ib+1]*sc;
-      var grd=bCtx.createRadialGradient(px,py,0,px,py,r);
-      grd.addColorStop(0,b3spec(0,(t*t*0.12*fade).toFixed(3)));
-      grd.addColorStop(1,b3spec(0,'0'));
-      bCtx.fillStyle=grd;
-      bCtx.beginPath();bCtx.arc(px,py,r,0,Math.PI*2);bCtx.fill();
+      var w = (0.8 + t*2.2)*bDPR;
+      bCtx.lineWidth=w;
+      bCtx.strokeStyle=b3spec(0, (t*t*0.5*fade).toFixed(3));
+      bCtx.beginPath();
+      bCtx.moveTo(cx+cb.buf[ia]*sc, cy+cb.buf[ia+1]*sc);
+      bCtx.lineTo(cx+cb.buf[ib]*sc, cy+cb.buf[ib+1]*sc);
+      bCtx.stroke();
     }
     if(n>2){
       var hi=((cb.head-1+cap)%cap)*2;
       var hx=cx+cb.buf[hi]*sc, hy=cy+cb.buf[hi+1]*sc;
-      var grd2=bCtx.createRadialGradient(hx,hy,0,hx,hy,24*bDPR);
-      grd2.addColorStop(0,b3spec(0,(0.25*fade).toFixed(3)));
-      grd2.addColorStop(1,b3spec(0,'0'));
-      bCtx.fillStyle=grd2;bCtx.beginPath();bCtx.arc(hx,hy,24*bDPR,0,Math.PI*2);bCtx.fill();
+      bCtx.fillStyle=b3spec(0,(0.7*fade).toFixed(3));
+      bCtx.beginPath();bCtx.arc(hx,hy,3*bDPR,0,Math.PI*2);bCtx.fill();
+      var grd=bCtx.createRadialGradient(hx,hy,0,hx,hy,14*bDPR);
+      grd.addColorStop(0,b3spec(0,(0.18*fade).toFixed(3)));
+      grd.addColorStop(1,b3spec(0,'0'));
+      bCtx.fillStyle=grd;bCtx.beginPath();bCtx.arc(hx,hy,14*bDPR,0,Math.PI*2);bCtx.fill();
     }
     bCtx.restore();
   }
