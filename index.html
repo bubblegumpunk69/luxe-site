@@ -6054,27 +6054,18 @@ var GAME_TILES = [
 (function buildGameGrid(){
   var grid = document.getElementById('gameGrid');
   if (!grid) return;
-  var gameMap = {};
-  GAME_TILES.forEach(function(g){ gameMap[g.col + ',' + g.row] = g; });
-  for (var r = 1; r <= 4; r++) {
-    for (var c = 1; c <= 4; c++) {
-      var g = gameMap[c + ',' + r];
-      var tile = document.createElement('div');
-      tile.className = 'game-tile';
-      if (g) {
-        tile.setAttribute('role', 'button');
-        tile.setAttribute('tabindex', '0');
-        tile.setAttribute('aria-label', g.label);
-        var lbl = document.createElement('span');
-        lbl.className = 'game-tile-label';
-        lbl.textContent = g.label;
-        tile.appendChild(lbl);
-        tile.addEventListener('click', function(url){ return function(){ window.open(url, '_blank', 'noopener'); }; }(g.url));
-        tile.addEventListener('keydown', function(url){ return function(e){ if (e.key === 'Enter') window.open(url, '_blank', 'noopener'); }; }(g.url));
-      }
-      grid.appendChild(tile);
-    }
-  }
+  GAME_TILES.forEach(function(g){
+    var tile = document.createElement('div');
+    tile.className = 'game-tile';
+    tile.style.gridColumn = g.col;
+    tile.style.gridRow = g.row;
+    tile.setAttribute('role', 'button');
+    tile.setAttribute('tabindex', '0');
+    tile.setAttribute('aria-label', g.label);
+    tile.addEventListener('click', function(url){ return function(){ window.open(url, '_blank', 'noopener'); }; }(g.url));
+    tile.addEventListener('keydown', function(url){ return function(e){ if (e.key === 'Enter') window.open(url, '_blank', 'noopener'); }; }(g.url));
+    grid.appendChild(tile);
+  });
 }());
 
 (function specularTrack(){
