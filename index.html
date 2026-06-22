@@ -3968,7 +3968,8 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
 
   var _b3elapsed = 0;
   function b3spec(offset, alpha){
-    return blacklabel_spectral(_b3elapsed*0.0004*BLACKLABEL_PARAMS.SPEED + offset) + alpha + ')';
+    var dark = window.__MQ__.dark;
+    return dark ? 'rgba(240,237,228,'+alpha+')' : 'rgba(14,14,15,'+alpha+')';
   }
 
   function b3Draw(W,H,now){
