@@ -2126,27 +2126,28 @@ body.overlay-open .plus-row.is-yielding-reset {
 }
 #tvClose {
   position: absolute;
-  top: 20px;
-  right: 22px;
+  top: 16px;
+  right: 16px;
   z-index: 4201;
-  background: none;
-  border: none;
-  padding: 14px;
+  width: 36px;
+  height: 36px;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 0.5px solid rgba(255,255,255,0.15);
+  border-radius: 50%;
   cursor: pointer;
-  opacity: 0.42;
-  transition: opacity 0.25s;
+  opacity: 0.6;
+  transition: opacity 0.25s, background 0.25s;
   line-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
 }
-#tvClose:hover { opacity: 0.9; }
+#tvClose:hover { opacity: 1; background: rgba(255,255,255,0.18); }
 #tvLabel {
-  position: absolute;
-  top: 22px;
-  left: 24px;
-  color: rgba(255,255,255,0.45);
-  font-family: 'EB Garamond', Georgia, serif;
-  font-size: 11px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
+  display: none;
   pointer-events: none;
   -webkit-font-smoothing: antialiased;
 }
