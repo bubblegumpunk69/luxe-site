@@ -3790,6 +3790,7 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
   ];
 
   var _formFn, _formTrail, _formT;
+  var _ripple = 1;
 
   function b3Reset(){
     b3startTime=null; b3paused=false; b3lastT=null;
@@ -3829,10 +3830,12 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
     bCtx.globalCompositeOperation='source-over';
     bCtx.fillStyle=dark?'rgba(14,14,15,0.02)':'rgba(246,244,232,0.02)';
     bCtx.fill();
-    var steps = Math.max(1, Math.round(dt * 150));
+    _ripple += (_ripple > 1.01) ? (1 - _ripple) * 0.03 : 0;
+    if (_ripple < 1.005) _ripple = 1;
+    var steps = Math.max(1, Math.round(dt * 150 * _ripple));
     var stepSize = dt / steps;
     for(var s=0; s<steps; s++){
-      _formT += stepSize * 0.9;
+      _formT += stepSize * 0.9 * _ripple;
       var p = _formFn(_formT, stepSize);
       if(p&&isFinite(p.x)&&isFinite(p.y)) cbPush(_formTrail, p.x, p.y);
     }
@@ -3860,6 +3863,14 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
     }
     bCtx.restore();
   }
+
+  bCanvas.addEventListener('click', function(e){
+    var rect = bCanvas.getBoundingClientRect();
+    var cx = rect.width*0.5, cy = rect.height*0.52;
+    var dx = e.clientX - rect.left - cx, dy = e.clientY - rect.top - cy;
+    var r = Math.sqrt(dx*dx+dy*dy), limit = Math.min(rect.width,rect.height)*0.36;
+    if (r < limit) _ripple = 2.5;
+  });
 
   const BLACKLABEL_PARAMS = {
     SPEED:0.18,
