@@ -6145,9 +6145,9 @@ var TV_SQUARES = [
 
   function rotateCube(dir){
     var mob = window.__MQ__.mobile;
+    if (mob && faceState !== 'radio') { flipToRadio(); return; }
     cubeAngle += dir * 90;
     var n = ((cubeAngle % 360) + 360) % 360;
-    if (mob && n === 180){ cubeAngle += dir * 90; n = ((cubeAngle % 360) + 360) % 360; }
     var prev = faceState;
     faceState = FACE_ORDER[n / 90];
     gridCube.classList.remove('reading-face','reading-face-left');
