@@ -6025,31 +6025,28 @@ var READING_SQUARES = [
 
 /* ── Games back-face data ── */
 var GAME_SQUARES = [
-  { id:'doom-gallery', label:'DOOM\nGallery',       url:'https://bobatealee.itch.io/doom-the-gallery-experience' },
-  { id:'earth-reviews',label:'Earth\nReviews',      url:'https://neal.fun/earth-reviews/' },
-  { id:'kong-studios', label:'Kong\nStudios',        url:'https://kongstudios.gorillaz.com' },
-  null, null, null, null,
-  null, null, null, null,
-  null, null, null, null, null
+  { id:'doom-gallery', label:'DOOM Gallery',   url:'https://bobatealee.itch.io/doom-the-gallery-experience', col:1, row:1 },
+  { id:'earth-reviews',label:'Earth Reviews',  url:'https://neal.fun/earth-reviews/',                        col:3, row:2 },
+  { id:'kong-studios', label:'Kong Studios',    url:'https://kongstudios.gorillaz.com',                       col:2, row:4 }
 ];
 
 (function buildGlassGrid(){
   var grid = document.getElementById('glassGrid');
   if (!grid) return;
-  GAME_SQUARES.forEach(function(g, i){
+  GAME_SQUARES.forEach(function(g){
     var tile = document.createElement('div');
-    tile.className = 'glass-tile' + (g ? ' glass-tile--active' : '');
-    if (g) {
-      tile.setAttribute('role', 'button');
-      tile.setAttribute('tabindex', '0');
-      tile.setAttribute('aria-label', g.label.replace('\n',' '));
-      var lbl = document.createElement('span');
-      lbl.className = 'glass-tile-label';
-      lbl.textContent = g.label.replace('\n',' ');
-      tile.appendChild(lbl);
-      tile.addEventListener('click', function(){ window.open(g.url, '_blank', 'noopener'); });
-      tile.addEventListener('keydown', function(e){ if (e.key === 'Enter') window.open(g.url, '_blank', 'noopener'); });
-    }
+    tile.className = 'glass-tile glass-tile--active';
+    tile.style.gridColumn = g.col;
+    tile.style.gridRow = g.row;
+    tile.setAttribute('role', 'button');
+    tile.setAttribute('tabindex', '0');
+    tile.setAttribute('aria-label', g.label);
+    var lbl = document.createElement('span');
+    lbl.className = 'glass-tile-label';
+    lbl.textContent = g.label;
+    tile.appendChild(lbl);
+    tile.addEventListener('click', function(){ window.open(g.url, '_blank', 'noopener'); });
+    tile.addEventListener('keydown', function(e){ if (e.key === 'Enter') window.open(g.url, '_blank', 'noopener'); });
     grid.appendChild(tile);
   });
 }());
