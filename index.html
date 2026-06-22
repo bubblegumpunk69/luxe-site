@@ -3969,7 +3969,7 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
     if(fade<=0){b3paused=true;return;}
     var cx=W*0.5,cy=H*0.52,sc=Math.min(W,H);
     var dark=window.__MQ__.dark;
-    var col=dark?'rgba(247,247,245,':'rgba(14,14,15,';
+    var col=blacklabel_spectral(elapsed*0.0004*BLACKLABEL_PARAMS.SPEED);
     var dt=b3lastT ? Math.min((now-b3lastT)/1000,0.1) : 0.016;
     b3lastT=now;
     bCtx.save();
