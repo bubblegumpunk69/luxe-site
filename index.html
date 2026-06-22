@@ -6143,9 +6143,31 @@ var TV_SQUARES = [
     faces.forEach(function(f){ if(f){ f.style.backfaceVisibility = val; f.style.webkitBackfaceVisibility = val; }});
   }
 
+  var _rubberBanding = false;
+  function rubberBand(dir){
+    if (_rubberBanding) return;
+    _rubberBanding = true;
+    var tilt = cubeAngle + dir * 6;
+    gridCube.style.transition = 'transform 0.18s ease-out';
+    setCubeRot(tilt);
+    setTimeout(function(){
+      gridCube.style.transition = 'transform 0.5s cubic-bezier(0.34,1.56,0.64,1)';
+      setCubeRot(cubeAngle);
+      setTimeout(function(){
+        gridCube.style.transition = '';
+        _rubberBanding = false;
+      }, 550);
+    }, 180);
+  }
+
   function rotateCube(dir){
+    if (_rubberBanding) return;
     var mob = window.__MQ__.mobile;
-    if (mob && faceState !== 'radio') { flipToRadio(); return; }
+    if (mob && faceState !== 'radio') {
+      var nextN = (((cubeAngle + dir * 90) % 360) + 360) % 360;
+      if (nextN === 0) { flipToRadio(); } else { rubberBand(dir); }
+      return;
+    }
     cubeAngle += dir * 90;
     var n = ((cubeAngle % 360) + 360) % 360;
     var prev = faceState;
