@@ -2732,7 +2732,7 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
   var gridPaused = false;
 
   function animTick(){
-    if (!gridPaused && (!window.__LUXE_FACE__ || window.__LUXE_FACE__ === 'radio')){
+    if (!gridPaused){
       var time = performance.now()*0.001;
       var tileW = canvas.width/cols, tileH = canvas.height/rows;
       var amplitude = Math.min(tileW, tileH)*0.1;
@@ -2763,15 +2763,9 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
         ctx.fillStyle = grad; ctx.fillRect(x0,y0,w,h);
       }
     }
-    if (!gridPaused && (!window.__LUXE_FACE__ || window.__LUXE_FACE__ === 'radio'))
-      requestAnimationFrame(animTick);
-    else
-      window.__radioAnimStopped = true;
+    requestAnimationFrame(animTick);
   }
   animTick();
-  window.__restartRadioAnim = function(){
-    if (window.__radioAnimStopped) { window.__radioAnimStopped = false; animTick(); }
-  };
 
   /* ================== Playback ================== */
   var stations = window.STATIONS || [];
@@ -6195,8 +6189,6 @@ var TV_SQUARES = [
     if (faceState === 'back' && prev !== 'back') toggleBackfaces(true);
     if (faceState !== 'back' && prev === 'back') toggleBackfaces(false);
     window.__LUXE_FACE__ = faceState;
-    if (faceState === 'radio' && window.__restartRadioAnim) window.__restartRadioAnim();
-    if (faceState !== 'radio' && window.__restartLitAnim) window.__restartLitAnim();
     updateArrows(); closePreview();
   }
   var RSS2JSON  = 'https://api.rss2json.com/v1/api.json?count=1&rss_url=';
@@ -6574,13 +6566,9 @@ var TV_SQUARES = [
       /* Advance time tracking only — keeps lerp state fresh on return */
       _lastLitTime = time;
     }
-    if (onLit) requestAnimationFrame(litTick);
-    else window.__litAnimStopped = true;
+    requestAnimationFrame(litTick);
   }
   litTick();
-  window.__restartLitAnim = function(){
-    if (window.__litAnimStopped) { window.__litAnimStopped = false; litTick(); }
-  };
 
   /* ── Square clicks — shared handler for both faces ── */
   function handleLitClick(e, canvas, activeFace){
