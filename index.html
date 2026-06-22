@@ -2151,6 +2151,47 @@ body.tv-open .plus-row      { opacity: 0; pointer-events: none; }
 body.tv-open .cube-dots     { opacity: 0; transition: opacity 400ms ease; }
 body.tv-open .pill:not(.dock-bottom) { display: none !important; }
 body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
+
+/* ── Game player (mirrors TV player) ── */
+#gamePlayer {
+  position: fixed; inset: 0; z-index: 4200;
+  background: #000; opacity: 0; pointer-events: none;
+  transition: opacity 0.18s ease;
+}
+#gamePlayer.visible { opacity: 1; pointer-events: auto; }
+#gamePlayer iframe {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  border: none; display: block;
+}
+#gameClose {
+  position: absolute; top: 20px; right: 22px; z-index: 4201;
+  background: none; border: none; padding: 14px; cursor: pointer;
+  opacity: 0.42; transition: opacity 0.25s; line-height: 0;
+}
+#gameClose:hover { opacity: 0.9; }
+#gameLabel {
+  position: absolute; top: 22px; left: 24px;
+  color: rgba(255,255,255,0.45);
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+  pointer-events: none;
+}
+#gameNewTab {
+  position: absolute; bottom: 22px; left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255,255,255,0.4); font-size: 11px;
+  text-decoration: none; letter-spacing: 0.1em;
+  transition: color 0.2s;
+}
+#gameNewTab:hover { color: rgba(255,255,255,0.8); }
+body.game-open #gridCubeWrapper {
+  opacity: 0; pointer-events: none;
+  transition: opacity 820ms cubic-bezier(0.19,1,0.22,1);
+}
+body.game-open .plus-row      { opacity: 0; pointer-events: none; }
+body.game-open .cube-dots     { opacity: 0; transition: opacity 400ms ease; }
+body.game-open .pill:not(.dock-bottom) { display: none !important; }
+body.game-open #radioBriefing { opacity: 0; pointer-events: none; }
 </style>
 </head>
 <body>
@@ -2197,6 +2238,12 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
   <button id="tvClose" aria-label="Close channel"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="2" y1="2" x2="14" y2="14" stroke="white" stroke-width="0.8"/><line x1="14" y1="2" x2="2" y2="14" stroke="white" stroke-width="0.8"/></svg></button>
 </div>
 
+<div id="gamePlayer" aria-hidden="true">
+  <div id="gamePlayerInner"></div>
+  <div id="gameLabel"></div>
+  <a id="gameNewTab" target="_blank" rel="noopener">open in new tab ↗</a>
+  <button id="gameClose" aria-label="Close game"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="2" y1="2" x2="14" y2="14" stroke="white" stroke-width="0.8"/><line x1="14" y1="2" x2="2" y2="14" stroke="white" stroke-width="0.8"/></svg></button>
+</div>
 
 <div class="pill" id="pill">
   <span id="nowPlaying"></span>
@@ -6046,8 +6093,8 @@ var GAME_SQUARES = [
       lbl.className = 'glass-tile-label';
       lbl.textContent = g.label.replace('\n',' ');
       tile.appendChild(lbl);
-      tile.addEventListener('click', function(){ window.open(g.url, '_blank', 'noopener'); });
-      tile.addEventListener('keydown', function(e){ if (e.key === 'Enter') window.open(g.url, '_blank', 'noopener'); });
+      tile.addEventListener('click', function(){ if (window.openGame) window.openGame(g); });
+      tile.addEventListener('keydown', function(e){ if (e.key === 'Enter' && window.openGame) window.openGame(g); });
     }
     grid.appendChild(tile);
   });
@@ -6596,6 +6643,67 @@ var TV_SQUARES = [
 
   window.openTVChannel   = openTVChannel;
   window.closeTVChannel  = closeTVChannel;
+})();
+</script>
+
+<!-- ── Game player ── -->
+<script>
+(function () {
+  var player = document.getElementById('gamePlayer');
+  var inner  = document.getElementById('gamePlayerInner');
+  var label  = document.getElementById('gameLabel');
+  var link   = document.getElementById('gameNewTab');
+  var btn    = document.getElementById('gameClose');
+  if (!player || !inner) return;
+
+  var _radioAutoPaused = false;
+
+  function openGame(g) {
+    inner.innerHTML = '';
+    if (label) label.textContent = g.label ? g.label.replace('\n', ' ') : '';
+    if (link) link.href = g.url;
+    player.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('game-open');
+
+    var radio = window.__LUXE_RADIO__;
+    if (radio && radio.isPlaying && radio.isPlaying() && !radio.isPaused()) {
+      radio.pause();
+      _radioAutoPaused = true;
+    } else {
+      _radioAutoPaused = false;
+    }
+
+    var fr = document.createElement('iframe');
+    fr.src = g.url;
+    fr.allow = 'fullscreen; autoplay; gamepad';
+    fr.allowFullscreen = true;
+    fr.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms');
+    inner.appendChild(fr);
+    player.classList.add('visible');
+  }
+
+  function closeGame() {
+    if (!player.classList.contains('visible')) return;
+    player.classList.remove('visible');
+    player.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('game-open');
+    inner.innerHTML = '';
+    if (label) label.textContent = '';
+
+    if (_radioAutoPaused) {
+      var radio = window.__LUXE_RADIO__;
+      if (radio && radio.isPaused()) radio.resume();
+      _radioAutoPaused = false;
+    }
+  }
+
+  if (btn) btn.addEventListener('click', closeGame);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeGame();
+  });
+
+  window.openGame  = openGame;
+  window.closeGame = closeGame;
 })();
 </script>
 
