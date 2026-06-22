@@ -3897,7 +3897,24 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
     0.14,0.01, 0.15,0.00, 0.16,0.01, 0.16,0.03,
     0.15,0.04, 0.14,0.03, 0.14,0.01
   ];
-  var _mshSavedSpeed = 0;
+  var _mshSavedSpeed = 0, _mshSavedStyle = null;
+  function _mshDraw(cb,n,cap,st,cx,cy,sc,fade,fT){
+    bCtx.lineWidth=2.2*bDPR;
+    for(var j=1;j<n;j++){
+      var ia=((st+j-1)%cap)*2,ib=((st+j)%cap)*2,t=j/n;
+      bCtx.strokeStyle=b3spec(0,(t*0.85*fade).toFixed(3));
+      bCtx.beginPath();
+      bCtx.moveTo(cx+cb.buf[ia]*sc,cy+cb.buf[ia+1]*sc);
+      bCtx.lineTo(cx+cb.buf[ib]*sc,cy+cb.buf[ib+1]*sc);
+      bCtx.stroke();
+    }
+    if(n>2){
+      var hi=((cb.head-1+cap)%cap)*2;
+      var hx=cx+cb.buf[hi]*sc,hy=cy+cb.buf[hi+1]*sc;
+      bCtx.fillStyle=b3spec(0,(0.9*fade).toFixed(3));
+      bCtx.beginPath();bCtx.arc(hx,hy,3.5*bDPR,0,Math.PI*2);bCtx.fill();
+    }
+  }
   function _mshForm(){
     var pts=_mshPts, len=pts.length/2;
     return function(t){
@@ -3919,8 +3936,10 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
       _mshActive = true;
       _mshSavedFn = _formFn;
       _mshSavedSpeed = _traceSpeed;
+      _mshSavedStyle = _styleFn;
       _formFn = _mshForm();
       _traceSpeed = 1.2;
+      _styleFn = _mshDraw;
       _formTrail = makeCB(_trailCap);
       _formT = 0;
     }
@@ -3929,6 +3948,7 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
       _mshLastEnd = elapsed;
       _formFn = _mshSavedFn || PIECES[_curPiece].form();
       _traceSpeed = _mshSavedSpeed || 0.9;
+      _styleFn = _mshSavedStyle || PIECES[_curPiece].draw;
       _formTrail = makeCB(_trailCap);
       _formT = 0;
     }
