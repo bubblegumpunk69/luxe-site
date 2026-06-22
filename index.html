@@ -3876,52 +3876,7 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
   }
 
   var _b3elapsed = 0;
-  var _mshActive = false, _mshSavedFn = null, _mshLastEnd = -30001;
-  var _MSH_INTERVAL = 30000, _MSH_DUR = 6000;
-  var _mshPts = [
-    -0.21,0.04, -0.21,0.02, -0.21,0.00, -0.20,-0.02,
-    -0.18,-0.03, -0.17,-0.01, -0.17,0.01, -0.17,0.03,
-    -0.16,0.01, -0.15,-0.01, -0.14,-0.03,
-    -0.13,-0.01, -0.13,0.01, -0.13,0.03, -0.13,0.04,
-    -0.09,0.04, -0.09,0.02, -0.08,0.00, -0.07,-0.01,
-    -0.06,0.00, -0.06,0.02, -0.07,0.04, -0.08,0.04,
-    -0.04,-0.04, -0.04,-0.02, -0.04,0.00, -0.04,0.02,
-    -0.04,0.04, -0.04,0.01, -0.03,0.00, -0.02,0.00,
-    -0.01,0.01, -0.01,0.03, -0.01,0.04,
-    0.02,0.04, 0.02,0.035,
-    0.05,-0.04, 0.05,-0.02, 0.05,0.00, 0.05,0.02,
-    0.05,0.04, 0.06,0.04, 0.07,0.03, 0.07,0.01,
-    0.06,0.00, 0.05,0.00,
-    0.10,0.04, 0.10,0.02, 0.10,0.00, 0.10,0.04,
-    0.10,-0.02, 0.10,-0.025,
-    0.14,0.01, 0.15,0.00, 0.16,0.01, 0.16,0.03,
-    0.15,0.04, 0.14,0.03, 0.14,0.01
-  ];
-  var _mshSavedSpeed = 0, _mshSavedStyle = null;
-  function _mshDraw(cb,n,cap,st,cx,cy,sc,fade,fT){
-    bCtx.lineWidth=2.2*bDPR;
-    for(var j=1;j<n;j++){
-      var ia=((st+j-1)%cap)*2,ib=((st+j)%cap)*2,t=j/n;
-      bCtx.strokeStyle=b3spec(0,(t*0.85*fade).toFixed(3));
-      bCtx.beginPath();
-      bCtx.moveTo(cx+cb.buf[ia]*sc,cy+cb.buf[ia+1]*sc);
-      bCtx.lineTo(cx+cb.buf[ib]*sc,cy+cb.buf[ib+1]*sc);
-      bCtx.stroke();
-    }
-    if(n>2){
-      var hi=((cb.head-1+cap)%cap)*2;
-      var hx=cx+cb.buf[hi]*sc,hy=cy+cb.buf[hi+1]*sc;
-      bCtx.fillStyle=b3spec(0,(0.9*fade).toFixed(3));
-      bCtx.beginPath();bCtx.arc(hx,hy,3.5*bDPR,0,Math.PI*2);bCtx.fill();
-    }
-  }
-  function _mshForm(){
-    var pts=_mshPts, len=pts.length/2;
-    return function(t){
-      var idx = Math.min(Math.floor(t * len * 0.35), len-1);
-      return {x: pts[idx*2], y: pts[idx*2+1]};
-    };
-  }
+  var _MSH_INTERVAL = 30000, _MSH_DUR = 5000;
   function b3spec(offset, alpha){
     var dark = window.__MQ__.dark;
     return dark ? 'rgba(235,230,240,'+alpha+')' : 'rgba(18,14,26,'+alpha+')';
@@ -3931,26 +3886,11 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
     if(b3paused||!_formFn) return;
     if(!b3startTime) b3startTime=now;
     var elapsed=now-b3startTime;
-    var sinceLast = elapsed - _mshLastEnd;
-    if(!_mshActive && sinceLast > _MSH_INTERVAL){
-      _mshActive = true;
-      _mshSavedFn = _formFn;
-      _mshSavedSpeed = _traceSpeed;
-      _mshSavedStyle = _styleFn;
-      _formFn = _mshForm();
-      _traceSpeed = 1.2;
-      _styleFn = _mshDraw;
-      _formTrail = makeCB(_trailCap);
-      _formT = 0;
-    }
-    if(_mshActive && (elapsed - (_mshLastEnd + _MSH_INTERVAL)) > _MSH_DUR){
-      _mshActive = false;
-      _mshLastEnd = elapsed;
-      _formFn = _mshSavedFn || PIECES[_curPiece].form();
-      _traceSpeed = _mshSavedSpeed || 0.9;
-      _styleFn = _mshSavedStyle || PIECES[_curPiece].draw;
-      _formTrail = makeCB(_trailCap);
-      _formT = 0;
+    var mshCycle = elapsed % (_MSH_INTERVAL + _MSH_DUR);
+    if (mshCycle > _MSH_INTERVAL) {
+      var mshT = (mshCycle - _MSH_INTERVAL) / _MSH_DUR;
+      var mshAlpha = mshT < 0.3 ? mshT/0.3 : mshT > 0.7 ? (1-mshT)/0.3 : 1;
+      mshAlpha = Math.max(0, Math.min(1, mshAlpha)) * 0.55 * fade;
     }
     _b3elapsed = elapsed;
     var fade=elapsed>B3_DURATION ? 1-(elapsed-B3_DURATION)/B3_FADEOUT : 1;
@@ -3988,6 +3928,15 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
     bCtx.lineCap='round';
     bCtx.lineJoin='round';
     if(_styleFn) _styleFn(cb,n,cap,start,cx,cy,sc,fade,_formT);
+    if (typeof mshAlpha !== 'undefined' && mshAlpha > 0.005) {
+      bCtx.globalCompositeOperation='source-over';
+      var fontSize = Math.round(sc * 0.055);
+      bCtx.font = '300 '+fontSize+'px "EB Garamond", Georgia, serif';
+      bCtx.textAlign = 'center';
+      bCtx.textBaseline = 'middle';
+      bCtx.fillStyle = b3spec(0, mshAlpha.toFixed(3));
+      bCtx.fillText('msh.bio', cx, cy);
+    }
     bCtx.restore();
   }
 
