@@ -3876,8 +3876,8 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
   }
 
   var _b3elapsed = 0;
-  var _mshDone = false, _mshActive = false, _mshSavedFn = null;
-  var _MSH_START = 30000, _MSH_DUR = 6000;
+  var _mshActive = false, _mshSavedFn = null, _mshLastEnd = -30001;
+  var _MSH_INTERVAL = 30000, _MSH_DUR = 6000;
   var _mshPts = [
     -0.21,0.04, -0.21,0.02, -0.21,0.00, -0.20,-0.02,
     -0.18,-0.03, -0.17,-0.01, -0.17,0.01, -0.17,0.03,
@@ -3913,16 +3913,17 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
     if(b3paused||!_formFn) return;
     if(!b3startTime) b3startTime=now;
     var elapsed=now-b3startTime;
-    if(!_mshDone && !_mshActive && elapsed > _MSH_START){
+    var sinceLast = elapsed - _mshLastEnd;
+    if(!_mshActive && sinceLast > _MSH_INTERVAL){
       _mshActive = true;
       _mshSavedFn = _formFn;
       _formFn = _mshForm();
       _formTrail = makeCB(_trailCap);
       _formT = 0;
     }
-    if(_mshActive && elapsed > _MSH_START + _MSH_DUR){
+    if(_mshActive && (elapsed - (_mshLastEnd + _MSH_INTERVAL)) > _MSH_DUR){
       _mshActive = false;
-      _mshDone = true;
+      _mshLastEnd = elapsed;
       _formFn = _mshSavedFn || PIECES[_curPiece].form();
       _formTrail = makeCB(_trailCap);
       _formT = 0;
