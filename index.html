@@ -3956,7 +3956,6 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
   // ── Dispatcher ───────────────────────────────────────────────
   function b3Reset(){
     b3mode=Math.floor(Math.random()*5);
-    _b3uv = Math.random() < 0.5;
     b3startTime=null; b3paused=false; b3lastT=null;
     b3mNX=0; b3mNY=0;
     b3off=null; b3offCtx=null; b3offPending=false;
@@ -3968,15 +3967,8 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
   }
 
   var _b3elapsed = 0;
-  var _b3uv = false;
   function b3spec(offset, alpha){
     var dark = window.__MQ__.dark;
-    if (_b3uv) {
-      var t = _b3elapsed*0.00006 + offset;
-      var s = Math.sin(t)*0.5+0.5;
-      if (dark) return 'rgba('+(140+Math.round(30*s))+','+(60+Math.round(20*s))+','+(220+Math.round(35*s))+','+alpha+')';
-      return 'rgba('+(80+Math.round(20*s))+','+(30+Math.round(15*s))+','+(160+Math.round(30*s))+','+alpha+')';
-    }
     return dark ? 'rgba(240,237,228,'+alpha+')' : 'rgba(14,14,15,'+alpha+')';
   }
 
@@ -3996,6 +3988,16 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
     var dt=b3lastT ? Math.min((now-b3lastT)/1000,0.1) : 0.016;
     b3lastT=now;
     bCtx.save();
+    var a0=sc*0.34,b0=sc*0.32,nSE=3.2,clipN=120;
+    bCtx.beginPath();
+    for(var ci=0;ci<=clipN;ci++){
+      var theta=(ci/clipN)*Math.PI*2;
+      var pt=blacklabel_superellipse(a0,b0,nSE,theta);
+      if(ci===0) bCtx.moveTo(cx+pt.x,cy+pt.y);
+      else bCtx.lineTo(cx+pt.x,cy+pt.y);
+    }
+    bCtx.closePath();
+    bCtx.clip();
     if(b3mode===0)      m0Draw(W,H,dt,cx,cy,sc,col,fade);
     else if(b3mode===1) m1Draw(W,H,dt,cx,cy,sc,col,fade);
     else if(b3mode===2) m2Draw(W,H,dt,cx,cy,sc,col,fade);
