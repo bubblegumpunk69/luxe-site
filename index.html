@@ -3869,7 +3869,11 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
     var cx = rect.width*0.5, cy = rect.height*0.52;
     var dx = e.clientX - rect.left - cx, dy = e.clientY - rect.top - cy;
     var r = Math.sqrt(dx*dx+dy*dy), limit = Math.min(rect.width,rect.height)*0.36;
-    if (r < limit) _ripple = 2.5;
+    if (r < limit) {
+      _formFn = FORMS[Math.floor(Math.random()*FORMS.length)]();
+      _formTrail = makeCB(2000);
+      _formT = 0;
+    }
   });
 
   const BLACKLABEL_PARAMS = {
