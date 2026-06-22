@@ -6051,6 +6051,9 @@ var GAME_TILES = [
   { label:'Katamari',      url:'https://www.miniplay.com/game/katamari-damacy',          col:2, row:1 }
 ];
 
+var _gameOccupied = {};
+GAME_TILES.forEach(function(g){ _gameOccupied[g.col+','+g.row] = true; });
+
 (function buildGameGrid(){
   var grid = document.getElementById('gameGrid');
   if (!grid) return;
@@ -6522,7 +6525,13 @@ var TV_SQUARES = [
       var leftPal  = dark ? LIT_COLOURS_GREEN : LIT_COLOURS_BRIGHT;
       if (litCtx     && cubeGrid.width     > 0) drawLitFrame(litCtx,     cubeGrid.width,     cubeGrid.height,     time, rightPal);
       if (litCtxLeft && cubeGridLeft.width > 0) drawLitFrame(litCtxLeft, cubeGridLeft.width, cubeGridLeft.height, time, leftPal);
-      if (litCtxBack && backCv.width > 0)       drawLitFrame(litCtxBack, backCv.width,       backCv.height,       time, LIT_COLOURS_GRAY);
+      if (litCtxBack && backCv.width > 0) {
+        drawLitFrame(litCtxBack, backCv.width, backCv.height, time, LIT_COLOURS_GRAY);
+        var tW = backCv.width / 4, tH = backCv.height / 4;
+        for (var gr = 0; gr < 4; gr++)
+          for (var gc = 0; gc < 4; gc++)
+            if (!_gameOccupied[(gc+1)+','+(gr+1)]) litCtxBack.clearRect(gc*tW, gr*tH, tW, tH);
+      }
     } else {
       /* Advance time tracking only — keeps lerp state fresh on return */
       _lastLitTime = time;
