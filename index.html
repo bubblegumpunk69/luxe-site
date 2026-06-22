@@ -269,7 +269,17 @@ body.overlay-open #gridCubeWrapper {
   overflow: hidden;
   background: #2C2A28;
 }
+#cubeGridBack_cv {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+}
 .game-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(4, 1fr);
@@ -283,9 +293,10 @@ body.overlay-open #gridCubeWrapper {
   justify-content: center;
   cursor: default;
   overflow: hidden;
+  background: transparent;
 }
 .game-tile--link { cursor: pointer; }
-.game-tile--link:hover { filter: brightness(1.12); }
+.game-tile--link:hover { background: rgba(255,255,255,0.08); }
 .game-tile-label {
   color: rgba(255,255,255,0.72);
   font-size: 9px;
@@ -2135,7 +2146,7 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
     </div>
     <canvas id="cubeGrid"></canvas>
     <canvas id="cubeGridLeft"></canvas>
-    <div id="cubeGridBack"><div class="game-grid" id="gameGrid"></div></div>
+    <div id="cubeGridBack"><canvas id="cubeGridBack_cv"></canvas><div class="game-grid" id="gameGrid"></div></div>
     <div class="cube-side cube-side-top"></div>
     <div class="cube-side cube-side-bottom"></div>
   </div>
@@ -6019,7 +6030,6 @@ var GAME_TILES = [
   GAME_TILES.forEach(function(t){
     var tile = document.createElement('div');
     tile.className = 'game-tile' + (t.url ? ' game-tile--link' : '');
-    tile.style.background = 'radial-gradient(ellipse at 48% 42%, '+t.h+', '+t.c+')';
     if (t.url) {
       tile.setAttribute('role', 'button');
       tile.setAttribute('tabindex', '0');
@@ -6238,6 +6248,8 @@ var TV_SQUARES = [
   var LIT_COLS = 4, LIT_ROWS = 4;
   var litCtx     = cubeGrid     ? cubeGrid.getContext('2d')     : null;
   var litCtxLeft = cubeGridLeft ? cubeGridLeft.getContext('2d') : null;
+  var backCv     = document.getElementById('cubeGridBack_cv');
+  var litCtxBack = backCv ? backCv.getContext('2d') : null;
   var litBB = new Array(16);
 
   /* Dark palette — left face: near-black ink through charcoal to warm paper */
@@ -6327,6 +6339,26 @@ var TV_SQUARES = [
     {r:8,  g:40,  b:16 }   /* return to deep forest */
   ];
 
+  /* Warm gray palette — games back face */
+  var LIT_COLOURS_GRAY = [
+    {r:30, g:28, b:26 },
+    {r:48, g:45, b:42 },
+    {r:68, g:64, b:60 },
+    {r:90, g:86, b:80 },
+    {r:112,g:108,b:100},
+    {r:134,g:128,b:120},
+    {r:154,g:148,b:140},
+    {r:170,g:164,b:155},
+    {r:184,g:178,b:168},
+    {r:196,g:190,b:180},
+    {r:184,g:178,b:168},
+    {r:162,g:156,b:146},
+    {r:130,g:124,b:116},
+    {r:96, g:92, b:86 },
+    {r:64, g:60, b:56 },
+    {r:40, g:38, b:35 }
+  ];
+
   var litTiles = [];
   for (var li=0; li<LIT_ROWS; li++){
     for (var lj=0; lj<LIT_COLS; lj++){
@@ -6342,6 +6374,7 @@ var TV_SQUARES = [
     var sz = wrapper.clientWidth || 280;
     if (cubeGrid)     { cubeGrid.width     = sz; cubeGrid.height     = sz; }
     if (cubeGridLeft) { cubeGridLeft.width = sz; cubeGridLeft.height = sz; }
+    if (backCv)       { backCv.width       = sz; backCv.height       = sz; }
   }
   resizeLitCanvases();
   window.addEventListener('resize', resizeLitCanvases, { passive: true });
@@ -6424,6 +6457,7 @@ var TV_SQUARES = [
       var leftPal  = dark ? LIT_COLOURS_GREEN : LIT_COLOURS_BRIGHT;
       if (litCtx     && cubeGrid.width     > 0) drawLitFrame(litCtx,     cubeGrid.width,     cubeGrid.height,     time, rightPal);
       if (litCtxLeft && cubeGridLeft.width > 0) drawLitFrame(litCtxLeft, cubeGridLeft.width, cubeGridLeft.height, time, leftPal);
+      if (litCtxBack && backCv.width > 0)       drawLitFrame(litCtxBack, backCv.width,       backCv.height,       time, LIT_COLOURS_GRAY);
     } else {
       /* Advance time tracking only — keeps lerp state fresh on return */
       _lastLitTime = time;
