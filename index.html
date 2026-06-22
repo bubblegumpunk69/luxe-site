@@ -6225,11 +6225,13 @@ var TV_SQUARES = [
   /* ── Chevron clicks ── */
   if (arcLeft)  arcLeft.addEventListener('click',  function(){
     if      (faceState === 'radio')  flipToReadingLeft();
+    else if (faceState === 'left')   flipToBack();
     else if (faceState === 'back')   returnFromBack();
     else                             flipToRadio();
   });
   if (arcRight) arcRight.addEventListener('click', function(){
     if      (faceState === 'radio')  flipToReading();
+    else if (faceState === 'right')  flipToBack();
     else if (faceState === 'back')   returnFromBack();
     else                             flipToRadio();
   });
