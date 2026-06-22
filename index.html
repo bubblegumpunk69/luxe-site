@@ -3779,9 +3779,9 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
     function(){ var tw=ri([1,2,3]),a=0.25+Math.random()*0.04;
       return function(t){ var s=Math.sqrt(Math.abs(Math.cos(tw*t))); return {x:a*s*Math.cos(t),y:a*s*Math.sin(t)}; }; },
     function(){ var x=0.01,y=0,z=0,sg=10,rh=28,bt=8/3;
-      return function(t,dt){ var h=(dt||0.016)*0.4; for(var i=0;i<3;i++){x+=sg*(y-x)*h;y+=(x*(rh-z)-y)*h;z+=(x*y-bt*z)*h;} return {x:x*0.005,y:z*0.005-0.15}; }; },
+      return function(t,dt){ var h=(dt||0.016)*0.18; for(var i=0;i<3;i++){x+=sg*(y-x)*h;y+=(x*(rh-z)-y)*h;z+=(x*y-bt*z)*h;} return {x:x*0.005,y:z*0.005-0.15}; }; },
     function(){ var x=0.1,y=0,z=0,a=0.95,b=0.7,c=0.6,dd=3.5,e=0.25,f=0.1;
-      return function(t,dt){ var h=(dt||0.016)*0.4; for(var i=0;i<2;i++){x+=((z-b)*x-dd*y)*h;y+=(dd*x+(z-b)*y)*h;z+=(c+a*z-z*z*z/3-(x*x+y*y)*(1+e*z)+f*z*x*x*x)*h;} return {x:x*0.1,y:y*0.1}; }; },
+      return function(t,dt){ var h=(dt||0.016)*0.18; for(var i=0;i<2;i++){x+=((z-b)*x-dd*y)*h;y+=(dd*x+(z-b)*y)*h;z+=(c+a*z-z*z*z/3-(x*x+y*y)*(1+e*z)+f*z*x*x*x)*h;} return {x:x*0.1,y:y*0.1}; }; },
     function(){ var aa=rv(-2,2),bb=rv(-2,2),cc=rv(-2,2),dd=rv(-2,2),x=0.1,y=0,bounds=2;
       setTimeout(function(){var tx=0.1,ty=0,mx=0;for(var s=0;s<3000;s++){var nx=Math.sin(aa*ty)+cc*Math.cos(aa*tx);ty=Math.sin(bb*tx)+dd*Math.cos(bb*ty);tx=nx;mx=Math.max(mx,Math.abs(tx),Math.abs(ty));}bounds=Math.max(mx,0.1);},50);
       return function(t){ var nx=Math.sin(aa*y)+cc*Math.cos(aa*x); y=Math.sin(bb*x)+dd*Math.cos(bb*y); x=nx; return {x:x*0.28/bounds,y:y*0.28/bounds}; }; },
@@ -3827,12 +3827,12 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
     bCtx.clip();
     var dark=window.__MQ__.dark;
     bCtx.globalCompositeOperation='source-over';
-    bCtx.fillStyle=dark?'rgba(14,14,15,0.04)':'rgba(246,244,232,0.04)';
+    bCtx.fillStyle=dark?'rgba(14,14,15,0.02)':'rgba(246,244,232,0.02)';
     bCtx.fill();
-    var steps = Math.max(1, Math.round(dt * 300));
+    var steps = Math.max(1, Math.round(dt * 150));
     var stepSize = dt / steps;
     for(var s=0; s<steps; s++){
-      _formT += stepSize * 1.8;
+      _formT += stepSize * 0.9;
       var p = _formFn(_formT, stepSize);
       if(p&&isFinite(p.x)&&isFinite(p.y)) cbPush(_formTrail, p.x, p.y);
     }
@@ -3862,7 +3862,7 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
   }
 
   const BLACKLABEL_PARAMS = {
-    SPEED:0.28,
+    SPEED:0.18,
     THICK:1.2,
     EDGE:1.18,
     SPECTRAL:0.72,
