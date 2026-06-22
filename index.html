@@ -4150,12 +4150,14 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
 
   function startBlackLabel() {
     var prefersReduced = window.__MQ__.motion;
-    if (bAnimationRunning || prefersReduced) return;
-    bAnimationRunning = true;
+    if (prefersReduced) return;
     bAnimationStart = performance.now();
     b3Reset();
     resizeBlackLabel();
-    requestAnimationFrame(loopBlackLabel);
+    if (!bAnimationRunning) {
+      bAnimationRunning = true;
+      requestAnimationFrame(loopBlackLabel);
+    }
   }
 
   function stopBlackLabel() {
