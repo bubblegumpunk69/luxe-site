@@ -108,14 +108,14 @@
 <style>
 @font-face {
   font-family: 'EB Garamond';
-  src: url('fonts/EBGaramond.ttf') format('truetype');
+  src: url('fonts/EBGaramond.woff2') format('woff2');
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'EB Garamond';
-  src: url('fonts/EBGaramond-Italic.ttf') format('truetype');
+  src: url('fonts/EBGaramond-Italic.woff2') format('woff2');
   font-weight: 100 900;
   font-style: italic;
   font-display: swap;
@@ -201,6 +201,7 @@ body.overlay-open #gridCubeWrapper {
   height: 100%;
   position: relative;
   transform-style: preserve-3d;
+  will-change: transform;
   /* Push cube back so front face sits at Z=0 — prevents perspective zoom */
   transform: translateZ(calc(-1 * var(--grid-size) / 2));
   transition: transform 680ms cubic-bezier(0.175, 0.885, 0.32, 1.22);
@@ -2256,13 +2257,13 @@ body.tv-open #radioBriefing { opacity: 0; pointer-events: none; }
     <div id="galleryCarousel" class="gallery-carousel is-hidden">
       <div class="carousel-track">
         <div class="carousel-slide active" data-index="0">
-          <img src="images/IMG_0328.jpeg" alt="Street photography" draggable="false">
+          <img src="images/IMG_0328.jpeg" alt="Street photography" draggable="false" loading="lazy">
         </div>
         <div class="carousel-slide" data-index="1">
-          <img src="images/coffee-cups.jpeg" alt="Street photography" draggable="false">
+          <img src="images/coffee-cups.jpeg" alt="Street photography" draggable="false" loading="lazy">
         </div>
         <div class="carousel-slide" data-index="2">
-          <img src="images/IMG_0156.jpeg" alt="Street photography" draggable="false">
+          <img src="images/IMG_0156.jpeg" alt="Street photography" draggable="false" loading="lazy">
         </div>
       </div>
       <button class="carousel-nav carousel-nav-left" aria-label="Previous image">
